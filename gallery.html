@@ -1,101 +1,930 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>IUCEE Gallery</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVISC Technical Club - Gallery</title>
+    <meta name="description" content="View our gallery of past events, workshops, and student projects.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="light-mode">
 
-<nav>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="nav-logo-wrap">
+                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
+                    <span class="nav-logo-pulse"></span>
+                </span>
+                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+            </a>
 
-<div class="logo">
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="departments.html">Departments</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="council.html">Council</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="contact.html">Contact</a>
+            </div>
 
-<img src="assets/logos/vvisc.png" alt="logo">
+            <div class="nav-actions">
+                <div class="theme-toggle-container">
+                    <span class="theme-label" id="theme-label">Light Mode</span>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                        <span class="toggle-icon"></span>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <a href="login.html" class="nav-login-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Login
+                    </a>
+                </div>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="departments.html">Departments</a>
+            <a href="events.html">Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="council.html">Council</a>
+            <a href="announcements.html">Announcements</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html" style="color: var(--accent-color);">Login</a>
+        </div>
+        <div class="scroll-progress"></div>
+    </nav>
 
-<h2>IUCEE</h2>
+    <!-- =====================================
+            GALLERY HERO
+    ====================================== -->
 
-</div>
+    <section class="gallery-hero">
 
-<ul>
+        <div class="gallery-bg-circle circle-one"></div>
+        <div class="gallery-bg-circle circle-two"></div>
 
-<li><a href="index.html">Home</a></li>
+        <div class="container">
 
-<li><a href="about.html">About</a></li>
+            <div class="gallery-hero-content reveal-up">
 
-<li><a href="members.html">Members</a></li>
+                <span class="section-tag">
+                    📸 VVISC MEMORIES
+                </span>
 
-<li><a href="events.html">Events</a></li>
+                <h1>
 
-<li><a href="gallery.html">Gallery</a></li>
+                    Every Event
+                    <span>Creates a Story.</span>
 
-<li><a href="join.html">Join Us</a></li>
+                </h1>
 
-</ul>
+                <p>
 
-</nav>
+                    Explore unforgettable moments from hackathons,
+                    workshops, seminars, competitions, industrial visits,
+                    celebrations and every milestone of the VVISC journey.
 
-<section class="gallery-page">
+                </p>
 
-<h1>Gallery</h1>
+                <div class="gallery-hero-buttons">
 
-<p class="subtitle">
-Memories, Events, Workshops and Achievements
-</p>
+                    <a href="#albums" class="primary-btn">
 
-<div class="gallery-grid">
+                        Explore Gallery
 
-<div class="gallery-card">
-<img src="assets/gallery/1.jpeg" alt="gallery image">
-</div>
+                    </a>
 
-<div class="gallery-card">
-<img src="assets/gallery/2.jpeg" alt=" gallery image">
-</div>
+                    <a href="events.html" class="secondary-btn">
 
-<div class="gallery-card">
-<img src="assets/gallery/3.jpeg" alt="gallery image">
-</div>
+                        Upcoming Events
 
-<div class="gallery-card">
-<img src="assets/gallery/4.jpeg" alt="gallery image">
-</div>
+                    </a>
 
-<div class="gallery-card">
-<img src="assets/gallery/5.jpeg" alt="gallery image ">
-</div>
+                </div>
 
-<div class="gallery-card">
-<img src="assets/gallery/6.jpeg" alt="gallery image">
-</div>
+            </div>
 
-</div>
+        </div>
 
-<div class="next-btn">
+    </section>
+    <!--=====================================
+            3D PHOTO SHOWCASE
+    ======================================-->
 
-<a href="join.html" class="btn">
-Join IUCEE
-</a>
+    <section class="photo-showcase">
 
-</div>
+        <div class="container">
 
-</section>
-<footer class="footer">
+            <div class="section-title">
 
-    <h4>IUCEE VVITU</h4>
+                <span class="section-tag">
+                    🌟 HIGHLIGHTS
+                </span>
 
-    <p>Innovation • Leadership • Excellence</p>
+                <h2>
 
-    <p>© 2026 IUCEE VVITU. All Rights Reserved.</p>
+                    Experience Our
+                    <span>Best Moments</span>
 
-</footer>
+                </h2>
+
+                <p>
+
+                    A collection of the most memorable moments
+                    from VVISC events.
+
+                </p>
+
+            </div>
+
+            <div class="carousel-3d">
+
+                <span style="--i:1">
+                    <img src="assets/9.png">
+                </span>
+
+                <span style="--i:2">
+                    <img src="assets/1.png">
+                </span>
+
+                <span style="--i:3">
+                    <img src="assets/10.png">
+                </span>
+
+                <span style="--i:4">
+                    <img src="assets/4.png">
+                </span>
+
+                <span style="--i:5">
+                    <img src="assets/5.png">
+                </span>
+
+                <span style="--i:6">
+                    <img src="assets/6.png">
+                </span>
+
+                <span style="--i:7">
+                    <img src="assets/7.png">
+                </span>
+
+                <span style="--i:8">
+                    <img src="assets/8.png">
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!--=====================================
+            FEATURED ALBUMS
+    ======================================-->
+
+    <section class="gallery-albums" id="albums">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+                    📂 EVENT ALBUMS
+                </span>
+
+                <h2>
+
+                    Explore Our
+                    <span>Memories</span>
+
+                </h2>
+
+                <p>
+
+                    Browse photographs from our flagship events,
+                    workshops, competitions and student activities.
+
+                </p>
+
+            </div>
+
+            <div class="album-grid">
+
+                <!-- Album 1 -->
+
+                <div class="album-card reveal-up">
+
+                    <img src="assets/AI-Bootcamp.png" alt="AI Bootcamp">
+
+                    <div class="album-overlay">
+
+                        <span>AI Bootcamp</span>
+
+                        <h3>Artificial Intelligence Bootcamp</h3>
+
+                        <p>120 Photos</p>
+
+                        <a href="#bootcamp-gallery">
+                            Open Album →
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Album 2 -->
+
+                <div class="album-card reveal-up delay-100">
+
+                    <img src="assets/hackathon.png" alt="Hackathon">
+
+                    <div class="album-overlay">
+
+                        <span>Hackathon</span>
+
+                        <h3>Annual Hackathon</h3>
+
+                        <p>210 Photos</p>
+
+                        <a href="#hackathon-gallery">
+                            Open Album →
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Album 3 -->
+
+                <div class="album-card reveal-up delay-200">
+
+                    <img src="assets/Ai-summit.png" alt="Workshop">
+
+                    <div class="album-overlay">
+
+                        <span>Workshop</span>
+
+                        <h3>Technical Workshops</h3>
+
+                        <p>150 Photos</p>
+
+                        <a href="#workshop-gallery">
+                            Open Album →
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Album 4 -->
+
+                <div class="album-card reveal-up delay-300">
+
+                    <img src="assets/1.png" alt="Seminar">
+
+                    <div class="album-overlay">
+
+                        <span>Seminars</span>
+
+                        <h3>Guest Talks & Seminars</h3>
+
+                        <p>95 Photos</p>
+
+                        <a href="#seminar-gallery">
+                            Open Album →
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Album 5 -->
+
+                <div class="album-card reveal-up delay-400">
+
+                    <img src="assets/2.png" alt="Competition">
+
+                    <div class="album-overlay">
+
+                        <span>Competition</span>
+
+                        <h3>Technical Competitions</h3>
+
+                        <p>180 Photos</p>
+
+                        <a href="#competition-gallery">
+                            Open Album →
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Album 6 -->
+
+                <div class="album-card reveal-up delay-500">
+
+                    <img src="assets/4.png" alt="Club Activities">
+
+                    <div class="album-overlay">
+
+                        <span>Club Life</span>
+
+                        <h3>VVISC Activities</h3>
+
+                        <p>260 Photos</p>
+
+                        <a href="#club-gallery">
+                            Open Album →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!--=====================================
+            PHOTO GALLERY
+    ======================================-->
+
+    <section class="photo-gallery">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+                    📸 PHOTO COLLECTION
+                </span>
+
+                <h2>
+                    Moments We
+                    <span>Captured</span>
+                </h2>
+
+                <p>
+                    Every photograph reflects learning, teamwork,
+                    innovation and unforgettable memories.
+                </p>
+
+            </div>
+
+            <!-- Filter -->
+
+            <div class="gallery-filter">
+
+                <button class="gallery-filter-btn active">All</button>
+                <button class="gallery-filter-btn">Hackathon</button>
+                <button class="gallery-filter-btn">Workshop</button>
+                <button class="gallery-filter-btn">Bootcamp</button>
+                <button class="gallery-filter-btn">Seminar</button>
+                <button class="gallery-filter-btn">Competition</button>
+
+            </div>
+
+            <!-- Masonry Gallery -->
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item large">
+                    <img src="assets/5.png">
+                    <div class="gallery-overlay">
+                        <h3>AI Bootcamp</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="assets/6.png">
+                    <div class="gallery-overlay">
+                        <h3>Hackathon</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item tall">
+                    <img src="assets/7.png">
+                    <div class="gallery-overlay">
+                        <h3>Workshop</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="assets/8.png">
+                    <div class="gallery-overlay">
+                        <h3>Seminar</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item wide">
+                    <img src="assets/9.png">
+                    <div class="gallery-overlay">
+                        <h3>Competition</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="assets/10.png">
+                    <div class="gallery-overlay">
+                        <h3>Club Activity</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item tall">
+                    <img src="assets/1.png">
+                    <div class="gallery-overlay">
+                        <h3>Guest Lecture</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="assets/2.png">
+                    <div class="gallery-overlay">
+                        <h3>Team Work</h3>
+                        <span>View Photo</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================
+            AI BOOTCAMP GALLERY
+    ====================================== -->
+
+    <section class="album-section" id="bootcamp-gallery">
+
+        <div class="container">
+
+            <div class="album-header">
+                <h2>🤖 Artificial Intelligence Bootcamp</h2>
+                <p>Highlights from our AI & Machine Learning Bootcamp.</p>
+            </div>
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item"><img src="assets/1.png"></div>
+                <div class="gallery-item"><img src="assets/2.png"></div>
+                <div class="gallery-item"><img src="assets/3.png"></div>
+                <div class="gallery-item"><img src="assets/4.png"></div>
+                <div class="gallery-item"><img src="assets/5.png"></div>
+                <div class="gallery-item"><img src="assets/6.png"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+            HACKATHON GALLERY
+    ====================================== -->
+
+    <section class="album-section" id="hackathon-gallery">
+
+        <div class="container">
+
+            <div class="album-header">
+                <h2>💻 Annual Hackathon</h2>
+                <p>48 hours of coding, teamwork and innovation.</p>
+            </div>
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item"><img src="assets/7.png"></div>
+                <div class="gallery-item"><img src="assets/8.png"></div>
+                <div class="gallery-item"><img src="assets/9.png"></div>
+                <div class="gallery-item"><img src="assets/10.png"></div>
+                <div class="gallery-item"><img src="assets/1.png"></div>
+                <div class="gallery-item"><img src="assets/2.png"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+            WORKSHOP GALLERY
+    ====================================== -->
+
+    <section class="album-section" id="workshop-gallery">
+
+        <div class="container">
+
+            <div class="album-header">
+                <h2>🛠 Technical Workshops</h2>
+                <p>Hands-on learning sessions conducted by experts.</p>
+            </div>
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item"><img src="assets/3.png"></div>
+                <div class="gallery-item"><img src="assets/4.png"></div>
+                <div class="gallery-item"><img src="assets/5.png"></div>
+                <div class="gallery-item"><img src="assets/6.png"></div>
+                <div class="gallery-item"><img src="assets/7.png"></div>
+                <div class="gallery-item"><img src="assets/8.png"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+            SEMINAR GALLERY
+    ====================================== -->
+
+    <section class="album-section" id="seminar-gallery">
+
+        <div class="container">
+
+            <div class="album-header">
+                <h2>🎤 Guest Talks & Seminars</h2>
+                <p>Inspirational sessions from industry professionals.</p>
+            </div>
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item"><img src="assets/9.png"></div>
+                <div class="gallery-item"><img src="assets/10.png"></div>
+                <div class="gallery-item"><img src="assets/1.png"></div>
+                <div class="gallery-item"><img src="assets/2.png"></div>
+                <div class="gallery-item"><img src="assets/3.png"></div>
+                <div class="gallery-item"><img src="assets/4.png"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+            COMPETITION GALLERY
+    ====================================== -->
+
+    <section class="album-section" id="competition-gallery">
+
+        <div class="container">
+
+            <div class="album-header">
+                <h2>🏆 Technical Competitions</h2>
+                <p>Competitions, coding contests and technical challenges.</p>
+            </div>
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item"><img src="assets/5.png"></div>
+                <div class="gallery-item"><img src="assets/6.png"></div>
+                <div class="gallery-item"><img src="assets/7.png"></div>
+                <div class="gallery-item"><img src="assets/8.png"></div>
+                <div class="gallery-item"><img src="assets/9.png"></div>
+                <div class="gallery-item"><img src="assets/10.png"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+            CLUB GALLERY
+    ====================================== -->
+
+    <section class="album-section" id="club-gallery">
+
+        <div class="container">
+
+            <div class="album-header">
+                <h2>🎉 Club Activities</h2>
+                <p>Celebrations, meetings, outreach programs and memories.</p>
+            </div>
+
+            <div class="masonry-gallery">
+
+                <div class="gallery-item"><img src="assets/1.png"></div>
+                <div class="gallery-item"><img src="assets/2.png"></div>
+                <div class="gallery-item"><img src="assets/3.png"></div>
+                <div class="gallery-item"><img src="assets/4.png"></div>
+                <div class="gallery-item"><img src="assets/5.png"></div>
+                <div class="gallery-item"><img src="assets/6.png"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+        <!--=====================================
+            GALLERY STATISTICS
+    ======================================-->
+
+    <section class="gallery-stats">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+                    📊 VVISC IN NUMBERS
+                </span>
+
+                <h2>
+
+                    Every Picture
+                    <span>Has a Story</span>
+
+                </h2>
+
+                <p>
+
+                    Thousands of memories have been captured
+                    through innovation, teamwork and celebrations.
+
+                </p>
+
+            </div>
+
+            <div class="gallery-stats-grid">
+
+                <div class="gallery-stat-card reveal-up">
+
+                    <div class="gallery-stat-icon">
+                        📷
+                    </div>
+
+                    <h3 class="gallery-counter" data-target="2500">0</h3>
+
+                    <span>Total Photos</span>
+
+                </div>
+
+                <div class="gallery-stat-card reveal-up delay-100">
+
+                    <div class="gallery-stat-icon">
+                        🎉
+                    </div>
+
+                    <h3 class="gallery-counter" data-target="85">0</h3>
+
+                    <span>Events Covered</span>
+
+                </div>
+
+                <div class="gallery-stat-card reveal-up delay-200">
+
+                    <div class="gallery-stat-icon">
+                        👨‍🎓
+                    </div>
+
+                    <h3 class="gallery-counter" data-target="5000">0</h3>
+
+                    <span>Participants</span>
+
+                </div>
+
+                <div class="gallery-stat-card reveal-up delay-300">
+
+                    <div class="gallery-stat-icon">
+                        🏆
+                    </div>
+
+                    <h3 class="gallery-counter" data-target="120">0</h3>
+
+                    <span>Awards Won</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!--=====================================
+            MEMORIES WALL
+    ======================================-->
+
+    <section class="memories-wall">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+                    ❤️ STUDENT MEMORIES
+                </span>
+
+                <h2>
+
+                    What Our
+                    <span>Students Say</span>
+
+                </h2>
+
+                <p>
+
+                    Every event creates unforgettable memories and lifelong friendships.
+
+                </p>
+
+            </div>
+
+            <div class="memories-grid">
+
+                <div class="memory-card reveal-up">
+
+                    <div class="memory-profile">
+
+                        <img src="assets/student1.jpg">
+
+                        <div>
+
+                            <h4>Raja Vardhan</h4>
+
+                            <span>AI & ML Student</span>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        "VVISC Hackathon completely changed the way I think about solving real-world problems."
+
+                    </p>
+
+                    <div class="memory-stars">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+
+                </div>
+
+                <div class="memory-card reveal-up delay-100">
+
+                    <div class="memory-profile">
+
+                        <img src="assets/student2.jpg">
+
+                        <div>
+
+                            <h4>Priya</h4>
+
+                            <span>CSE Student</span>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        "The workshops helped me gain confidence and improve my technical skills."
+
+                    </p>
+
+                    <div class="memory-stars">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+
+                </div>
+
+                <div class="memory-card reveal-up delay-200">
+
+                    <div class="memory-profile">
+
+                        <img src="assets/student3.jpg">
+
+                        <div>
+
+                            <h4>Harsha</h4>
+
+                            <span>ECE Student</span>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        "Amazing experience. Every event was full of innovation and teamwork."
+
+                    </p>
+
+                    <div class="memory-stars">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!--=====================================
+            GALLERY CTA
+    ======================================-->
+
+    <section class="gallery-cta">
+
+        <div class="container">
+
+            <div class="gallery-cta-box reveal-up">
+
+                <span class="cta-tag">📸 OUR MEMORIES</span>
+                <h2>Capture Every <span>Moment</span></h2>
+
+                <p>
+
+                    Today's visitors become tomorrow's innovators.
+                    Register for upcoming VVISC events and be part
+                    of our growing community.
+
+                </p>
+
+                <div class="gallery-cta-buttons">
+
+                    <a href="events.html" class="primary-btn">
+
+                        Explore Events
+
+                    </a>
+
+                    <a href="contact.html" class="secondary-btn">
+
+                        Contact Us
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+  
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        </div>
+    </footer>
+    <div class="gallery-lightbox" id="galleryLightbox">
+
+        <span class="lightbox-close">&times;</span>
+
+        <img class="lightbox-image" id="lightboxImage">
+
+        <button class="lightbox-prev">&#10094;</button>
+
+        <button class="lightbox-next">&#10095;</button>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
+
+    <script src="main.js" defer></script>
+
 </body>
+
 </html>
