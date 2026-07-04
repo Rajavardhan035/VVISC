@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVISC Technical Club - Departments</title>
+    <meta name="description" content="Explore the various technical and non-technical departments of VVISC.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="light-mode">
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="nav-logo-wrap">
+                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
+                    <span class="nav-logo-pulse"></span>
+                </span>
+                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="departments.html">Departments</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="council.html">Council</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="nav-actions">
+                <div class="theme-toggle-container">
+                    <span class="theme-label" id="theme-label">Light Mode</span>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                        <span class="toggle-icon"></span>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <a href="login.html" class="nav-login-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Login
+                    </a>
+                </div>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="departments.html">Departments</a>
+            <a href="events.html">Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="council.html">Council</a>
+            <a href="announcements.html">Announcements</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html" style="color: var(--accent-color);">Login</a>
+        </div>
+        <div class="scroll-progress"></div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container reveal-up">
+            <h1>Our <span class="logo-accent">Departments</span></h1>
+            <p class="section-subtitle">Collaborating across diverse disciplines to achieve excellence and foster innovation.</p>
+        </div>
+    </header>
+
+    <!-- =========================================================
+                        VVISC DEPARTMENTS
+    ========================================================== -->
+
+    <section class="departments-section">
+
+        <div class="container">
+
+            <!-- Heading -->
+
+            <div class="department-heading">
+
+                <span class="section-tag">
+                    ● OUR DEPARTMENTS
+                </span>
+
+                <h2>
+
+                    Meet The Teams Behind
+                    <span>VVISC</span>
+
+                </h2>
+
+                <p>
+
+                    Every department plays a vital role in building,
+                    managing and growing the VVISC innovation ecosystem.
+
+                </p>
+
+            </div>
+
+            <div class="department-layout">
+
+                <!-- LEFT NAVIGATION -->
+
+                <aside class="department-navigation">
+
+                    <button class="department-btn"
+                        data-department="rnd">
+
+                        <div class="dept-icon">🧪</div>
+
+                        <div class="dept-text">
+
+                            <h3>Research & Development</h3>
+
+                            <span>Innovation & Research</span>
+
+                        </div>
+
+                    </button>
+
+                    <button class="department-btn"
+                        data-department="digital">
+
+                        <div class="dept-icon">💻</div>
+
+                        <div class="dept-text">
+
+                            <h3>Digital Infrastructure</h3>
+
+                            <span>Technology & Systems</span>
+
+                        </div>
+
+                    </button>
+
+                    <button class="department-btn"
+                        data-department="pr">
+
+                        <div class="dept-icon">📢</div>
+
+                        <div class="dept-text">
+
+                            <h3>Public Relations</h3>
+
+                            <span>Branding & Outreach</span>
+
+                        </div>
+
+                    </button>
+
+                    <button class="department-btn"
+                        data-department="operations">
+
+                        <div class="dept-icon">⚙️</div>
+
+                        <div class="dept-text">
+
+                            <h3>Operations</h3>
+
+                            <span>Execution & Management</span>
+
+                        </div>
+
+                    </button>
+
+                    <button class="department-btn"
+                        data-department="strategy">
+
+                        <div class="dept-icon">📈</div>
+
+                        <div class="dept-text">
+
+                            <h3>Strategic Planning</h3>
+
+                            <span>Content Development</span>
+
+                        </div>
+
+                    </button>
+
+                    <button class="department-btn"
+                        data-department="social">
+
+                        <div class="dept-icon">🎨</div>
+
+                        <div class="dept-text">
+
+                            <h3> Social Media & Visual Arts</h3>
+
+                            <span>Creative Design</span>
+
+                        </div>
+
+                    </button>
+
+                    <button class="department-btn"
+                        data-department="finance">
+
+                        <div class="dept-icon">💰</div>
+
+                        <div class="dept-text">
+
+                            <h3>Finance Team</h3>
+
+                            <span>Budget & Accounts</span>
+
+                        </div>
+
+                    </button>
+
+                </aside>
+                <!-- RIGHT PANEL -->
+
+                <div class="department-panel">
+
+                    <!-- ================================================= -->
+                     <div class="department-content" id="rnd">
+
+                        <span class="department-tag">Innovation Hub</span>
+
+                        <h2>Research & Development</h2>
+
+                        <p>
+
+                        The R&D Department transforms ideas into innovative
+                        projects, research papers and prototypes while encouraging
+                        students to explore emerging technologies.
+
+                        </p>
+
+                        <div class="department-info">
+
+                        <div>
+
+                        <h4>Responsibilities</h4>
+
+                        <ul>
+
+                        <li>Research Papers</li>
+
+                        <li>Innovation Projects</li>
+
+                        <li>Patent Ideas</li>
+
+                        <li>Prototype Development</li>
+
+                        </ul>
+
+                        </div>
+
+                        <div>
+
+                        <h4>Core Skills</h4>
+
+                        <div class="skill-tags">
+
+                        <span>Innovation</span>
+
+                        <span>Research</span>
+
+                        <span>AI</span>
+
+                        <span>IoT</span>
+
+                        <span>Robotics</span>
+
+                        </div>
+
+                        </div>
+
+                        </div>
+
+                        <div class="department-stats">
+
+                        <div>
+
+                        <h3>28+</h3>
+
+                        <span>Researchers</span>
+
+                        </div>
+
+                        <div>
+
+                        <h3>18+</h3>
+
+                        <span>Projects</span>
+
+                        </div>
+
+                        <div>
+
+                        <h3>12+</h3>
+
+                        <span>Papers</span>
+
+                        </div>
+
+                        </div>
+
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                            ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                            Next →
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="department-content active" id="digital">
+                        
+
+                        <span class="department-tag">
+
+                            Core Department
+
+                        </span>
+
+                        <h2>
+
+                            Digital infrastructure Department
+
+                        </h2>
+
+                        <p>
+
+                            The Technical Department develops software,
+                            websites, applications and innovative
+                            technical solutions for VVISC activities.
+
+                        </p>
+
+                        <div class="department-info">
+
+                            <div>
+
+                                <h4>Responsibilities</h4>
+
+                                <ul>
+
+                                    <li>Website Development</li>
+
+                                    <li>Software Projects</li>
+
+                                    <li>Hackathon Support</li>
+
+                                    <li>Technical Workshops</li>
+
+                                </ul>
+
+                            </div>
+
+                            <div>
+
+                                <h4>Skills</h4>
+
+                                <div class="skill-tags">
+
+                                    <span>Python</span>
+
+                                    <span>Java</span>
+
+                                    <span>Web</span>
+
+                                    <span>Cloud</span>
+
+                                    <span>AI</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="department-stats">
+
+                            <div>
+
+                                <h3>40+</h3>
+
+                                <span>Members</span>
+
+                            </div>
+
+                            <div>
+
+                                <h3>15+</h3>
+
+                                <span>Projects</span>
+
+                            </div>
+
+                            <div>
+
+                                <h3>20+</h3>
+
+                                <span>Workshops</span>
+
+                            </div>
+
+                        </div>
+                            <!-- ==========================================
+                                    RECENT PROJECTS
+                            ========================================== -->
+
+                            <div class="department-projects">
+
+                                <h3>Recent Projects</h3>
+
+                                <div class="project-grid">
+
+                                    <div class="project-card">
+
+                                        <div class="project-image">
+
+                                            💻
+
+                                        </div>
+
+                                        <h4>VVISC Website</h4>
+
+                                        <p>
+                                            Designed and developed the official
+                                            VVISC student chapter website.
+                                        </p>
+
+                                    </div>
+
+                                    <div class="project-card">
+
+                                        <div class="project-image">
+
+                                            🤖
+
+                                        </div>
+
+                                        <h4>AI Assistant</h4>
+
+                                        <p>
+                                            Voice-enabled AI assistant
+                                            built using Python and LLMs.
+                                        </p>
+
+                                    </div>
+
+                                    <div class="project-card">
+
+                                        <div class="project-image">
+
+                                            ☁️
+
+                                        </div>
+
+                                        <h4>Cloud Dashboard</h4>
+
+                                        <p>
+                                            Smart cloud monitoring
+                                            platform for IoT devices.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                                ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                                Next Department →
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                    
+
+                    <!-- ================================================= -->
+
+                    
+                    <div class="department-content" id="pr">
+
+                        <span class="department-tag">Communication</span>
+
+                        <h2>Public Relations</h2>
+
+                        <p>
+
+                        Building partnerships, managing collaborations,
+                        conducting outreach and strengthening VVISC's
+                        professional presence.
+
+                        </p>
+
+                        <div class="department-info">
+
+                        <div>
+
+                        <h4>Responsibilities</h4>
+
+                        <ul>
+
+                        <li>Industry Relations</li>
+
+                        <li>Guest Lectures</li>
+
+                        <li>Sponsorships</li>
+
+                        <li>Public Communication</li>
+
+                        </ul>
+
+                        </div>
+
+                        <div>
+
+                        <h4>Skills</h4>
+
+                        <div class="skill-tags">
+
+                        <span>Leadership</span>
+
+                        <span>Networking</span>
+
+                        <span>Public Speaking</span>
+
+                        <span>Planning</span>
+
+                        </div>
+
+                        </div>
+
+                        </div>
+
+                        <div class="department-stats">
+
+                        <div>
+
+                        <h3>15+</h3>
+
+                        <span>Members</span>
+
+                        </div>
+
+                        <div>
+
+                        <h3>30+</h3>
+
+                        <span>Collaborations</span>
+
+                        </div>
+
+                        <div>
+
+                        <h3>10+</h3>
+
+                        <span>Events</span>
+
+                        </div>
+
+                        </div>
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                            ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                            Next →
+
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="department-content" id="operations">
+
+                        <span class="department-tag">
+
+                            Creativity
+
+                        </span>
+
+                        <h2>
+
+                            Operations Department
+
+                        </h2>
+
+                        <p>
+
+                            Designing posters,
+                            UI/UX,
+                            branding,
+                            graphics,
+                            and promotional materials.
+
+                        </p>
+
+                        ...
+
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                            ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                            Next →
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                    <div class="department-content" id="strategy">
+
+                        <span class="department-tag">
+
+                            Creativity
+
+                        </span>
+
+                        <h2>
+
+                            Strategy & Planning Department
+
+                        </h2>
+
+                        <p>
+
+                            Designing posters,
+                            UI/UX,
+                            branding,
+                            graphics,
+                            and promotional materials.
+
+                        </p>
+
+                        ...
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                            ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                            Next →
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="department-content" id="social">
+
+                        <span class="department-tag">
+
+                            Digital Marketing
+
+                        </span>
+
+                        <h2>
+
+                            Social Media Department
+
+                        </h2>
+
+                        <p>
+
+                            Managing VVISC's digital presence,
+                            photography, videography and
+                            creative campaigns.
+
+                        </p>
+
+                        ...
+                        
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                            ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                            Next →
+
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="department-content" id="finance">
+
+                        <span class="department-tag">
+
+                            Finance Department
+
+                        </span>
+
+                        <h2>
+
+                            Finance Department
+
+                        </h2>
+
+                        <p>
+
+                            The Finance Department manages budgeting,
+                            sponsorships, financial planning and
+                            resource allocation for every VVISC event.
+
+                        </p>
+
+                        <div class="department-info">
+
+                            <div>
+
+                                <h4>Responsibilities</h4>
+
+                                <ul>
+
+                                    <li>Budget Planning</li>
+
+                                    <li>Sponsorship Management</li>
+
+                                    <li>Expense Tracking</li>
+
+                                    <li>Financial Reports</li>
+
+                                </ul>
+
+                            </div>
+
+                            <div>
+
+                                <h4>Skills</h4>
+
+                                <div class="skill-tags">
+
+                                    <span>Excel</span>
+
+                                    <span>Accounting</span>
+
+                                    <span>Planning</span>
+
+                                    <span>Budgeting</span>
+
+                                    <span>Leadership</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="department-stats">
+
+                            <div>
+
+                                <h3>10+</h3>
+
+                                <span>Members</span>
+
+                            </div>
+
+                            <div>
+
+                                <h3>₹2L+</h3>
+
+                                <span>Managed Funds</span>
+
+                            </div>
+
+                            <div>
+
+                                <h3>20+</h3>
+
+                                <span>Sponsors</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="department-navigation-buttons">
+
+                            <button class="prev-department">
+
+                            ← Previous
+
+                            </button>
+
+                            <button class="next-department">
+
+                            Next →
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- ===========================================
+            DEPARTMENT TEAM
+    =========================================== -->
+
+    <div class="department-team">
+
+        <h3>Meet The Team</h3>
+
+        <div class="team-grid">
+
+            <!-- Faculty -->
+
+            <div class="team-card">
+
+                <div class="team-image">
+
+                    <img src="assets/faculty.png"
+                        alt="Faculty Coordinator">
+
+                </div>
+
+                <span class="team-role">
+
+                    Faculty Coordinator
+
+                </span>
+
+                <h4>
+
+                    Dr. Faculty Name
+
+                </h4>
+
+                <p>
+
+                    Mentors the department,
+                    guides projects and
+                    supports innovation.
+
+                </p>
+
+            </div>
+
+            <!-- Student -->
+
+            <div class="team-card">
+
+                <div class="team-image">
+
+                    <img src="assets/student.png"
+                        alt="Student Lead">
+
+                </div>
+
+                <span class="team-role">
+
+                    Student Lead
+
+                </span>
+
+                <h4>
+
+                    Student Name
+
+                </h4>
+
+                <p>
+
+                    Leads department activities,
+                    workshops and student teams.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- ===========================================
+                MEET THE COUNCIL CTA
+    =========================================== -->
+
+    <section class="council-cta">
+
+        <div class="council-cta-content">
+
+            <span class="cta-tag">📚 EXPLORE DEPARTMENTS</span>
+
+                <h2>Shape Your <span>Future Career</span></h2>
+
+            <h2>
+
+                Meet The Council
+                Behind <span>VVISC</span>
+
+            </h2>
+
+            <p>
+
+                Explore the passionate student leaders and faculty members
+                driving innovation, organizing events, and building the
+                VVISC community.
+
+            </p>
+
+            <div class="council-buttons">
+
+                <a href="council.html" class="council-btn">
+
+                    Meet The Council →
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
