@@ -1,153 +1,1084 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>IUCEE Events</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVISC Technical Club - Events</title>
+    <meta name="description" content="Discover upcoming hackathons, workshops, and symposia hosted by VVISC.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="light-mode">
 
-<nav>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="nav-logo-wrap">
+                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
+                    <span class="nav-logo-pulse"></span>
+                </span>
+                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+            </a>
 
-<div class="logo">
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="departments.html">Departments</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="council.html">Council</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="contact.html">Contact</a>
+            </div>
 
-<img src="assets/logos/vvisc.png" alt="logo">
+            <div class="nav-actions">
+                <div class="theme-toggle-container">
+                    <span class="theme-label" id="theme-label">Light Mode</span>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                        <span class="toggle-icon"></span>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <a href="login.html" class="nav-login-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Login
+                    </a>
+                </div>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="departments.html">Departments</a>
+            <a href="events.html">Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="council.html">Council</a>
+            <a href="announcements.html">Announcements</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html" style="color: var(--accent-color);">Login</a>
+        </div>
+        <div class="scroll-progress"></div>
+    </nav>
+    <!-- =====================================================
+                        EVENTS HERO
+    ===================================================== -->
 
-<h2>IUCEE</h2>
+    <section class="events-hero">
 
-</div>
+        <div class="events-bg-circle one"></div>
+        <div class="events-bg-circle two"></div>
 
-<ul>
+        <div class="container">
 
-<li><a href="index.html">Home</a></li>
+            <div class="events-heading reveal-up">
 
-<li><a href="about.html">About</a></li>
+                <span class="section-tag">
 
-<li><a href="members.html">Members</a></li>
+                    ● VVISC EVENTS
 
-<li><a href="events.html">Events</a></li>
+                </span>
 
-<li><a href="gallery.html">Gallery</a></li>
+                <h1>
 
-<li><a href="join.html">Join Us</a></li>
+                    Learn.
+                    <span>Build.</span>
+                    Innovate.
 
-</ul>
+                </h1>
 
-</nav>
+                <p>
 
-<section class="events-page">
+                    Discover workshops, hackathons,
+                    technical talks, competitions and
+                    innovation programs organized by
+                    VVISC IUCEE Student Chapter.
 
-<h1>Our Events</h1>
+                </p>
 
-<p class="subtitle">
-Workshops, Hackathons, Technical Sessions & Industry Connect Programs
-</p>
+            </div>
 
-<div class="event-grid">
+            <!-- Featured Event -->
 
-<div class="event-card">
+            <div class="featured-event reveal-up">
 
-<h2>TechXplore 2026</h2>
+                <div class="featured-left">
 
-<p>
-A technical fest focused on AI, Cloud Computing and Innovation.
-</p>
+                    <span class="live-badge">
 
-<span>January 2026</span>
+                        🔴 REGISTRATION OPEN
 
-</div>
+                    </span>
 
-<div class="event-card">
+                    <h2>
 
-<h2>Hackathon</h2>
+                        VVISC Annual Hackathon 2026
 
-<p>
-24-hour coding competition to solve real-world problems.
-</p>
+                    </h2>
 
-<span>March 2026</span>
+                    <p>
 
-</div>
+                        A 48-hour innovation challenge
+                        bringing together developers,
+                        designers and innovators to solve
+                        real-world problems using AI,
+                        Robotics, IoT and Web Technologies.
 
-<div class="event-card">
+                    </p>
 
-<h2>Industry Visit</h2>
+                    <div class="event-details">
 
-<p>
-Hands-on industrial exposure and learning experience.
-</p>
+                        <div>
 
-<span>May 2026</span>
+                            📅
 
-</div>
+                            <span>
 
-<div class="event-card">
+                                Oct 15–17, 2026
 
-<h2>Startup Summit</h2>
+                            </span>
 
-<p>
-Entrepreneurship and innovation workshop for students.
-</p>
+                        </div>
 
-<span>August 2026</span>
+                        <div>
 
-</div>
+                            📍
 
-</div>
+                            <span>
 
-<h2 class="timeline-title">
-Annual Roadmap
-</h2>
+                                VVIT Campus
 
-<div class="timeline">
+                            </span>
 
-<div class="timeline-item">
-<h3>January</h3>
-<p>TechXplore</p>
-</div>
+                        </div>
 
-<div class="timeline-item">
-<h3>March</h3>
-<p>Hackathon</p>
-</div>
+                        <div>
 
-<div class="timeline-item">
-<h3>May</h3>
-<p>Industry Visit</p>
-</div>
+                            👥
 
-<div class="timeline-item">
-<h3>August</h3>
-<p>Startup Summit</p>
-</div>
+                            <span>
 
-</div>
+                                Team Size: 2–4
 
-<div class="next-btn">
+                            </span>
 
-<a href="gallery.html" class="btn">
-View Gallery
-</a>
+                        </div>
 
-</div>
+                        <div>
 
-</section>
-<footer class="footer">
+                            🏆
 
-    <h4>IUCEE VVITU</h4>
+                            <span>
 
-    <p>Innovation • Leadership • Excellence</p>
+                                ₹50,000 Prize Pool
 
-    <p>© 2026 IUCEE VVITU. All Rights Reserved.</p>
+                            </span>
 
-</footer>
+                        </div>
+
+                    </div>
+
+                    <div class="hero-buttons">
+
+                        <a href="#" class="register-btn">
+
+                            Register Now
+
+                        </a>
+
+                        <a href="#upcoming-events"
+
+                            class="details-btn">
+
+                            Explore Events
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="featured-right">
+
+                    <div class="countdown-card">
+
+                        <span>
+
+                            NEXT EVENT
+
+                        </span>
+
+                        <h3>
+
+                            15 OCT
+
+                        </h3>
+
+                        <p>
+
+                            Registration Closing Soon
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================================
+                    UPCOMING EVENTS
+    ===================================================== -->
+
+    <section class="events-section" id="upcoming-events">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+                    ● UPCOMING EVENTS
+                </span>
+
+                <h2>
+                    Register For Our
+                    <span>Upcoming Events</span>
+                </h2>
+
+                <p>
+                    Participate in workshops, hackathons, technical talks,
+                    competitions and innovation programs.
+                </p>
+
+            </div>
+
+            <!-- Category Filter -->
+
+            <div class="event-filter reveal-up">
+
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Hackathons</button>
+                <button class="filter-btn">Workshops</button>
+                <button class="filter-btn">Seminars</button>
+                <button class="filter-btn">Competitions</button>
+
+            </div>
+
+            <!-- Event Grid -->
+
+            <div class="premium-event-grid">
+
+                <!-- Card 1 -->
+
+                <div class="premium-event-card reveal-up">
+
+                    <div class="event-image">
+                        <img src="assets/Hackathon.png" alt="Test">
+                        <span class="event-badge">HACKATHON</span>
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-date">
+
+                            📅 Oct 15–17, 2026
+
+                        </div>
+
+                        <h3>
+
+                            VVISC Annual Hackathon
+
+                        </h3>
+
+                        <p>
+
+                            48-hour coding competition focused on
+                            AI, IoT, Robotics and Web Technologies.
+
+                        </p>
+
+                        <div class="event-info">
+
+                            <span>📍 VVIT Campus</span>
+
+                            <span>👥 2–4 Members</span>
+
+                        </div>
+
+                        <div class="seat-progress">
+
+                            <div class="seat-header">
+
+                                <span>Seats Left</span>
+
+                                <span>78 / 150</span>
+
+                            </div>
+
+                            <div class="progress-bar">
+
+                                <div class="progress-fill"
+                                    style="width:52%;"></div>
+
+                            </div>
+
+                        </div>
+
+                        <a href="#" class="event-btn">
+
+                            Register →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Card 2 -->
+
+                <div class="premium-event-card reveal-up delay-200">
+
+                    <div class="event-image workshop">
+
+                        <img src="assets/Ai-bootcamp.png"
+                            alt="AI Bootcamp">
+
+                        <span class="event-badge">
+                            WORKSHOP
+                        </span>
+
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-date">
+
+                            📅 Nov 5, 2026
+
+                        </div>
+
+                        <h3>
+
+                            AI Bootcamp
+
+                        </h3>
+
+                        <p>
+
+                            Hands-on training on Machine Learning,
+                            Deep Learning and Generative AI.
+
+                        </p>
+
+                        <div class="event-info">
+
+                            <span>📍 Seminar Hall</span>
+
+                            <span>👥 Individual</span>
+
+                        </div>
+
+                        <div class="seat-progress">
+
+                            <div class="seat-header">
+
+                                <span>Seats Left</span>
+
+                                <span>45 / 80</span>
+
+                            </div>
+
+                            <div class="progress-bar">
+
+                                <div class="progress-fill"
+                                    style="width:44%;"></div>
+
+                            </div>
+
+                        </div>
+
+                        <a href="#" class="event-btn">
+
+                            Register →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Card 3 -->
+
+                <div class="premium-event-card reveal-up delay-300">
+
+                    <div class="event-image seminar">
+
+                        <img src="assets/Ai-summit.png"
+                            alt="Tech Symposium">
+
+                        <span class="event-badge">
+                            SEMINAR
+                        </span>
+
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-date">
+
+                            📅 Dec 10, 2026
+
+                        </div>
+
+                        <h3>
+
+                            Industry Tech Summit
+
+                        </h3>
+
+                        <p>
+
+                            Meet industry experts,
+                            startup founders and researchers.
+
+                        </p>
+
+                        <div class="event-info">
+
+                            <span>📍 Auditorium</span>
+
+                            <span>👥 Open For All</span>
+
+                        </div>
+
+                        <div class="seat-progress">
+
+                            <div class="seat-header">
+
+                                <span>Seats Left</span>
+
+                                <span>150 / 300</span>
+
+                            </div>
+
+                            <div class="progress-bar">
+
+                                <div class="progress-fill"
+                                    style="width:50%;"></div>
+
+                            </div>
+
+                        </div>
+
+                        <a href="#" class="event-btn">
+
+                            Register →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+                    EVENT JOURNEY
+    ===================================================== -->
+
+    <section class="event-journey">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+
+                    ● EVENT JOURNEY
+
+                </span>
+
+                <h2>
+
+                    Our Journey Through
+                    <span>Innovation</span>
+
+                </h2>
+
+                <p>
+
+                    Every event strengthens the VVISC community,
+                    creating opportunities to learn, innovate and lead.
+
+                </p>
+
+            </div>
+
+            <div class="timeline-wrapper">
+
+                <div class="timeline-line"></div>
+
+                <!-- Event -->
+
+                <div class="timeline-card reveal-up">
+
+                    <div class="timeline-dot"></div>
+
+                    <span class="timeline-year">
+
+                        AUG 2026
+
+                    </span>
+
+                    <h3>
+
+                        AI Bootcamp
+
+                    </h3>
+
+                    <p>
+
+                        300+ students learned
+                        Machine Learning and
+                        Deep Learning.
+
+                    </p>
+
+                </div>
+
+                <div class="timeline-card reveal-up delay-100">
+
+                    <div class="timeline-dot"></div>
+
+                    <span class="timeline-year">
+
+                        SEP 2026
+
+                    </span>
+
+                    <h3>
+
+                        Web Development Workshop
+
+                    </h3>
+
+                    <p>
+
+                        Built responsive websites
+                        using HTML, CSS and JavaScript.
+
+                    </p>
+
+                </div>
+
+                <div class="timeline-card reveal-up delay-200">
+
+                    <div class="timeline-dot active"></div>
+
+                    <span class="timeline-year">
+
+                        OCT 2026
+
+                    </span>
+
+                    <h3>
+
+                        Annual Hackathon
+
+                    </h3>
+
+                    <p>
+
+                        48-hour coding challenge
+                        with ₹50,000 prize pool.
+
+                    </p>
+
+                </div>
+
+                <div class="timeline-card reveal-up delay-300">
+
+                    <div class="timeline-dot"></div>
+
+                    <span class="timeline-year">
+
+                        NOV 2026
+
+                    </span>
+
+                    <h3>
+
+                        Core Team Hiring
+
+                    </h3>
+
+                    <p>
+
+                        Recruiting passionate
+                        students into VVISC.
+
+                    </p>
+
+                </div>
+
+                <div class="timeline-card reveal-up delay-400">
+
+                    <div class="timeline-dot"></div>
+
+                    <span class="timeline-year">
+
+                        DEC 2026
+
+                    </span>
+
+                    <h3>
+
+                        Tech Symposium
+
+                    </h3>
+
+                    <p>
+
+                        Meet researchers,
+                        startups and industry experts.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+                    PAST EVENTS SHOWCASE
+    ===================================================== -->
+
+    <section class="past-events">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+
+                    ● EVENT HIGHLIGHTS
+
+                </span>
+
+                <h2>
+
+                    Memories That
+                    <span>Inspired Innovation</span>
+
+                </h2>
+
+                <p>
+
+                    Every VVISC event leaves behind
+                    unforgettable experiences,
+                    successful projects and future leaders.
+
+                </p>
+
+            </div>
+
+            <div class="past-event-grid">
+
+                <!-- Event -->
+
+                <div class="past-event-card reveal-up">
+
+                    <div class="past-image">
+
+                        <span>
+
+                            AI BOOTCAMP
+
+                        </span>
+
+                    </div>
+
+                    <div class="past-content">
+
+                        <h3>
+
+                            AI / ML Bootcamp
+
+                        </h3>
+
+                        <p>
+
+                            Three days of hands-on
+                            Artificial Intelligence
+                            and Machine Learning.
+
+                        </p>
+
+                        <div class="past-stats">
+
+                            <div>
+
+                                <h4>320+</h4>
+
+                                <span>Participants</span>
+
+                            </div>
+
+                            <div>
+
+                                <h4>12</h4>
+
+                                <span>Sessions</span>
+
+                            </div>
+
+                        </div>
+
+                        <a href="gallery.html"
+
+                            class="past-btn">
+
+                            View Gallery →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Event -->
+
+                <div class="past-event-card reveal-up delay-200">
+
+                    <div class="past-image hackathon">
+
+                        <span>
+
+                            HACKATHON
+
+                        </span>
+
+                    </div>
+
+                    <div class="past-content">
+
+                        <h3>
+
+                            Annual Hackathon
+
+                        </h3>
+
+                        <p>
+
+                            48 hours of innovation
+                            where teams built
+                            real-world solutions.
+
+                        </p>
+
+                        <div class="past-stats">
+
+                            <div>
+
+                                <h4>450+</h4>
+
+                                <span>Participants</span>
+
+                            </div>
+
+                            <div>
+
+                                <h4>90</h4>
+
+                                <span>Teams</span>
+
+                            </div>
+
+                        </div>
+
+                        <a href="gallery.html"
+
+                            class="past-btn">
+
+                            View Gallery →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Event -->
+
+                <div class="past-event-card reveal-up delay-300">
+
+                    <div class="past-image workshop">
+
+                        <span>
+
+                            WORKSHOP
+
+                        </span>
+
+                    </div>
+
+                    <div class="past-content">
+
+                        <h3>
+
+                            Web Development Workshop
+
+                        </h3>
+
+                        <p>
+
+                            HTML, CSS,
+                            JavaScript and
+                            Firebase workshop.
+
+                        </p>
+
+                        <div class="past-stats">
+
+                            <div>
+
+                                <h4>180+</h4>
+
+                                <span>Students</span>
+
+                            </div>
+
+                            <div>
+
+                                <h4>8</h4>
+
+                                <span>Projects</span>
+
+                            </div>
+
+                        </div>
+
+                        <a href="gallery.html"
+
+                            class="past-btn">
+
+                            View Gallery →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================================
+                    EVENT STATISTICS
+    ===================================================== -->
+
+    <section class="event-stats-section">
+
+        <div class="container">
+
+            <div class="section-title reveal-up">
+
+                <span class="section-tag">
+
+                    ● VVISC IMPACT
+
+                </span>
+
+                <h2>
+
+                    Our Events in
+                    <span>Numbers</span>
+
+                </h2>
+
+                <p>
+
+                    Every event contributes to learning,
+                    innovation and community building.
+
+                </p>
+
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card reveal-up">
+
+                    <div class="stat-icon">
+
+                        🚀
+
+                    </div>
+
+                    <h3 class="counter" data-target="85">0</h3>
+
+                    <span>
+
+                        Events Conducted
+
+                    </span>
+
+                </div>
+
+                <div class="stat-card reveal-up delay-100">
+
+                    <div class="stat-icon">
+
+                        👨‍🎓
+
+                    </div>
+
+                    <h3 class="counter" data-target="5000">0</h3>
+
+                    <span>
+
+                        Participants
+
+                    </span>
+
+                </div>
+
+                <div class="stat-card reveal-up delay-200">
+
+                    <div class="stat-icon">
+
+                        🎤
+
+                    </div>
+
+                    <h3 class="counter" data-target="120">0</h3>
+
+                    <span>
+
+                        Industry Speakers
+
+                    </span>
+
+                </div>
+
+                <div class="stat-card reveal-up delay-300">
+
+                    <div class="stat-icon">
+
+                        🏆
+
+                    </div>
+
+                    <h3 class="counter" data-target="35">0</h3>
+
+                    <span>
+
+                        Hackathons & Workshops
+
+                    </span><div class="event-image">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================================
+                    EVENT CTA
+    ===================================================== -->
+
+    <section class="event-cta">
+
+        <div class="container">
+
+            <div class="cta-box reveal-up">
+
+                <span class="cta-tag">🚀 JOIN VVISC</span>
+
+                    <h2>Create the Next <span>Success Story</span></h2>
+
+                <h2>
+
+                    Become Part of the
+                    <span>Next Big Event</span>
+
+                </h2>
+
+                <p>
+
+                    Register today and experience innovation,
+                    networking and hands-on learning with VVISC.
+
+                </p>
+
+                <div class="cta-buttons">
+
+                    <a href="#"
+
+                        class="register-btn">
+
+                        Register Now
+
+                    </a>
+                    
+
+                    <a href="contact.html"
+
+                        class="details-btn">
+
+                        Contact Us
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
+
+    <script src="main.js"></script>
 </body>
+
 </html>
