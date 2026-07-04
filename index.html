@@ -1,88 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>IUCEE VVITU</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVISC Technical Club - Home</title>
+    <meta name="description"
+        content="Welcome to the VVISC IUCEE Student Chapter. Innovate, Build, and Transform with us.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="light-mode">
 
-<nav>
-
-    <div class="logo">
-        <img src="assets/logos/vvisc.png" alt="logo">
-        <h2>IUCEE</h2>
+    <!-- Preloader: shown while the frame sequence assets load -->
+    <div class="preloader">
+        <span class="preloader-mark">VVISC // LOADING</span>
+        <div class="preloader-bar-track">
+            <div class="preloader-bar-fill"></div>
+        </div>
     </div>
 
-    <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="members.html">Members</a></li>
-        <li><a href="events.html">Events</a></li>
-        <li><a href="gallery.html">Gallery</a></li>
-        <li><a href="join.html">Join Us</a></li>
-    </ul>
+    <!-- Ambient 3D background shapes (decorative, behind all content) -->
+    <div class="shape-field" aria-hidden="true">
+        <div class="shape shape-poly shape-1"></div>
+        <div class="shape shape-ring shape-2"></div>
+        <div class="shape shape-cube shape-3">
+            <div class="cube-inner">
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+            </div>
+        </div>
+        <div class="shape shape-poly shape-4" style="width: 110px; height: 110px; opacity: 0.35;"></div>
+    </div>
 
-</nav>
 
-<section class="hero">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- LEFT SIDE: Logo and Theme Toggle Grouped Together -->
+            <div class="nav-left">
+                <a href="index.html" class="logo">
+                    <span class="nav-logo-wrap">
+                        <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
+                        <span class="nav-logo-pulse"></span>
+                    </span>
+                    <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+                </a>
+            </div>    
+            <!-- CENTER: Navigation Links -->
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="departments.html">Departments</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="council.html">Council</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="contact.html">Contact</a>
+            </div>
 
-    <div class="overlay"></div>
+            <!-- RIGHT SIDE -->
+            <div class="nav-actions">
 
-    <div class="hero-content">
+                <div class="theme-toggle-container">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+                        <span class="toggle-icon"></span>
+                    </button>
+                </div>
 
-        <h1>VVISC</h1>
+                <div class="auth-buttons">
+                    <a href="login.html" class="nav-login-btn">
+                        <svg viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Login
+                    </a>
+                </div>
 
-        <p>
-            Institution of University Council on Emerging Engineers
-        </p>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
 
-        <div class="buttons">
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Updated with Auth links) -->
+        <div class="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="departments.html">Departments</a>
+            <a href="events.html">Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="council.html">Council</a>
+            <a href="announcements.html">Announcements</a>
+            <a href="contact.html">Contact</a>
+            <!-- Mobile Auth Link -->
+            <a href="login.html" style="color: var(--accent-color);">Login</a>
+        </div>
+        <div class="scroll-progress"></div>
+    </nav>
 
-            <a href="about.html" class="btn">
-                Explore More
-            </a>
+    <!-- Scroll-Locked Intro Sequence -->
+    <section id="intro" class="scroll-container">
+        <div class="canvas-container">
+            <div id="canvasStage" class="canvas-stage">
+                <canvas id="scroll-canvas"></canvas>
+            </div>
 
-            <a href="members.html" class="btn2">
-                Meet Team
-            </a>
+            <!-- Shown until the user scrolls once to trigger the sequence -->
+            <div class="intro-scroll-hint" id="intro-scroll-hint">
+                <span>Scroll</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"></path></svg>
+            </div>
+
+            <!-- Event Card that sits on top of the canvas, revealed once the intro finishes playing -->
+            <div id="canvas-event-overlay" class="canvas-overlay">
+                <div class="hero-layout">
+
+                <!-- RIGHT -->
+                <div id="eventCard" class="premium-event-card">
+
+                    <div class="event-top">
+
+                        <span class="live-badge">
+                            <span class="pulse"></span>
+                            LIVE EVENT
+                        </span>
+
+                        <span class="event-date">
+                            OCT 25
+                        </span>
+
+                    </div>
+
+                    <h1 class="event-title">
+                        Spring Hackathon
+                        <span>2026</span>
+                    </h1>
+
+                    <p class="event-subtitle">
+                        Build AI, Robotics, IoT & Software projects with the brightest innovators.
+                    </p>
+
+                    <div class="event-poster">
+
+                        <div class="poster-glow"></div>
+
+                        <h3>AI HACKATHON</h3>
+
+                        <p>300+ Participants</p>
+
+                    </div>
+
+                    <div class="event-stats">
+
+                        <div class="stat">
+                            <h3>300+</h3>
+                            <p>Students</p>
+                        </div>
+
+                        <div class="stat">
+                            <h3>₹50K</h3>
+                            <p>Prize</p>
+                        </div>
+
+                        <div class="stat">
+                            <h3>48H</h3>
+                            <p>Build</p>
+                        </div>
+
+                    </div>
+
+                    <div class="countdown-strip">
+
+                        <div>
+                            <h2>02</h2>
+                            <span>Days</span>
+                        </div>
+
+                        <div>
+                            <h2>14</h2>
+                            <span>Hours</span>
+                        </div>
+
+                        <div>
+                            <h2>08</h2>
+                            <span>Min</span>
+                        </div>
+
+                    </div>
+
+                    <div class="hero-buttons">
+
+                        <a href="events.html" class="hero-btn hero-primary">
+                            Register Now →
+                        </a>
+
+                        <a href="events.html" class="hero-btn hero-secondary">
+                            Explore Event ↗
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background"></div>
+        <div class="container hero-container">
+            <div class="hero-content reveal-left">
+                <span class="eyebrow">VVISC // IUCEE Student Chapter</span>
+                <h1>Innovate. Build. <span class="highlight">Transform.</span></h1>
+                <p
+                    style="font-size: 1.35rem; font-weight: 400; margin-bottom: 30px; line-height: 1.7; color: var(--text-color);">
+                    Where ideas evolve into impact and students become innovators.Bringing together passionate minds to
+                    innovate boldly,
+                    build confidently, and transform challenges into
+                    opportunities for growth and impact.</p>
+                <div class="hero-buttons">
+                    <a href="about.html" class="btn btn-primary reveal-scale delay-400">Discover More</a>
+                    <a href="contact.html" class="btn btn-secondary reveal-scale delay-500">Join Us</a>
+                </div>
+            </div>
+            <div class="hero-right-col reveal-right"
+                style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="hero-model" style="flex: none; width: 100%; height: 420px; position: relative;">
+                    <!-- Spline 3D viewer -->
+                    <iframe src='https://my.spline.design/genkubgreetingrobot-yjG71GrOBfFaCZejjc5j0CzE/' frameborder='0'
+                        width='100%' height='100%'></iframe>
+                </div>
+                <div class="quote-container reveal-up delay-300"
+                    style="text-align: center; margin-top: 20px; padding: 0 20px; max-width: 450px;">
+                    <h2
+                        style="font-size: 1.6rem; font-style: italic; font-weight: 400; color: var(--accent-color); margin-bottom: 15px; line-height: 1.4;">
+                        "the future belongs to those who dare to take risks to build."
+                    </h2>
+                    <div
+                        style="width: 50px; height: 3px; background-color: #D4AF37; margin: 0 auto; border-radius: 2px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Highlights — floating + cursor-tilt cards -->
+    <section class="section-padding highlight-section">
+        <div class="container">
+            <div class="eyebrow-center reveal-down"><span class="eyebrow">Don't Miss These</span></div>
+            <h2 class="reveal-down">Event Highlights</h2>
+            <p class="section-subtitle reveal-up delay-100">The moments worth circling on your calendar.</p>
+
+            <div class="highlight-grid">
+                <div class="highlight-card tilt-card reveal-left delay-200" style="--float-delay: 0s;">
+                    <div class="highlight-card-inner">
+                        <div class="highlight-badge">⚡</div>
+                        <span class="highlight-tag">Flagship</span>
+                        <h3>Spring Hackathon</h3>
+                        <p>48 hours. One idea. Real impact. Our biggest build event of the year.</p>
+                        <div class="highlight-meta">
+                            <span>📅 Oct 15</span>
+                            <span>📍 Main Auditorium</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-card tilt-card reveal-scale delay-300" style="--float-delay: 0.4s;">
+                    <div class="highlight-card-inner">
+                        <div class="highlight-badge">🧠</div>
+                        <span class="highlight-tag">Workshop</span>
+                        <h3>AI/ML Bootcamp</h3>
+                        <p>Hands-on neural networks and computer vision, taught by our top performers.</p>
+                        <div class="highlight-meta">
+                            <span>📅 Nov 02</span>
+                            <span>📍 Lab Block C</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-card tilt-card reveal-right delay-400" style="--float-delay: 0.8s;">
+                    <div class="highlight-card-inner">
+                        <div class="highlight-badge">🛰️</div>
+                        <span class="highlight-tag">Symposium</span>
+                        <h3>Tech Symposium</h3>
+                        <p>Guest speakers, live demos, and networking with industry alumni.</p>
+                        <div class="highlight-meta">
+                            <span>📅 Dec 10</span>
+                            <span>📍 Seminar Hall</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+        PREMIUM IMPACT SECTION
+    ============================================= -->
+
+    <section class="impact-section" id="impact">
+
+        <div class="impact-bg-circle circle-1"></div>
+        <div class="impact-bg-circle circle-2"></div>
+
+        <div class="container">
+
+            <div class="impact-heading">
+
+                <span class="impact-subtitle">
+                    ● OUR ACHIEVEMENTS
+                </span>
+
+                <h2>
+                    Building Innovation,
+                    <span>Creating Impact</span>
+                </h2>
+
+                <p>
+                    Every workshop, hackathon, and collaboration strengthens
+                    the innovation ecosystem of VVISC IUCEE Student Chapter.
+                </p>
+
+            </div>
+
+            <!-- Vertical Timeline -->
+
+            <div class="impact-timeline">
+
+                <div class="timeline-progress"></div>
+
+                <!-- CARD 1 -->
+
+                <div class="impact-item left reveal-impact">
+
+                    <div class="impact-card">
+
+                        <div class="impact-number"
+                            data-target="50">
+
+                            0
+
+                        </div>
+
+                        <h3>Events</h3>
+
+                        <p>
+
+                            National Hackathons,
+                            Workshops,
+                            Guest Lectures and
+                            Technical Meetups.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- CARD 2 -->
+
+                <div class="impact-item right reveal-impact">
+
+                    <div class="impact-card">
+                        <div class="impact-number"
+                            data-target="40">
+
+                            0
+
+                        </div>
+
+                        <h3>Volunteers</h3>
+
+                        <p>
+
+                            Passionate students
+                            leading technical
+                            communities and
+                            organizing events.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- CARD 3 -->
+
+                <div class="impact-item left reveal-impact">
+
+                    <div class="impact-card">
+
+                        <div class="impact-number"
+                            data-target="20">
+
+                            0
+
+                        </div>
+
+                        <h3>Achievements</h3>
+
+                        <p>
+
+                            National level
+                            competitions,
+                            hackathon wins
+                            and awards.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- CARD 4 -->
+
+                <div class="impact-item right reveal-impact">
+
+                    <div class="impact-card">
+
+                        <div class="impact-number"
+                            data-target="30">
+
+                            0
+
+                        </div>
+
+                        <h3>Research</h3>
+
+                        <p>
+
+                            Research papers,
+                            innovation projects
+                            and publications
+                            by VVISC members.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
+    <!-- Quick Navigation Cards -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="eyebrow-center reveal-down"><span class="eyebrow">Get Involved</span></div>
+            <h2 class="reveal-down">Explore VVISC</h2>
+            <p class="section-subtitle reveal-up delay-100">Navigate through our various initiatives and branches.</p>
 
-</section>
+            <div class="grid-container">
+                <a href="departments.html" class="card reveal-left delay-200">
+                    <div class="icon">🏢</div>
+                    <h3>Our Departments</h3>
+                    <p>Discover the various domains we operate in, from AI & ML to Cloud Computing.</p>
+                </a>
+                <a href="gallery.html" class="card reveal-scale delay-300">
+                    <div class="icon">🖼️</div>
+                    <h3>Gallery</h3>
+                    <p>Take a glimpse at our past events, workshops, and student projects.</p>
+                </a>
+                <a href="council.html" class="card reveal-right delay-400">
+                    <div class="icon">👥</div>
+                    <h3>Council Members</h3>
+                    <p>Meet the dedicated faculty and student coordinators behind VVISC.</p>
+                </a>
+            </div>
+        </div>
+    </section>
 
-<section class="intro-section">
+    <!-- Upcoming Events Preview -->
+    <section class="section-padding" style="background-color: var(--container-bg);">
+        <div class="container">
+            <div class="eyebrow-center reveal-down"><span class="eyebrow">What's Next</span></div>
+            <h2 class="reveal-down">Upcoming Events</h2>
+            <p class="section-subtitle reveal-up delay-100">Join us and participate in our latest initiatives.</p>
 
-    <h2>Empowering Future Engineers</h2>
+            <div class="event-grid">
+                <div class="event-card reveal-left delay-200">
+                    <div class="event-date">Oct 15, 2026</div>
+                    <h3>Annual Hackathon</h3>
+                    <p>A 48-hour coding marathon where ideas come to life. Build, innovate, and win prizes!</p>
+                    <a href="events.html" class="btn btn-secondary">View Details</a>
+                </div>
+                <div class="event-card reveal-right delay-300">
+                    <div class="event-date">Nov 02, 2026</div>
+                    <h3>Core Team Hiring</h3>
+                    <p>We are recruiting passionate individuals for technical and management roles. Join the team!</p>
+                    <a href="events.html" class="btn btn-secondary">View Details</a>
+                </div>
+            </div>
 
-    <p>
-        IUCEE VVITU inspires innovation, leadership,
-        entrepreneurship and technical excellence through
-        workshops, hackathons, industry visits and student initiatives.
-    </p>
+            <div style="text-align: center; margin-top: 40px;" class="reveal-up delay-400">
+                <a href="events.html" class="btn btn-primary reveal-scale delay-500">See All Events</a>
+            </div>
+        </div>
+    </section>
 
-</section>
+    <!-- Recent Announcements Preview -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="eyebrow-center reveal-down"><span class="eyebrow">Stay In The Loop</span></div>
+            <h2 class="reveal-down">Recent Announcements</h2>
+            <p class="section-subtitle reveal-up delay-100">Stay updated with the latest news from the chapter.</p>
 
-<footer class="footer">
+            <div class="timeline" style="max-width: 600px; margin: 0 auto;">
+                <div class="timeline-item timeline-left reveal-left delay-200">
+                    <div class="timeline-content">
+                        <h4>Workshop Rescheduled</h4>
+                        <p style="font-size: 0.9rem; color: var(--accent-color);">Posted on Sep 28, 2026</p>
+                        <p>The AI & ML introductory workshop has been moved to Oct 5th.</p>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right reveal-right delay-300">
+                    <div class="timeline-content">
+                        <h4>New Faculty Coordinator</h4>
+                        <p style="font-size: 0.9rem; color: var(--accent-color);">Posted on Sep 20, 2026</p>
+                        <p>We welcome Dr.Bharath Prabha Medikonda & Raja vardhan as the new advisors for the Cyber
+                            Security wing.</p>
+                    </div>
+                </div>
+            </div>
 
-    <h4>IUCEE VVITU</h4>
+            <div style="text-align: center; margin-top: 40px;" class="reveal-up delay-400">
+                <a href="announcements.html" class="btn btn-primary reveal-scale delay-500">All Announcements</a>
+            </div>
+        </div>
+    </section>
 
-    <p>Innovation • Leadership • Excellence</p>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        </div>
+    </footer>
 
-    <p>© 2026 IUCEE VVITU. All Rights Reserved.</p>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 
-</footer>
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
 
-<script src="js/script.js"></script>
-
+    <script src="main.js"></script>
 </body>
+
 </html>
