@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVISC Technical Club - Contact Us</title>
+    <meta name="description"
+        content="Get in touch with the VVISC team for collaborations, questions, or joining the club.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .contact-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            margin-top: 40px;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .contact-form-container {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .info-card {
+            background-color: var(--container-bg);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .info-card .icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+
+        .info-card h4 {
+            margin-bottom: 5px;
+        }
+    </style>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+</head>
+
+<body class="light-mode">
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="nav-logo-wrap">
+                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
+                    <span class="nav-logo-pulse"></span>
+                </span>
+                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+            </a>
+
+            <div class="nav-links">
+
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="departments.html">Departments</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="council.html">Council</a>
+                <a href="contact.html">Contact</a>
+
+            </div>
+
+            <a href="testimonials.html" class="reviews-highlight">
+
+                <span class="review-star">⭐</span>
+
+                <span class="review-text">
+                    Student Reviews
+                </span>
+
+            </a>
+
+            <div class="nav-actions">
+                <div class="theme-toggle-container">
+                    <span class="theme-label" id="theme-label">Light Mode</span>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                        <span class="toggle-icon"></span>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+                </div>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="departments.html">Departments</a>
+            <a href="events.html">Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="council.html">Council</a>
+            <a href="contact.html">Contact</a>
+            <a href="testimonials.html">Student Reviews</a>
+            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+        </div>
+        <div class="scroll-progress"></div>
+    </nav>
+
+    <!-- =====================================================
+        HERO
+    ====================================================== -->
+
+    <section class="reviews-hero">
+
+        <div class="reviews-bg-circle circle-1"></div>
+        <div class="reviews-bg-circle circle-2"></div>
+
+        <div class="container">
+
+            <div class="reviews-hero-content">
+
+                <span class="reviews-tag">
+
+                    ⭐ Voices of VVISC
+
+                </span>
+
+                <h1>
+
+                    Real Stories.
+                    <br>
+                    Real Innovation.
+                    <br>
+                    Real Growth.
+
+                </h1>
+
+                <p>
+
+                    Discover how VVISC has inspired students through
+                    hackathons, workshops, technical events,
+                    innovation challenges, and leadership opportunities.
+
+                </p>
+
+                <div class="reviews-hero-buttons">
+
+                    <a href="#reviews" class="primary-btn">
+
+                        Read Student Reviews
+
+                    </a>
+
+                    <button
+                        id="openReviewModal"
+                        class="secondary-btn">
+
+                        Share Your Experience
+
+                    </button>
+
+                </div>
+
+                <div class="reviews-rating">
+
+                    <div class="rating-stars">
+
+                        ★★★★★
+
+                    </div>
+
+                    <div class="rating-info">
+
+                        <h3 id="averageRating">
+
+                            4.9
+
+                        </h3>
+
+                        <span>
+
+                            Average Rating
+
+                        </span>
+
+                    </div>
+
+                    <div class="rating-divider"></div>
+
+                    <div class="rating-info">
+
+                        <h3 id="reviewCount">
+
+                            0
+
+                        </h3>
+
+                        <span>
+
+                            Student Reviews
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================================
+        FEATURED REVIEW
+    ====================================================== -->
+
+    <section class="featured-review">
+
+        <div class="container">
+
+            <div class="featured-card">
+
+                <div class="featured-left">
+
+                    <span class="featured-badge">
+
+                        ⭐ Featured Student Story
+
+                    </span>
+
+                    <h2>
+
+                        Inspiring Innovation,
+                        <br>
+                        Building Future Leaders
+
+                    </h2>
+
+                    <p class="featured-review-text">
+
+                        "VVISC completely changed my perspective on technology.
+                        From hackathons to AI workshops, every event challenged
+                        me to learn, collaborate, and grow. The mentors were
+                        supportive, and the community always encouraged innovation."
+
+                    </p>
+
+                    <div class="featured-author">
+
+                        <div class="author-avatar">
+
+                            R
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+
+                                Raja Vardhan
+
+                            </h3>
+
+                            <span>
+
+                                AI & ML • 3rd Year
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="featured-right">
+
+                    <div class="featured-score">
+
+                        <h1>
+
+                            4.9★
+
+                        </h1>
+
+                        <p>
+
+                            Average Student Rating
+
+                        </p>
+
+                    </div>
+
+                    <div class="mini-stats">
+
+                        <div>
+
+                            <h3>500+</h3>
+
+                            <span>Members</span>
+
+                        </div>
+
+                        <div>
+
+                            <h3>35+</h3>
+
+                            <span>Events</span>
+
+                        </div>
+
+                        <div>
+
+                            <h3>97%</h3>
+
+                            <span>Recommend VVISC</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================================
+        REVIEW WALL
+    ====================================================== -->
+
+    <section class="review-wall" id="reviews">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <span>
+
+                    COMMUNITY VOICES
+
+                </span>
+
+                <h2>
+
+                    Hear From Our Members
+
+                </h2>
+
+                <p>
+
+                    Every review shown here has been verified and approved by
+                    the VVISC Administration.
+
+                </p>
+
+            </div>
+
+            <div
+                id="testimonialContainer"
+                class="review-grid">
+
+                <!-- Firestore Cards -->
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- =====================================================
+        REVIEW MODAL
+    ====================================================== -->
+
+    <div id="reviewModal" class="review-modal">
+
+        <div class="review-modal-box">
+
+            <button
+                id="closeReviewModal"
+                class="modal-close">
+
+                &times;
+
+            </button>
+
+            <span class="modal-tag">
+
+                ⭐ Share Your Experience
+
+            </span>
+
+            <h2>
+
+                Tell Us About Your VVISC Journey
+
+            </h2>
+
+            <p>
+
+                Your review helps future students understand the impact of
+                our community. Every submission is verified before being published.
+
+            </p>
+
+            <form id="testimonialForm">
+
+                <div class="form-row">
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Full Name"
+                        required>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="College Email"
+                        required>
+
+                </div>
+
+                <div class="form-row">
+
+                    <input
+                        type="text"
+                        id="department"
+                        placeholder="Department"
+                        required>
+
+                    <input
+                        type="text"
+                        id="year"
+                        placeholder="Year"
+                        required>
+
+                </div>
+
+                <div class="rating-select">
+
+                    <label>
+
+                        Rating
+
+                    </label>
+
+                    <div id="ratingStars" class="stars">
+
+                        <span data-rating="1">★</span>
+                        <span data-rating="2">★</span>
+                        <span data-rating="3">★</span>
+                        <span data-rating="4">★</span>
+                        <span data-rating="5">★</span>
+
+                    </div>
+
+                </div>
+
+                <textarea
+                    id="review"
+                    rows="6"
+                    placeholder="Share your experience with VVISC..."
+                    required></textarea>
+
+                <button
+                    class="submit-review-btn"
+                    id="submitReviewBtn"
+                    type="submit">
+
+                    Submit Review
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+    <div id="successModal" class="success-modal">
+
+        <div class="success-box">
+
+            <div class="success-icon">
+
+                ✓
+
+            </div>
+
+            <h2>
+
+                Thank You!
+
+            </h2>
+
+            <p>
+
+                Your review has been submitted successfully.
+
+                <br><br>
+
+                It will appear publicly after administrator approval.
+
+            </p>
+
+            <button id="closeSuccess">
+
+                Awesome!
+
+            </button>
+
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script src="testimonials.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function(){
+            var t = localStorage.getItem("vviscTheme") || "dark";
+            var a = localStorage.getItem("vviscAccent") || "copper";
+            document.documentElement.setAttribute("data-theme", t);
+            document.documentElement.setAttribute("data-accent", a);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management | VVISC Admin Console</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+                <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <span>VVISC</span>
+                    <small>Admin Console</small>
+                </div>
+            </div>
+
+            <nav>
+                <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+                <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+                <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+                <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+                <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+            </nav>
+
+            <div class="theme-toggle-row">
+                <span class="theme-ico ico-sun" data-icon="sun"></span>
+                <label class="theme-switch">
+                    <input type="checkbox" class="theme-switch-input">
+                    <span class="switch-track"></span>
+                </label>
+                <span class="theme-ico ico-moon" data-icon="moon"></span>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+        </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1 class="page-title">Admin Management</h1>
+                <p class="page-subtitle">Add, disable or remove VVISC administrators. Super Admin access only.</p>
+            </div>
+            <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
+        </header>
+
+        <!-- Statistics -->
+
+        <section class="stats-grid">
+            <div class="stat-card"><h3>Total Admins</h3><span id="totalAdmins">0</span></div>
+            <div class="stat-card"><h3>Super Admins</h3><span id="superAdmins">0</span></div>
+            <div class="stat-card"><h3>Active Admins</h3><span id="activeAdmins">0</span></div>
+            <div class="stat-card"><h3>Pending Requests</h3><span id="pendingRequests">0</span></div>
+        </section>
+
+        <!-- Pending Admin Registration Requests Section -->
+        <section class="admin-requests-section" style="margin-top: 35px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin: 0;">Pending Admin Registration Requests</h2>
+                <span id="requestsCountBadge" style="background: var(--accent-color, #C76B3C); color: white; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">0 Requests</span>
+            </div>
+            <div id="requestsGrid" class="admins-grid"></div>
+        </section>
+
+        <!-- Toolbar -->
+
+        <div class="toolbar" style="margin-top: 40px;">
+            <input id="searchAdmin" type="text" placeholder="Search active admins by name or email">
+            <button id="addAdminBtn" class="add-admin-btn">+ Add New Admin</button>
+        </div>
+
+        <!-- Admin Cards -->
+
+        <section class="admins-section">
+            <h2>Active Administrators</h2>
+            <div id="adminsGrid" class="admins-grid"></div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Add Admin Modal -->
+
+<div class="modal-overlay" id="adminModal">
+    <div class="admin-modal">
+
+        <div class="modal-header">
+            <h2>Add New Admin</h2>
+            <button id="closeModal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>Full Name</label>
+            <input id="adminNameInput" type="text" placeholder="Enter full name">
+
+            <label>Email Address</label>
+            <input id="adminEmailInput" type="email" placeholder="Enter email">
+
+            <label>Password</label>
+            <input id="adminPasswordInput" type="password" placeholder="Temporary password (min 6 characters)">
+
+            <label>Role</label>
+            <select id="adminRoleInput">
+                <option value="admin">Admin</option>
+                <option value="superadmin">Super Admin</option>
+            </select>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" id="cancelModal">Cancel</button>
+            <button class="save-btn" id="saveAdmin">Save Admin</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="admins.js"></script>
+<script src="logout.js"></script>
+
+</body>
+
+</html>

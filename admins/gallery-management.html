@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function(){
+            var t = localStorage.getItem("vviscTheme") || "dark";
+            var a = localStorage.getItem("vviscAccent") || "copper";
+            document.documentElement.setAttribute("data-theme", t);
+            document.documentElement.setAttribute("data-accent", a);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Management | VVISC Admin Console</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+                <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <span>VVISC</span>
+                    <small>Admin Console</small>
+                </div>
+            </div>
+
+            <nav>
+                <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+                <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+                <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+                <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+                <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+            </nav>
+
+            <div class="theme-toggle-row">
+                <span class="theme-ico ico-sun" data-icon="sun"></span>
+                <label class="theme-switch">
+                    <input type="checkbox" class="theme-switch-input">
+                    <span class="switch-track"></span>
+                </label>
+                <span class="theme-ico ico-moon" data-icon="moon"></span>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+        </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <h1 style="margin-top:4px;">Gallery Management</h1>
+                <p>Upload photos, set titles, event descriptions, and category tags displayed on gallery.html.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a href="../gallery.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+                <button id="addPhotoBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px;">+ Upload Photo</button>
+            </div>
+        </header>
+
+        <!-- Gallery Grid -->
+        <div id="galleryListContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-top:20px;">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div id="galleryModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+            <div class="card" style="width:100%; max-width:600px; max-height:90vh; overflow-y:auto; padding:24px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                    <h3 id="modalTitle">Upload Photo</h3>
+                    <button type="button" id="closeModalBtn" style="background:none; border:none; color:inherit; font-size:1.4rem; cursor:pointer;">✕</button>
+                </div>
+
+                <form id="galleryForm" style="display:grid; gap:14px;">
+                    <input type="hidden" id="photoDocId">
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Photo Title *</label>
+                            <input type="text" id="photoTitle" required class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Hackathon 2025 Opening Ceremony">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Category</label>
+                            <input type="text" id="photoCategory" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Hackathons / Workshops">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Description</label>
+                        <textarea id="photoDesc" rows="2" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Short caption for the gallery item..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Event Name</label>
+                            <input type="text" id="photoEventName" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. AI Hackathon 2025">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Date</label>
+                            <input type="date" id="photoDate" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                        </div>
+                    </div>
+
+                    <!-- Image File Upload or URL -->
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Image File (Upload or Paste URL) *</label>
+                        <div style="display:flex; gap:10px; align-items:center; margin-top:6px;">
+                            <input type="file" id="photoFile" accept="image/*" style="font-size:0.8rem;">
+                            <input type="text" id="photoUrl" class="form-input" style="flex:1; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Or paste image URL (assets/1.png)">
+                        </div>
+                        <div id="imagePreviewWrap" style="margin-top:8px; display:none;">
+                            <img id="imagePreview" src="" alt="Preview" style="max-width:160px; height:100px; border-radius:6px; object-fit:cover;">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:center;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Display Order</label>
+                            <input type="number" id="photoOrder" value="1" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                        </div>
+                        <div style="padding-top:18px;">
+                            <label style="cursor:pointer; display:flex; align-items:center; gap:8px; font-weight:600;">
+                                <input type="checkbox" id="photoActive" checked> Active / Visible
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                        <button type="button" id="cancelModalBtn" class="secondary-btn" style="padding:8px 16px;">Cancel</button>
+                        <button type="submit" class="primary-btn" style="padding:8px 20px;">Save Photo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="gallery-management.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>

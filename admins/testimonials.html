@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function(){
+            var t = localStorage.getItem("vviscTheme") || "dark";
+            var a = localStorage.getItem("vviscAccent") || "copper";
+            document.documentElement.setAttribute("data-theme", t);
+            document.documentElement.setAttribute("data-accent", a);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials | VVISC Admin Console</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+                <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <span>VVISC</span>
+                    <small>Admin Console</small>
+                </div>
+            </div>
+
+            <nav>
+                <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+                <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+                <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+                <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+                <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+            </nav>
+
+            <div class="theme-toggle-row">
+                <span class="theme-ico ico-sun" data-icon="sun"></span>
+                <label class="theme-switch">
+                    <input type="checkbox" class="theme-switch-input">
+                    <span class="switch-track"></span>
+                </label>
+                <span class="theme-ico ico-moon" data-icon="moon"></span>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+        </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1 class="page-title">Testimonials</h1>
+                <p class="page-subtitle">Review, approve and manage all student testimonials submitted from the site.</p>
+            </div>
+            <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
+        </header>
+
+        <!-- Statistics -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <h3>Pending Reviews</h3>
+                <span id="pendingCount">0</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Approved Reviews</h3>
+                <span id="approvedCount">0</span>
+            </div>
+
+        </section>
+
+        <!-- Toolbar -->
+
+        <div class="toolbar">
+
+            <input type="text" id="searchReview" placeholder="Search by name or email">
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="approved">Approved</button>
+            </div>
+
+        </div>
+
+        <!-- Pending -->
+
+        <section class="review-section">
+            <h2><span class="nav-ico" data-icon="star" style="width:16px;height:16px;color:var(--amber);"></span> Pending Reviews</h2>
+            <div id="pendingReviews" class="review-grid"></div>
+        </section>
+
+        <!-- Approved -->
+
+        <section class="review-section">
+            <h2><span class="nav-ico" data-icon="star" style="width:16px;height:16px;color:var(--pine-light);"></span> Approved Reviews</h2>
+            <div id="approvedReviews" class="review-grid"></div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="testimonials.js"></script>
+<script src="logout.js"></script>
+
+</body>
+
+</html>

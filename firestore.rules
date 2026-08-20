@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is an authenticated admin
+    function isAdmin() {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    // Public website content read access (anyone can view active content)
+    match /websiteContent/{document} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /departments/{deptDoc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /councilMembers/{memberDoc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /events/{eventDoc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /gallery/{photoDoc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /announcements/{announcementDoc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /testimonials/{testimonialDoc} {
+      allow read: if true;
+      allow create: if true; // Students can submit testimonials
+      allow update, delete: if request.auth != null;
+    }
+
+    match /admins/{adminDoc} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

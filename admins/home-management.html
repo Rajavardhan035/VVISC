@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function(){
+            var t = localStorage.getItem("vviscTheme") || "dark";
+            var a = localStorage.getItem("vviscAccent") || "copper";
+            document.documentElement.setAttribute("data-theme", t);
+            document.documentElement.setAttribute("data-accent", a);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page Management | VVISC Admin Console</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+                <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <span>VVISC</span>
+                    <small>Admin Console</small>
+                </div>
+            </div>
+
+            <nav>
+                <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+                <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+                <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+                <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+                <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+            </nav>
+
+            <div class="theme-toggle-row">
+                <span class="theme-ico ico-sun" data-icon="sun"></span>
+                <label class="theme-switch">
+                    <input type="checkbox" class="theme-switch-input">
+                    <span class="switch-track"></span>
+                </label>
+                <span class="theme-ico ico-moon" data-icon="moon"></span>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+        </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <h1 style="margin-top:4px;">Home Page Editor</h1>
+                <p>Edit hero titles, subtitle, CTAs, achievements impact section, and preview sections on index.html.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a href="../index.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+                <button id="saveHomeBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px;">Save Changes</button>
+            </div>
+        </header>
+
+        <form id="homeForm" style="display:grid; grid-template-columns: 1fr; gap:20px; margin-top:20px;">
+
+            <!-- Hero Section Card -->
+            <div class="card" style="padding:24px; border-radius:12px;">
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🚀 HERO SECTION</h3>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Hero Title</label>
+                        <input type="text" id="heroTitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. VVISC Technical Club">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Hero Subtitle / Accent Text</label>
+                        <input type="text" id="heroSubtitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. IUCEE Student Chapter">
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Hero Description</label>
+                    <textarea id="heroDescription" rows="3" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Main intro text under the hero heading..."></textarea>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:16px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Primary CTA Text</label>
+                        <input type="text" id="ctaPrimaryText" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Explore Events">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Primary CTA Link</label>
+                        <input type="text" id="ctaPrimaryLink" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. events.html">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Secondary CTA Text</label>
+                        <input type="text" id="ctaSecondaryText" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Join Community">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Secondary CTA Link</label>
+                        <input type="text" id="ctaSecondaryLink" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. contact.html">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stat Summaries -->
+            <div class="card" style="padding:24px; border-radius:12px;">
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">📊 QUICK STAT COUNTERS</h3>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:16px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Active Members</label>
+                        <input type="text" id="statMembers" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. 500+">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Events Conducted</label>
+                        <input type="text" id="statEvents" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. 50+">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Departments</label>
+                        <input type="text" id="statDepts" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. 6">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Students Reached</label>
+                        <input type="text" id="statReach" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. 1000+">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACHIEVEMENTS & IMPACT SECTION EDITOR -->
+            <div class="card" style="padding:24px; border-radius:12px;">
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🏆 OUR ACHIEVEMENTS & IMPACT SECTION</h3>
+                <p style="font-size:0.85rem; opacity:0.8; margin-bottom:20px;">Manage section text, title, button, and all 6 achievement impact cards shown on the home page.</p>
+
+                <!-- Section Text & Title -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Eyebrow Subtitle</label>
+                        <input type="text" id="impactEyebrow" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. ● OUR ACHIEVEMENTS">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Title Line 1</label>
+                        <input type="text" id="impactTitle1" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Building Innovation,">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Title Line 2 (Gradient Text)</label>
+                        <input type="text" id="impactTitle2" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Creating Impact">
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Impact Description Paragraph</label>
+                    <textarea id="impactDescription" rows="2" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Every workshop, hackathon, and collaboration strengthens the innovation ecosystem..."></textarea>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:24px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Button Text</label>
+                        <input type="text" id="impactCtaText" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Explore Achievements">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Button Link</label>
+                        <input type="text" id="impactCtaLink" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. events.html">
+                    </div>
+                </div>
+
+                <h4 style="font-size:1rem; margin-bottom:16px; border-bottom:1px dashed var(--border-color); padding-bottom:8px; color:var(--accent-color);">Card Grid Details (6 Cards)</h4>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+
+                    <!-- Card 1 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 1: Events & Hackathons</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="card1Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 50+)">
+                            <input type="text" id="card1Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Events Organized)">
+                        </div>
+                        <input type="text" id="card1Eyebrow" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:10px;" placeholder="Eyebrow Tag (e.g. Events & Hackathons)">
+                        <textarea id="card1Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 2: Volunteers & Leads</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="card2Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 40+)">
+                            <input type="text" id="card2Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Active Volunteers)">
+                        </div>
+                        <input type="text" id="card2Eyebrow" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:10px;" placeholder="Eyebrow Tag (e.g. Volunteers & Leads)">
+                        <textarea id="card2Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 3: Achievements & Awards</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="card3Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 20+)">
+                            <input type="text" id="card3Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. National Wins)">
+                        </div>
+                        <input type="text" id="card3Eyebrow" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:10px;" placeholder="Eyebrow Tag (e.g. Achievements & Awards)">
+                        <textarea id="card3Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 4: Research & Papers</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="card4Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 30+)">
+                            <input type="text" id="card4Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Research Papers)">
+                        </div>
+                        <input type="text" id="card4Eyebrow" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:10px;" placeholder="Eyebrow Tag (e.g. Research & Papers)">
+                        <textarea id="card4Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 5: Student Community</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="card5Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 500+)">
+                            <input type="text" id="card5Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Community Members)">
+                        </div>
+                        <input type="text" id="card5Eyebrow" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:10px;" placeholder="Eyebrow Tag (e.g. Student Community)">
+                        <textarea id="card5Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 6: Industry Mentorship</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="card6Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 15+)">
+                            <input type="text" id="card6Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Expert Mentors)">
+                        </div>
+                        <input type="text" id="card6Eyebrow" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:10px;" placeholder="Eyebrow Tag (e.g. Industry Mentorship)">
+                        <textarea id="card6Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- About Section Preview Card -->
+            <div class="card" style="padding:24px; border-radius:12px;">
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">ℹ️ ABOUT SECTION PREVIEW</h3>
+                
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Title</label>
+                    <input type="text" id="aboutTitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Empowering Next-Gen Engineers">
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Description</label>
+                    <textarea id="aboutDescription" rows="4" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Description for the about preview section..."></textarea>
+                </div>
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="home-management.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>

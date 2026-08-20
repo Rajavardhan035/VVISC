@@ -1,0 +1,5 @@
+.vscode/
+.firebase/
+.context-bridge/
+.v3code/
+firebase-debug.log

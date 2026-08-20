@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function(){
+            var t = localStorage.getItem("vviscTheme") || "dark";
+            var a = localStorage.getItem("vviscAccent") || "copper";
+            document.documentElement.setAttribute("data-theme", t);
+            document.documentElement.setAttribute("data-accent", a);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events & Workshops | VVISC Admin Console</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+                <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <span>VVISC</span>
+                    <small>Admin Console</small>
+                </div>
+            </div>
+
+            <nav>
+                <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+                <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+                <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+                <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+                <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+            </nav>
+
+            <div class="theme-toggle-row">
+                <span class="theme-ico ico-sun" data-icon="sun"></span>
+                <label class="theme-switch">
+                    <input type="checkbox" class="theme-switch-input">
+                    <span class="switch-track"></span>
+                </label>
+                <span class="theme-ico ico-moon" data-icon="moon"></span>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+        </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <h1 style="margin-top:4px;">Events & Workshops</h1>
+                <p>Manage hero banner, upcoming events, past event highlights, VVISC impact numbers, and updates & notices feed.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a href="../events.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+                <button id="addItemBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px; display:none;">+ Add Item</button>
+            </div>
+        </header>
+
+        <!-- Sub-Navigation Tabs -->
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+            <button type="button" id="tabHeroBtn" class="primary-btn" style="padding:8px 14px; font-size:0.82rem;">★ Featured Hero Event</button>
+            <button type="button" id="tabUpcomingBtn" class="secondary-btn" style="padding:8px 14px; font-size:0.82rem;">📅 Upcoming Events</button>
+            <button type="button" id="tabPastBtn" class="secondary-btn" style="padding:8px 14px; font-size:0.82rem;">🏆 Past Event Highlights</button>
+            <button type="button" id="tabImpactBtn" class="secondary-btn" style="padding:8px 14px; font-size:0.82rem;">📊 Impact Numbers</button>
+            <button type="button" id="tabNoticesBtn" class="secondary-btn" style="padding:8px 14px; font-size:0.82rem;">📢 Updates & Notices</button>
+        </div>
+
+        <!-- ==========================================
+             SECTION 1: FEATURED HERO EVENT EDITOR
+        ========================================== -->
+        <div id="heroSection" class="card" style="margin-top:20px; padding:24px; border-radius:12px;">
+            <h3 style="margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">Edit Featured Hero Event (Top Banner)</h3>
+            <form id="heroEventForm" style="display:grid; gap:14px;">
+
+                <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Event Title *</label>
+                        <input type="text" id="heroTitle" required class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. RAG HACKATHON 2026">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Status Chip</label>
+                        <input type="text" id="heroStatusTag" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="REGISTRATION OPEN">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Category Chip</label>
+                        <input type="text" id="heroCategoryTag" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="FEATURED EVENT">
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-size:0.8rem; font-weight:600;">Full Description Paragraph</label>
+                    <textarea id="heroDescription" rows="2" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Creating new ideas and building it different..."></textarea>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:12px;">
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Date Text</label>
+                        <input type="text" id="heroDateText" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="30 July 2026">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Venue / Location</label>
+                        <input type="text" id="heroVenueText" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="VVITU SEMINAR HALL">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Team Format</label>
+                        <input type="text" id="heroTeamFormat" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="2 – 4 Members">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Rewards / Prize Pool</label>
+                        <input type="text" id="heroPrizePool" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="₹50,000 Prize Pool">
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Registration Button URL</label>
+                        <input type="text" id="heroRegisterUrl" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="#">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Countdown Title Header</label>
+                        <input type="text" id="heroCountdownTitle" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="⏱️ HACKATHON STARTS IN">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Countdown Target ISO Date</label>
+                        <input type="datetime-local" id="heroTargetDate" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                    </div>
+                </div>
+
+                <!-- Poster Image Input -->
+                <div>
+                    <label style="font-size:0.8rem; font-weight:600;">Featured Event Poster (File Upload or Image URL)</label>
+                    <div style="display:flex; gap:10px; align-items:center; margin-top:6px;">
+                        <input type="file" id="heroImageFile" accept="image/*" style="font-size:0.8rem;">
+                        <input type="text" id="heroImageUrl" class="form-input" style="flex:1; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="assets/hackathon.png">
+                    </div>
+                    <div id="heroPreviewWrap" style="margin-top:8px;">
+                        <img id="heroPreview" src="../assets/hackathon.png" alt="Preview" style="max-width:140px; height:80px; border-radius:6px; object-fit:cover; border:1px solid var(--border-color);" onerror="this.onerror=null; this.src='../assets/nodp.png';">
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button type="submit" class="primary-btn" style="padding:10px 24px; border-radius:8px;">Save Featured Hero Event</button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- ==========================================
+             SECTION 2: UPCOMING EVENTS GRID
+        ========================================== -->
+        <div id="upcomingSection" style="display:none; margin-top:20px;">
+            <div id="upcomingListContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:20px;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SECTION 3: PAST EVENT HIGHLIGHTS GRID
+        ========================================== -->
+        <div id="pastSection" style="display:none; margin-top:20px;">
+            <div id="pastListContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:20px;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SECTION 4: IMPACT NUMBERS EDITOR
+        ========================================== -->
+        <div id="impactSection" class="card" style="display:none; margin-top:20px; padding:24px; border-radius:12px;">
+            <h3 style="margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">Edit VVISC Impact Numbers (Our Events in Numbers)</h3>
+            <form id="impactForm" style="display:grid; gap:16px;">
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div class="card" style="padding:16px; border-radius:8px;">
+                        <h4 style="margin-bottom:10px; font-size:0.95rem;">Card 1 (Events Conducted)</h4>
+                        <label style="font-size:0.8rem; font-weight:600;">Target Number *</label>
+                        <input type="text" id="stat1Target" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:8px;" value="85+">
+                        <label style="font-size:0.8rem; font-weight:600;">Label Text</label>
+                        <input type="text" id="stat1Label" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" value="Events Conducted">
+                    </div>
+
+                    <div class="card" style="padding:16px; border-radius:8px;">
+                        <h4 style="margin-bottom:10px; font-size:0.95rem;">Card 2 (Participants)</h4>
+                        <label style="font-size:0.8rem; font-weight:600;">Target Number *</label>
+                        <input type="text" id="stat2Target" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:8px;" value="5000+">
+                        <label style="font-size:0.8rem; font-weight:600;">Label Text</label>
+                        <input type="text" id="stat2Label" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" value="Participants">
+                    </div>
+
+                    <div class="card" style="padding:16px; border-radius:8px;">
+                        <h4 style="margin-bottom:10px; font-size:0.95rem;">Card 3 (Industry Speakers)</h4>
+                        <label style="font-size:0.8rem; font-weight:600;">Target Number *</label>
+                        <input type="text" id="stat3Target" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:8px;" value="120+">
+                        <label style="font-size:0.8rem; font-weight:600;">Label Text</label>
+                        <input type="text" id="stat3Label" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" value="Industry Speakers">
+                    </div>
+
+                    <div class="card" style="padding:16px; border-radius:8px;">
+                        <h4 style="margin-bottom:10px; font-size:0.95rem;">Card 4 (Hackathons & Workshops)</h4>
+                        <label style="font-size:0.8rem; font-weight:600;">Target Number *</label>
+                        <input type="text" id="stat4Target" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; margin-bottom:8px;" value="35+">
+                        <label style="font-size:0.8rem; font-weight:600;">Label Text</label>
+                        <input type="text" id="stat4Label" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" value="Hackathons & Workshops">
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button type="submit" class="primary-btn" style="padding:10px 24px; border-radius:8px;">Save Impact Numbers</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ==========================================
+             SECTION 5: UPDATES & NOTICES FEED GRID
+        ========================================== -->
+        <div id="noticesSection" style="display:none; margin-top:20px;">
+            <div id="noticesListContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:20px;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- ==========================================
+             MODAL FOR UPCOMING EVENT
+        ========================================== -->
+        <div id="eventModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+            <div class="card" style="width:100%; max-width:650px; max-height:90vh; overflow-y:auto; padding:24px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                    <h3 id="modalTitle">Add Upcoming Event</h3>
+                    <button type="button" class="closeModalBtn" style="background:none; border:none; color:inherit; font-size:1.4rem; cursor:pointer;">✕</button>
+                </div>
+
+                <form id="eventForm" style="display:grid; gap:14px;">
+                    <input type="hidden" id="eventDocId">
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Event Title *</label>
+                            <input type="text" id="eventTitleInput" required class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. VVISC Annual Hackathon">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Category Badge</label>
+                            <select id="eventCategory" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                                <option value="HACKATHON">HACKATHON</option>
+                                <option value="WORKSHOP">WORKSHOP</option>
+                                <option value="SEMINAR">SEMINAR</option>
+                                <option value="COMPETITION">COMPETITION</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Date Text *</label>
+                            <input type="text" id="eventDateText" required class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Oct 15–17, 2026">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Venue</label>
+                            <input type="text" id="eventVenue" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. VVIT Campus / Seminar Hall">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Full Description</label>
+                        <textarea id="eventDescriptionInput" rows="2" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="48-hour coding competition focused on..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Team Format</label>
+                            <input type="text" id="eventTeamFormat" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. 2-4 Members / Individual">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Seats Left Text</label>
+                            <input type="text" id="eventSeatsText" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. 78 / 150">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Progress Bar % (0-100)</label>
+                            <input type="number" id="eventProgressPct" value="50" min="0" max="100" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Registration URL</label>
+                            <input type="text" id="eventRegisterUrl" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="#">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Display Order</label>
+                            <input type="number" id="eventOrder" value="1" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Poster Image (File Upload or Image URL)</label>
+                        <div style="display:flex; gap:10px; align-items:center; margin-top:6px;">
+                            <input type="file" id="eventImageFile" accept="image/*" style="font-size:0.8rem;">
+                            <input type="text" id="eventImageUrl" class="form-input" style="flex:1; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="assets/Ai-bootcamp.png">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="eventActive" checked>
+                        <label for="eventActive" style="font-size:0.85rem; font-weight:600; cursor:pointer;">Active / Visible on website</label>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                        <button type="button" class="cancelModalBtn secondary-btn" style="padding:8px 16px;">Cancel</button>
+                        <button type="submit" class="primary-btn" style="padding:8px 20px;">Save Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             MODAL FOR PAST EVENT HIGHLIGHT
+        ========================================== -->
+        <div id="pastModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+            <div class="card" style="width:100%; max-width:600px; max-height:90vh; overflow-y:auto; padding:24px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                    <h3 id="pastModalTitle">Add Past Event Highlight</h3>
+                    <button type="button" class="closeModalBtn" style="background:none; border:none; color:inherit; font-size:1.4rem; cursor:pointer;">✕</button>
+                </div>
+
+                <form id="pastForm" style="display:grid; gap:14px;">
+                    <input type="hidden" id="pastDocId">
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Event Title *</label>
+                            <input type="text" id="pastTitleInput" required class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. AI / ML Bootcamp">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Eyebrow Tag</label>
+                            <input type="text" id="pastTagInput" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. AI BOOTCAMP">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Short Description</label>
+                        <textarea id="pastDescriptionInput" rows="2" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Three days of hands-on Artificial Intelligence..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Stat 1 Value & Label</label>
+                            <div style="display:flex; gap:6px;">
+                                <input type="text" id="pastStat1Val" class="form-input" style="width:80px; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="320+">
+                                <input type="text" id="pastStat1Lbl" class="form-input" style="flex:1; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Participants">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Stat 2 Value & Label</label>
+                            <div style="display:flex; gap:6px;">
+                                <input type="text" id="pastStat2Val" class="form-input" style="width:80px; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="12">
+                                <input type="text" id="pastStat2Lbl" class="form-input" style="flex:1; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Sessions">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Gallery Page Link</label>
+                            <input type="text" id="pastGalleryUrl" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" value="gallery.html">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Display Order</label>
+                            <input type="number" id="pastOrder" value="1" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="pastActive" checked>
+                        <label for="pastActive" style="font-size:0.85rem; font-weight:600; cursor:pointer;">Active / Visible on website</label>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                        <button type="button" class="cancelModalBtn secondary-btn" style="padding:8px 16px;">Cancel</button>
+                        <button type="submit" class="primary-btn" style="padding:8px 20px;">Save Past Highlight</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             MODAL FOR UPDATE / NOTICE
+        ========================================== -->
+        <div id="noticeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+            <div class="card" style="width:100%; max-width:600px; max-height:90vh; overflow-y:auto; padding:24px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                    <h3 id="noticeModalTitle">Add Notice / Update</h3>
+                    <button type="button" class="closeModalBtn" style="background:none; border:none; color:inherit; font-size:1.4rem; cursor:pointer;">✕</button>
+                </div>
+
+                <form id="noticeForm" style="display:grid; gap:14px;">
+                    <input type="hidden" id="noticeDocId">
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Title *</label>
+                            <input type="text" id="noticeTitleInput" required class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. New Website Launched!">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Category</label>
+                            <select id="noticeCategory" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                                <option value="Updates">Updates</option>
+                                <option value="Notices">Notices</option>
+                                <option value="Events">Events</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Date Text</label>
+                            <input type="text" id="noticeDateText" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Oct 01, 2026">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600;">Full Description</label>
+                        <textarea id="noticeDescriptionInput" rows="3" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="We are thrilled to announce..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600;">Display Order</label>
+                            <input type="number" id="noticeOrder" value="1" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                        </div>
+                        <div style="padding-top:18px;">
+                            <label style="cursor:pointer; display:flex; align-items:center; gap:8px; font-weight:600;">
+                                <input type="checkbox" id="noticeActive" checked> Active / Visible
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                        <button type="button" class="cancelModalBtn secondary-btn" style="padding:8px 16px;">Cancel</button>
+                        <button type="submit" class="primary-btn" style="padding:8px 20px;">Save Notice</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="events-management.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>
