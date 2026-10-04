@@ -33,9 +33,6 @@
 
 <div class="dashboard">
 
-    <!-- Sidebar -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
-
     <!-- Sidebar Navigation -->
     <aside id="adminSidebar" class="sidebar">
         <div class="sidebar-top">
@@ -82,48 +79,103 @@
         </header>
 
         <!-- Statistics -->
-
-        <section class="stats">
+        <section class="stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
 
             <div class="card">
-                <h3>Pending Reviews</h3>
-                <h1 id="pendingCount">0</h1>
+                <h3>Active Events</h3>
+                <h1 id="eventsCount" style="color:#ec4899;">0</h1>
             </div>
 
             <div class="card">
-                <h3>Approved Reviews</h3>
-                <h1 id="approvedCount">0</h1>
+                <h3>Technical Projects</h3>
+                <h1 id="projectsCount" style="color:var(--accent-color, #6366f1);">0</h1>
+            </div>
+
+            <div class="card">
+                <h3>Event Registrations</h3>
+                <h1 id="registrationsCount" style="color:#10b981;">0</h1>
+            </div>
+
+            <div class="card">
+                <h3>Contact Inquiries</h3>
+                <h1 id="inquiriesCount" style="color:#0ea5e9;">0</h1>
+            </div>
+
+            <div class="card">
+                <h3>Council Members</h3>
+                <h1 id="councilCount" style="color:#f59e0b;">0</h1>
+            </div>
+
+            <div class="card">
+                <h3>Achievements</h3>
+                <h1 id="achievementsCount" style="color:#eab308;">0</h1>
+            </div>
+
+            <div class="card">
+                <h3>Pending Reviews</h3>
+                <h1 id="pendingCount" style="color:#a855f7;">0</h1>
             </div>
 
             <div class="card">
                 <h3>Announcements</h3>
-                <h1 id="announcementCount">0</h1>
+                <h1 id="announcementCount" style="color:#ef4444;">0</h1>
             </div>
 
             <div class="card">
-                <h3>Admins</h3>
-                <h1 id="adminCount">0</h1>
+                <h3>Active Admins</h3>
+                <h1 id="adminCount" style="color:#38bdf8;">0</h1>
             </div>
 
         </section>
 
         <!-- Quick actions -->
+        <section class="quick-actions" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
 
-        <section class="quick-actions">
+            <a href="content-management.html" class="quick-action">
+                <span class="qa-ico" data-icon="layout"></span>
+                <div>
+                    <h4>Content Management</h4>
+                    <p>Edit public pages &amp; sections</p>
+                </div>
+            </a>
+
+            <a href="registrations-management.html" class="quick-action">
+                <span class="qa-ico" data-icon="check-circle"></span>
+                <div>
+                    <h4>Event Registrations</h4>
+                    <p>Track rosters &amp; check-ins</p>
+                </div>
+            </a>
+
+            <a href="contact-messages.html" class="quick-action">
+                <span class="qa-ico" data-icon="mail"></span>
+                <div>
+                    <h4>Contact Inquiries</h4>
+                    <p>Review student &amp; guest messages</p>
+                </div>
+            </a>
+
+            <a href="projects-management.html" class="quick-action">
+                <span class="qa-ico" data-icon="cpu"></span>
+                <div>
+                    <h4>Technical Projects</h4>
+                    <p>Publish student innovations</p>
+                </div>
+            </a>
 
             <a href="testimonials.html" class="quick-action">
                 <span class="qa-ico" data-icon="star"></span>
                 <div>
-                    <h4>Review Testimonials</h4>
-                    <p>Approve or clear the queue</p>
+                    <h4>Student Reviews</h4>
+                    <p>Moderate testimonial submissions</p>
                 </div>
             </a>
 
-            <a href="settings.html" class="quick-action">
-                <span class="qa-ico" data-icon="settings"></span>
+            <a href="audit-logs.html" class="quick-action">
+                <span class="qa-ico" data-icon="shield"></span>
                 <div>
-                    <h4>Settings</h4>
-                    <p>Profile &amp; console preferences</p>
+                    <h4>Audit Trail</h4>
+                    <p>Immutable administrative logs</p>
                 </div>
             </a>
 

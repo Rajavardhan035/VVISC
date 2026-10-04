@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registrations — VVISC Admin</title>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem("vvisc_admin_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+
+    <style>
+        .filter-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: var(--card-bg, rgba(255,255,255,0.04));
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color, rgba(255,255,255,0.08));
+        }
+        .filter-input {
+            flex: 1;
+            min-width: 220px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color, rgba(255,255,255,0.12));
+            background: var(--card-bg, rgba(255,255,255,0.05));
+            color: var(--text-color, #fff);
+            font-size: 0.88rem;
+        }
+        .filter-select {
+            padding: 9px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color, rgba(255,255,255,0.12));
+            background: var(--card-bg, #1a2333);
+            color: var(--text-color, #fff);
+            font-size: 0.88rem;
+            min-width: 180px;
+        }
+        .reg-table-card {
+            background: var(--card-bg, rgba(30, 41, 59, 0.5));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+        .reg-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+        .reg-table th {
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted, #94a3b8);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08));
+            white-space: nowrap;
+        }
+        .reg-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.05));
+            color: var(--text-color, #fff);
+            vertical-align: middle;
+        }
+        .reg-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .status-attended {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .status-absent {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid var(--border-color, rgba(255,255,255,0.2));
+            color: var(--text-color, #fff);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toggle-btn:hover {
+            border-color: var(--accent-color, #6366f1);
+            color: var(--accent-color, #6366f1);
+        }
+    </style>
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+            <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+            <div class="sidebar-title">
+                <span>VVISC</span>
+                <small>Admin Console</small>
+            </div>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+            <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+            <a href="events-management.html" id="eventsMenu"><span class="nav-ico" data-icon="calendar"></span> Events &amp; Workshops</a>
+            <a href="registrations-management.html" id="registrationsMenu" class="active"><span class="nav-ico" data-icon="check-circle"></span> Event Registrations</a>
+            <a href="contact-messages.html" id="messagesMenu"><span class="nav-ico" data-icon="mail"></span> Contact Inquiries</a>
+            <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+            <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+            <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+        </nav>
+
+        <div class="theme-toggle-row">
+            <span class="theme-ico ico-sun" data-icon="sun"></span>
+            <label class="theme-switch">
+                <input type="checkbox" class="theme-switch-input">
+                <span class="switch-track"></span>
+            </label>
+            <span class="theme-ico ico-moon" data-icon="moon"></span>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Event Registrations Desk</h1>
+                <p>Manage participant lists, verify attendance, and download check-in rosters.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button id="exportCsvBtn" class="primary-btn" style="padding: 9px 18px; font-size: 0.85rem;">📥 Export CSV</button>
+                <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <section class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin: 20px 0;">
+            <div class="card" style="padding: 16px; border-radius: 12px;">
+                <span style="font-size: 0.8rem; color: var(--text-muted, #94a3b8);">Total Registrations</span>
+                <h2 id="statTotal" style="font-size: 1.8rem; margin-top: 6px; color: var(--accent-color, #6366f1);">0</h2>
+            </div>
+            <div class="card" style="padding: 16px; border-radius: 12px;">
+                <span style="font-size: 0.8rem; color: var(--text-muted, #94a3b8);">Attended / Present</span>
+                <h2 id="statAttended" style="font-size: 1.8rem; margin-top: 6px; color: #22c55e;">0</h2>
+            </div>
+            <div class="card" style="padding: 16px; border-radius: 12px;">
+                <span style="font-size: 0.8rem; color: var(--text-muted, #94a3b8);">Pending Check-in</span>
+                <h2 id="statPending" style="font-size: 1.8rem; margin-top: 6px; color: #f59e0b;">0</h2>
+            </div>
+        </section>
+
+        <!-- Filters & Search Toolbar -->
+        <section class="filter-toolbar">
+            <input type="text" id="regSearchInput" class="filter-input" placeholder="🔍 Search participant by name, email, or roll number...">
+            
+            <select id="regEventFilter" class="filter-select">
+                <option value="all">All Events</option>
+            </select>
+
+            <select id="regStatusFilter" class="filter-select" style="min-width: 140px;">
+                <option value="all">All Status</option>
+                <option value="attended">Attended</option>
+                <option value="pending">Not Checked-in</option>
+            </select>
+
+            <button id="refreshBtn" class="secondary-btn" style="padding: 9px 14px; font-size: 0.85rem;">🔄 Refresh</button>
+        </section>
+
+        <!-- Table Card -->
+        <section class="reg-table-card">
+            <table class="reg-table">
+                <thead>
+                    <tr>
+                        <th>Participant</th>
+                        <th>Roll Number</th>
+                        <th>Contact</th>
+                        <th>Dept / Year</th>
+                        <th>Event</th>
+                        <th>Registered Date</th>
+                        <th>Attendance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="registrationsTableBody">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted, #94a3b8);">
+                            Loading registrations...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="registrations-management.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements &amp; Awards — VVISC Admin</title>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem("vvisc_admin_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+
+    <style>
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .achieve-card {
+            background: var(--card-bg, rgba(30, 41, 59, 0.5));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.25s ease;
+        }
+        .achieve-card:hover {
+            border-color: rgba(234, 179, 8, 0.4);
+            transform: translateY(-4px);
+        }
+        .achieve-img-wrap {
+            height: 160px;
+            background: #0f172a;
+            position: relative;
+            overflow: hidden;
+        }
+        .achieve-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .achieve-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+            <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+            <div class="sidebar-title">
+                <span>VVISC</span>
+                <small>Admin Console</small>
+            </div>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+            <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+            <a href="achievements-management.html" class="active"><span class="nav-ico" data-icon="award"></span> Achievements</a>
+            <a href="projects-management.html"><span class="nav-ico" data-icon="cpu"></span> Technical Projects</a>
+            <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+            <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+            <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+        </nav>
+
+        <div class="theme-toggle-row">
+            <span class="theme-ico ico-sun" data-icon="sun"></span>
+            <label class="theme-switch">
+                <input type="checkbox" class="theme-switch-input">
+                <span class="switch-track"></span>
+            </label>
+            <span class="theme-ico ico-moon" data-icon="moon"></span>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>🏆 Achievements &amp; Recognition</h1>
+                <p>Manage hackathon victories, patent grants, awards, and research milestones.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button id="addAchievementBtn" class="primary-btn" style="padding: 9px 18px; font-size: 0.85rem;">+ Add Achievement</button>
+                <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
+            </div>
+        </header>
+
+        <!-- Search & Filter -->
+        <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+            <input type="text" id="achieveSearch" placeholder="🔍 Search achievements..." style="flex:1; min-width:240px; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.05)); color:var(--text-color,#fff); font-size:0.88rem;">
+            <select id="achieveCategoryFilter" style="padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, #1a2333); color:var(--text-color,#fff); font-size:0.88rem;">
+                <option value="all">All Categories</option>
+                <option value="Hackathon">Hackathon</option>
+                <option value="Research">Research &amp; Papers</option>
+                <option value="Patent">Patents</option>
+                <option value="Award">Club Awards</option>
+            </select>
+        </div>
+
+        <!-- Grid -->
+        <section class="achievements-grid" id="achievementsGrid">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted, #94a3b8);">
+                Loading achievements...
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="achievementModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+    <div class="modal-card" style="background:var(--card-bg, #1e293b); border:1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius:16px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:25px; position:relative;">
+        <button id="closeModalBtn" style="position:absolute; top:18px; right:18px; background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
+        <h2 id="modalTitle" style="font-size:1.3rem; margin-bottom:15px; color:var(--text-color, #fff);">Add Achievement</h2>
+
+        <form id="achievementForm">
+            <input type="hidden" id="achieveDocId" value="">
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Title *</label>
+                <input type="text" id="achieveTitle" required placeholder="e.g. Smart India Hackathon 1st Prize" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color,#fff);">
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Category</label>
+                    <select id="achieveCategory" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, #1a2333); color:var(--text-color,#fff);">
+                        <option value="Hackathon">Hackathon</option>
+                        <option value="Research">Research &amp; Papers</option>
+                        <option value="Patent">Patent</option>
+                        <option value="Award">Club Award</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Award / Badge</label>
+                    <input type="text" id="achieveBadge" placeholder="e.g. 1st Place, Gold Medal" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color,#fff);">
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Awardees / Team</label>
+                    <input type="text" id="achieveAwardee" placeholder="e.g. K. Rajesh &amp; Team" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color,#fff);">
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Academic Year</label>
+                    <input type="text" id="achieveYear" value="2025-26" placeholder="2025-26" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color,#fff);">
+                </div>
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Description</label>
+                <textarea id="achieveDesc" rows="3" placeholder="Brief summary of the achievement and its significance..." style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color,#fff); font-size:0.88rem;"></textarea>
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted,#94a3b8); margin-bottom:5px;">Certificate / Photo</label>
+                <input type="file" id="achieveFile" accept="image/*" style="width:100%; font-size:0.85rem; color:var(--text-muted,#94a3b8);">
+                <input type="hidden" id="achieveImgUrl" value="">
+                <div id="imgPreviewWrap" style="display:none; margin-top:8px;">
+                    <img id="imgPreview" src="" alt="Preview" style="max-height:100px; border-radius:6px; object-fit:cover;">
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                <button type="button" id="cancelBtn" class="secondary-btn" style="padding:9px 16px;">Cancel</button>
+                <button type="submit" id="saveAchieveBtn" class="primary-btn" style="padding:9px 20px;">Save Achievement</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="achievements-management.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>

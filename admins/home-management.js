@@ -44,7 +44,35 @@ async function loadHomeData() {
         card6Eyebrow: "Industry Mentorship", card6Number: "15+", card6Title: "Expert Mentors", card6Desc: "Hands-on guidance and expert sessions from top tech industry leaders.",
 
         aboutTitle: "Empowering Next-Gen Engineers",
-        aboutDescription: "VVISC IUCEE Student Chapter provides a vibrant platform for technology enthusiasts to collaborate on real-world projects, attend technical workshops, hackathons, and industry mentorship sessions."
+        aboutDescription: "VVISC IUCEE Student Chapter provides a vibrant platform for technology enthusiasts to collaborate on real-world projects, attend technical workshops, hackathons, and industry mentorship sessions.",
+
+        highlightsEyebrow: "Don't Miss These",
+        highlightsTitle: "Event Highlights",
+        highlightsSubtitle: "The moments worth circling on your calendar.",
+
+        highlight1Tag: "Flagship",
+        highlight1Badge: "badge-flagship",
+        highlight1Title: "Spring Hackathon",
+        highlight1Desc: "48 hours. One idea. Real impact. Our biggest build event of the year.",
+        highlight1Date: "Oct 15",
+        highlight1Location: "Main Auditorium",
+        highlight1Link: "events.html",
+
+        highlight2Tag: "Workshop",
+        highlight2Badge: "badge-workshop",
+        highlight2Title: "AI/ML Bootcamp",
+        highlight2Desc: "Hands-on neural networks and computer vision, taught by our top performers.",
+        highlight2Date: "Nov 02",
+        highlight2Location: "Lab Block C",
+        highlight2Link: "events.html",
+
+        highlight3Tag: "Symposium",
+        highlight3Badge: "badge-symposium",
+        highlight3Title: "Tech Symposium",
+        highlight3Desc: "Guest speakers, live demos, and networking with industry alumni.",
+        highlight3Date: "Dec 10",
+        highlight3Location: "Seminar Hall",
+        highlight3Link: "events.html"
     });
 
     document.getElementById("heroTitle").value = data.heroTitle || "";
@@ -58,6 +86,65 @@ async function loadHomeData() {
     document.getElementById("statEvents").value = data.statEvents || "";
     document.getElementById("statDepts").value = data.statDepts || "";
     document.getElementById("statReach").value = data.statReach || "";
+
+    // Event Highlights
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val !== undefined ? val : "";
+    };
+
+    setVal("highlightsEyebrow", data.highlightsEyebrow);
+    setVal("highlightsTitle", data.highlightsTitle);
+    setVal("highlightsSubtitle", data.highlightsSubtitle);
+
+    // Populate Featured Event Select from live events collection
+    const featSelect = document.getElementById("featuredEventSelect");
+    if (featSelect) {
+        try {
+            const eventsList = await CMS.getCollection("events");
+            eventsList.forEach(ev => {
+                const opt = document.createElement("option");
+                opt.value = ev.id;
+                opt.textContent = `${ev.eventName || ev.title || "Untitled"} (${ev.date || "TBD"})`;
+                featSelect.appendChild(opt);
+            });
+
+            featSelect.value = data.featuredEventId || "";
+
+            featSelect.addEventListener("change", () => {
+                const selectedId = featSelect.value;
+                if (!selectedId) return;
+                if (selectedId === "auto") {
+                    setVal("highlight1Tag", "Flagship");
+                    setVal("highlight1Title", "Next Upcoming Event");
+                    setVal("highlight1Desc", "Auto-synced from latest active event in database.");
+                    setVal("highlight1Link", "events.html");
+                    return;
+                }
+                const found = eventsList.find(e => e.id === selectedId);
+                if (found) {
+                    setVal("highlight1Tag", found.category || "Flagship");
+                    setVal("highlight1Title", found.eventName || found.title || "");
+                    setVal("highlight1Desc", found.shortDescription || found.description || "");
+                    setVal("highlight1Date", found.date || "");
+                    setVal("highlight1Location", found.venue || found.location || "VVIT Campus");
+                    setVal("highlight1Link", found.registrationLink || "events.html");
+                }
+            });
+        } catch (e) {
+            console.warn("Could not load events dropdown:", e);
+        }
+    }
+
+    for (let i = 1; i <= 3; i++) {
+        setVal(`highlight${i}Tag`, data[`highlight${i}Tag`]);
+        setVal(`highlight${i}Badge`, data[`highlight${i}Badge`]);
+        setVal(`highlight${i}Title`, data[`highlight${i}Title`]);
+        setVal(`highlight${i}Desc`, data[`highlight${i}Desc`]);
+        setVal(`highlight${i}Date`, data[`highlight${i}Date`]);
+        setVal(`highlight${i}Location`, data[`highlight${i}Location`]);
+        setVal(`highlight${i}Link`, data[`highlight${i}Link`]);
+    }
 
     document.getElementById("impactEyebrow").value = data.impactEyebrow || "";
     document.getElementById("impactTitle1").value = data.impactTitle1 || "";
@@ -78,35 +165,69 @@ async function loadHomeData() {
 }
 
 async function saveHomeData() {
+    const getVal = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "";
+    };
+
     const payload = {
-        heroTitle: document.getElementById("heroTitle").value.trim(),
-        heroSubtitle: document.getElementById("heroSubtitle").value.trim(),
-        heroDescription: document.getElementById("heroDescription").value.trim(),
-        ctaPrimaryText: document.getElementById("ctaPrimaryText").value.trim(),
-        ctaPrimaryLink: document.getElementById("ctaPrimaryLink").value.trim(),
-        ctaSecondaryText: document.getElementById("ctaSecondaryText").value.trim(),
-        ctaSecondaryLink: document.getElementById("ctaSecondaryLink").value.trim(),
-        statMembers: document.getElementById("statMembers").value.trim(),
-        statEvents: document.getElementById("statEvents").value.trim(),
-        statDepts: document.getElementById("statDepts").value.trim(),
-        statReach: document.getElementById("statReach").value.trim(),
+        heroTitle: getVal("heroTitle"),
+        heroSubtitle: getVal("heroSubtitle"),
+        heroDescription: getVal("heroDescription"),
+        ctaPrimaryText: getVal("ctaPrimaryText"),
+        ctaPrimaryLink: getVal("ctaPrimaryLink"),
+        ctaSecondaryText: getVal("ctaSecondaryText"),
+        ctaSecondaryLink: getVal("ctaSecondaryLink"),
+        statMembers: getVal("statMembers"),
+        statEvents: getVal("statEvents"),
+        statDepts: getVal("statDepts"),
+        statReach: getVal("statReach"),
 
-        impactEyebrow: document.getElementById("impactEyebrow").value.trim(),
-        impactTitle1: document.getElementById("impactTitle1").value.trim(),
-        impactTitle2: document.getElementById("impactTitle2").value.trim(),
-        impactDescription: document.getElementById("impactDescription").value.trim(),
-        impactCtaText: document.getElementById("impactCtaText").value.trim(),
-        impactCtaLink: document.getElementById("impactCtaLink").value.trim(),
+        highlightsEyebrow: getVal("highlightsEyebrow"),
+        highlightsTitle: getVal("highlightsTitle"),
+        highlightsSubtitle: getVal("highlightsSubtitle"),
+        featuredEventId: getVal("featuredEventSelect"),
 
-        aboutTitle: document.getElementById("aboutTitle").value.trim(),
-        aboutDescription: document.getElementById("aboutDescription").value.trim()
+        highlight1Tag: getVal("highlight1Tag"),
+        highlight1Badge: getVal("highlight1Badge"),
+        highlight1Title: getVal("highlight1Title"),
+        highlight1Desc: getVal("highlight1Desc"),
+        highlight1Date: getVal("highlight1Date"),
+        highlight1Location: getVal("highlight1Location"),
+        highlight1Link: getVal("highlight1Link"),
+
+        highlight2Tag: getVal("highlight2Tag"),
+        highlight2Badge: getVal("highlight2Badge"),
+        highlight2Title: getVal("highlight2Title"),
+        highlight2Desc: getVal("highlight2Desc"),
+        highlight2Date: getVal("highlight2Date"),
+        highlight2Location: getVal("highlight2Location"),
+        highlight2Link: getVal("highlight2Link"),
+
+        highlight3Tag: getVal("highlight3Tag"),
+        highlight3Badge: getVal("highlight3Badge"),
+        highlight3Title: getVal("highlight3Title"),
+        highlight3Desc: getVal("highlight3Desc"),
+        highlight3Date: getVal("highlight3Date"),
+        highlight3Location: getVal("highlight3Location"),
+        highlight3Link: getVal("highlight3Link"),
+
+        impactEyebrow: getVal("impactEyebrow"),
+        impactTitle1: getVal("impactTitle1"),
+        impactTitle2: getVal("impactTitle2"),
+        impactDescription: getVal("impactDescription"),
+        impactCtaText: getVal("impactCtaText"),
+        impactCtaLink: getVal("impactCtaLink"),
+
+        aboutTitle: getVal("aboutTitle"),
+        aboutDescription: getVal("aboutDescription")
     };
 
     for (let i = 1; i <= 6; i++) {
-        payload[`card${i}Number`] = document.getElementById(`card${i}Number`).value.trim();
-        payload[`card${i}Title`] = document.getElementById(`card${i}Title`).value.trim();
-        payload[`card${i}Eyebrow`] = document.getElementById(`card${i}Eyebrow`).value.trim();
-        payload[`card${i}Desc`] = document.getElementById(`card${i}Desc`).value.trim();
+        payload[`card${i}Number`] = getVal(`card${i}Number`);
+        payload[`card${i}Title`] = getVal(`card${i}Title`);
+        payload[`card${i}Eyebrow`] = getVal(`card${i}Eyebrow`);
+        payload[`card${i}Desc`] = getVal(`card${i}Desc`);
     }
 
     try {

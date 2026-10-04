@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Library — VVISC Admin</title>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem("vvisc_admin_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+
+    <style>
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .media-card {
+            background: var(--card-bg, rgba(30, 41, 59, 0.5));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+        .media-card:hover {
+            border-color: var(--accent-color, #6366f1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+        .media-thumb-wrap {
+            height: 140px;
+            background: #0f172a;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .media-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .media-file-icon {
+            font-size: 3rem;
+            opacity: 0.8;
+        }
+        .media-card-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .media-card-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-color, #fff);
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .media-card-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted, #94a3b8);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+            <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+            <div class="sidebar-title">
+                <span>VVISC</span>
+                <small>Admin Console</small>
+            </div>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+            <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+            <a href="media-library.html" class="active"><span class="nav-ico" data-icon="image"></span> Media Library</a>
+            <a href="projects-management.html"><span class="nav-ico" data-icon="cpu"></span> Technical Projects</a>
+            <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+            <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+            <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+        </nav>
+
+        <div class="theme-toggle-row">
+            <span class="theme-ico ico-sun" data-icon="sun"></span>
+            <label class="theme-switch">
+                <input type="checkbox" class="theme-switch-input">
+                <span class="switch-track"></span>
+            </label>
+            <span class="theme-ico ico-moon" data-icon="moon"></span>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>🖼️ Media Asset Library</h1>
+                <p>Browse, upload, and copy URLs of images and documents used across VVISC web pages.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <label for="directUploadInput" class="primary-btn" style="padding: 9px 18px; font-size: 0.85rem; cursor:pointer;">
+                    + Upload New File
+                </label>
+                <input type="file" id="directUploadInput" style="display:none;" accept="image/*,application/pdf">
+                <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
+            </div>
+        </header>
+
+        <!-- Search & Filter -->
+        <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+            <input type="text" id="mediaSearch" placeholder="🔍 Search media by filename..." style="flex:1; min-width:240px; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.05)); color:var(--text-color,#fff); font-size:0.88rem;">
+            <select id="mediaTypeFilter" style="padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, #1a2333); color:var(--text-color,#fff); font-size:0.88rem;">
+                <option value="all">All File Types</option>
+                <option value="image">Images Only</option>
+                <option value="pdf">Documents &amp; PDFs</option>
+            </select>
+        </div>
+
+        <!-- Grid -->
+        <section class="media-grid" id="mediaGrid">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted, #94a3b8);">
+                Loading media assets...
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="media-library.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>

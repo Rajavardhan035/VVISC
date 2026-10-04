@@ -1,0 +1,92 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidImage() {
+      return request.resource.size < 15 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    function isValidMediaOrDoc() {
+      return request.resource.size < 20 * 1024 * 1024
+        && (request.resource.contentType.matches('image/.*') || request.resource.contentType == 'application/pdf');
+    }
+
+    // Public website media (CMS images, gallery, events posters, council, projects)
+    match /cms/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /gallery/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /events/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /departments/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /council/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /projects/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /achievements/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidMediaOrDoc();
+    }
+
+    match /partners/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidImage();
+    }
+
+    match /resources/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidMediaOrDoc();
+    }
+
+    match /media/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidMediaOrDoc();
+    }
+
+    // Private uploads: certificates, attendance, registration attachments
+    match /certificates/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isValidMediaOrDoc();
+    }
+
+    match /registrations/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isValidMediaOrDoc();
+    }
+
+    match /private/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isValidMediaOrDoc();
+    }
+
+    // Default deny for anything else
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

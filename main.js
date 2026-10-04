@@ -18,257 +18,289 @@ document.addEventListener('DOMContentLoaded', () => {
        auto-plays the 176-frame sequence, slides the logo left,
        reveals the event card on the right, then unlocks scroll.
        ============================================ */
-    const scrollContainer = document.querySelector('.scroll-container');
+    /* ============================================
+       1. Cinematic 250-Frame LogoSequence with Clean Logo Hold
+       Matching LogoSequence.jsx & Hero.tsx:
+       - Progressive loading with 45-frame initial priority
+       - Cover fit high-DPI rendering algorithm (warm parchment #ede7dc)
+       - Beginning state prompt ("Scroll Once to Begin")
+       - Skip Intro button during playback
+       - Lock scroll during ~3.8s animation, unlock on final frame (frame 250)
+       - Completion state: "VVISC Chapter Activated • Scroll to Explore ↓"
+       ============================================ */
     const canvas = document.getElementById('scroll-canvas');
+    const startPrompt = document.getElementById('seq-start-prompt');
+    const skipWrap = document.getElementById('seq-skip-wrap');
+    const skipBtn = document.getElementById('skipIntroBtn');
     const preloader = document.querySelector('.preloader');
     const preloaderBar = document.querySelector('.preloader-bar-fill');
-    const scrollHint = document.getElementById('intro-scroll-hint');
-    const eventOverlay = document.getElementById('canvas-event-overlay');
 
-    if (scrollContainer && canvas) {
-        const context = canvas.getContext('2d');
-        const frameCount = 173;
-        const currentFrame = index => `frames/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
-        const images = [];
-        let loadedImages = 0;
-        let assetsReady = false;
-        let lastDrawnFrame = 0;
+    if (canvas) {
+        const totalFrames = 168;
+        const basePath = 'logo-sequence/frame-';
+        const extension = '.jpg';
+        const initialBatchSize = 25;
+        const duration = 3800; // ms
 
-        /* ----------------------------------------------------------
-           High-DPI canvas sizing (fixes the blurry logo intro).
+        const images = new Array(totalFrames).fill(null);
+        let loadedCount = 0;
+        let isReady = false;
+        let isFullyLoaded = false;
+        let hasStarted = false;
+        let isPlaying = false;
+        let isCompleted = false;
+        let currentFrameIndex = 0;
+        let rafId = null;
 
-           Previously the canvas's internal bitmap was locked to the
-           source frame size (1280x720) while its CSS box stretched
-           to 100vw/100dvh — the browser then upscaled that low-res
-           bitmap across the whole screen, which read as soft/blurry
-           on any screen wider than 1280px (i.e. almost every desktop
-           and most phones at their CSS pixel width).
+        // Ensure scroll is at top on fresh load
+        if ('scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
 
-           Fix: size the canvas's actual drawing buffer to match its
-           on-screen box in device pixels (CSS size × devicePixelRatio),
-           then draw each frame in using a manual "cover" fit with
-           high-quality image smoothing. This removes the extra blur
-           pass caused by CSS upscaling a tiny bitmap.
-           ---------------------------------------------------------- */
-        const canvasStage = document.getElementById('canvasStage') || canvas.parentElement;
-
-        const sizeCanvasToDisplay = () => {
-            const dpr = Math.min(window.devicePixelRatio || 1, 3.0);
-            const rect = canvasStage.getBoundingClientRect();
-            const displayWidth = Math.max(1, Math.round(rect.width * dpr));
-            const displayHeight = Math.max(1, Math.round(rect.height * dpr));
-            if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-                canvas.width = displayWidth;
-                canvas.height = displayHeight;
-            }
-            context.imageSmoothingEnabled = true;
-            context.imageSmoothingQuality = 'high';
+        const constructUrl = (index) => {
+            const paddedIndex = String(index).padStart(3, '0');
+            return `${basePath}${paddedIndex}${extension}`;
         };
 
-        // Draws a frame using "cover" scaling (fills the box completely,
-        // cropping overflow, no distortion) into the high-res buffer.
-        const drawFrame = (index) => {
-            const clamped = Math.max(0, Math.min(frameCount - 1, index));
-            lastDrawnFrame = clamped;
-            const img = images[clamped];
-            if (!(img && img.complete && img.naturalWidth > 0)) return;
-
-            const canvasRatio = canvas.width / canvas.height;
-            const imgRatio = img.naturalWidth / img.naturalHeight;
-            let sx, sy, sWidth, sHeight;
-
-            if (imgRatio > canvasRatio) {
-                sHeight = img.naturalHeight;
-                sWidth = sHeight * canvasRatio;
-                sx = (img.naturalWidth - sWidth) / 2;
-                sy = 0;
-            } else {
-                sWidth = img.naturalWidth;
-                sHeight = sWidth / canvasRatio;
-                sx = 0;
-                sy = (img.naturalHeight - sHeight) / 2;
-            }
-
-            context.imageSmoothingEnabled = true;
-            context.imageSmoothingQuality = 'high';
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-        };
-
-        sizeCanvasToDisplay();
-
+        const preloaderMark = document.querySelector('.preloader-mark');
         const updatePreloader = () => {
-            const pct = Math.round((loadedImages / frameCount) * 100);
+            const pct = Math.min(100, Math.round((loadedCount / totalFrames) * 100));
             if (preloaderBar) preloaderBar.style.width = pct + '%';
-            if (loadedImages >= frameCount) {
-                assetsReady = true;
+            if (preloaderMark) preloaderMark.textContent = `PREPARING EXPERIENCE ... ${pct}%`;
+            if ((loadedCount >= initialBatchSize || loadedCount >= totalFrames) && !isReady) {
+                isReady = true;
+                if (!hasStarted) renderFrame(0);
                 if (preloader) preloader.classList.add('is-hidden');
             }
+            if (loadedCount >= totalFrames) {
+                isFullyLoaded = true;
+            }
         };
 
-        for (let i = 1; i <= frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i);
-            img.onload = () => {
-                loadedImages++;
-                if (loadedImages === 1) {
-                    sizeCanvasToDisplay();
-                    drawFrame(0);
+        // High-DPI COVER Render Algorithm: edge-to-edge full screen, never letterboxed
+        const renderFrame = (frameIdx) => {
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            const img = getFrame(frameIdx);
+            if (!img || !img.complete || img.naturalWidth === 0) return;
+
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            if (width === 0 || height === 0) return;
+
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+            }
+
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, width, height);
+
+            // Warm parchment ivory tone matching frames
+            ctx.fillStyle = '#ede7dc';
+            ctx.fillRect(0, 0, width, height);
+
+            // Cover math
+            const imgWidth = img.naturalWidth || 1920;
+            const imgHeight = img.naturalHeight || 1080;
+            const canvasRatio = width / height;
+            const imgRatio = imgWidth / imgHeight;
+
+            let renderW, renderH, offsetX, offsetY;
+
+            if (canvasRatio > imgRatio) {
+                renderW = width;
+                renderH = width / imgRatio;
+                offsetX = 0;
+                offsetY = (height - renderH) / 2;
+            } else {
+                renderH = height;
+                renderW = height * imgRatio;
+                offsetX = (width - renderW) / 2;
+                offsetY = 0;
+            }
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, offsetX, offsetY, renderW, renderH);
+            ctx.restore();
+        };
+
+        // Fallback: if requested frame is not yet loaded, return nearest preceding frame
+        const getFrame = (frameIndex) => {
+            const clamped = Math.max(0, Math.min(frameIndex, totalFrames - 1));
+            if (images[clamped] && images[clamped].complete && images[clamped].naturalWidth > 0) {
+                return images[clamped];
+            }
+            for (let i = clamped - 1; i >= 0; i--) {
+                if (images[i] && images[i].complete && images[i].naturalWidth > 0) return images[i];
+            }
+            for (let i = clamped + 1; i < totalFrames; i++) {
+                if (images[i] && images[i].complete && images[i].naturalWidth > 0) return images[i];
+            }
+            return null;
+        };
+
+        const loadImage = (index) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = constructUrl(index);
+                const onDone = () => {
+                    images[index - 1] = img;
+                    loadedCount += 1;
+                    updatePreloader();
+                    resolve(img);
+                };
+                img.onload = onDone;
+                img.onerror = () => {
+                    loadedCount += 1;
+                    updatePreloader();
+                    resolve(null);
+                };
+            });
+        };
+
+        const loadAllFrames = async () => {
+            // Phase 1: Load initial batch
+            const initialPromises = [];
+            for (let i = 1; i <= Math.min(initialBatchSize, totalFrames); i++) {
+                initialPromises.push(loadImage(i));
+            }
+            await Promise.all(initialPromises);
+            isReady = true;
+            if (!hasStarted) renderFrame(0);
+
+            // Phase 2: Stream remaining frames with concurrency of 8
+            const remaining = [];
+            for (let i = initialBatchSize + 1; i <= totalFrames; i++) {
+                remaining.push(i);
+            }
+            let curr = 0;
+            const worker = async () => {
+                while (curr < remaining.length) {
+                    const idx = remaining[curr++];
+                    await loadImage(idx);
                 }
-                updatePreloader();
             };
-            img.onerror = () => {
-                loadedImages++;
-                updatePreloader();
+            const workers = Array.from({ length: 8 }, () => worker());
+            await Promise.all(workers);
+        };
+
+        loadAllFrames();
+
+        // Safety timeout for preloader: guarantees user is never stuck
+        setTimeout(() => {
+            if (!isReady) {
+                isReady = true;
+                if (!hasStarted) renderFrame(0);
+            }
+            if (preloader) preloader.classList.add('is-hidden');
+        }, 2200);
+
+        // Skip directly to final locked frame
+        const skipToFinalFrame = () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            hasStarted = true;
+            isCompleted = true;
+            isPlaying = false;
+            currentFrameIndex = totalFrames - 1;
+            renderFrame(totalFrames - 1);
+            document.body.style.overflow = '';
+            if (startPrompt) startPrompt.classList.add('hidden');
+            if (skipWrap) skipWrap.classList.add('hidden');
+        };
+
+        // Trigger-Once Cinematic Animation Execution
+        const triggerSequence = () => {
+            if (hasStarted || isCompleted || !isReady) return;
+            hasStarted = true;
+            isPlaying = true;
+
+            // Temporarily lock body scroll while the cinematic opening unfolds
+            document.body.style.overflow = 'hidden';
+
+            if (startPrompt) startPrompt.classList.add('hidden');
+            if (skipWrap) skipWrap.classList.remove('hidden');
+
+            const startTime = performance.now();
+            const animateLoop = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(1, elapsed / duration);
+
+                const targetFrame = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+                currentFrameIndex = targetFrame;
+                renderFrame(targetFrame);
+
+                if (progress < 1) {
+                    rafId = requestAnimationFrame(animateLoop);
+                } else {
+                    // Animation finished! Lock permanently on Frame 250
+                    currentFrameIndex = totalFrames - 1;
+                    renderFrame(totalFrames - 1);
+                    isCompleted = true;
+                    isPlaying = false;
+                    document.body.style.overflow = '';
+                    if (skipWrap) skipWrap.classList.add('hidden');
+                }
             };
-            images.push(img);
+
+            rafId = requestAnimationFrame(animateLoop);
+        };
+
+        if (startPrompt) {
+            startPrompt.addEventListener('click', triggerSequence);
+        }
+        if (skipBtn) {
+            skipBtn.addEventListener('click', skipToFinalFrame);
         }
 
-        // Safety net: hide preloader after 4s regardless, so a slow/broken
-        // asset never traps the visitor on a blank screen.
-        setTimeout(() => {
-            assetsReady = true;
-            if (preloader) preloader.classList.add('is-hidden');
-        }, 4000);
-
-        // Re-size the drawing buffer on resize/orientation change and
-        // redraw the current frame so it never reverts to a blurry state.
-        let resizeRaf = null;
-        window.addEventListener('resize', () => {
-            if (resizeRaf) cancelAnimationFrame(resizeRaf);
-            resizeRaf = requestAnimationFrame(() => {
-                sizeCanvasToDisplay();
-                drawFrame(lastDrawnFrame);
-            });
-        });
-
-        // --- Sequence state ---
-        const SEQUENCE_DURATION = 1700; // ms — total auto-play length ("fast", ~1.5-2s)
-        const LOGO_SLIDE_START = 0.82;  // fraction of sequence when the logo starts sliding left
-        const CARD_REVEAL_AT = 0.98;    // fraction of sequence when the event card begins revealing
-        let hasPlayed = false;
-        let isPlaying = false;
-
-        const isIntroInView = () => {
-            const rect = scrollContainer.getBoundingClientRect();
-            // Consider it "in view" if it's still substantially on screen
-            return rect.top > -50 && rect.top < window.innerHeight * 0.5;
-        };
-
-        const lockScroll = () => {
-            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            if (scrollbarWidth > 0) {
-                document.body.style.paddingRight = `${scrollbarWidth}px`;
-            }
-            document.body.classList.add('intro-scroll-locked');
-        };
-
-        const unlockScroll = () => {
-            document.body.classList.remove('intro-scroll-locked');
-            document.body.style.paddingRight = '';
-        };
-
-        const playSequence = () => {
-            if (isPlaying || hasPlayed) return;
-            isPlaying = true;
-            lockScroll();
-            if (scrollHint) scrollHint.classList.add('is-hidden');
-
-            const begin = () => {
-                const startTime = performance.now();
-
-                const step = (now) => {
-                    const elapsed = now - startTime;
-                    let progress = Math.min(elapsed / SEQUENCE_DURATION, 1);
-
-                    const frameIndex = Math.floor(progress * (frameCount - 1));
-                    drawFrame(frameIndex);
-
-                    // Logo slide-left, eased in over the tail of the sequence
-                    canvas.style.transform = "translateX(0)";
-
-                    // Event card reveal near the very end
-                    if (eventOverlay) {
-                        if (progress > CARD_REVEAL_AT) {
-                            eventOverlay.classList.add('is-visible');
-                        } else {
-                            eventOverlay.classList.remove('is-visible');
-                        }
-                    }
-
-                    if (progress < 1) {
-                        requestAnimationFrame(step);
-                    } else {
-                        isPlaying = false;
-                        hasPlayed = true;
-                        // Brief pause so the reveal (and the Register CTA)
-                        // can be appreciated before scroll unlocks. The
-                        // visitor's own next scroll then continues normally —
-                        // we don't auto-advance past the card they just saw.
-                        setTimeout(unlockScroll, 450);
-                    }
-                };
-
-                requestAnimationFrame(step);
-            };
-
-            // If assets are still loading, give them a brief moment to finish
-            // so playback doesn't visibly jump/stutter on slower connections.
-            if (assetsReady) {
-                begin();
-            } else {
-                const waitStart = performance.now();
-                const waitForAssets = () => {
-                    if (assetsReady || performance.now() - waitStart > 1000) {
-                        begin();
-                    } else {
-                        requestAnimationFrame(waitForAssets);
-                    }
-                };
-                waitForAssets();
+        // Listen for user scroll / gestures to trigger the sequence
+        const onWheel = (e) => {
+            if (!hasStarted && e.deltaY > 0) {
+                if (e.cancelable) e.preventDefault();
+                triggerSequence();
             }
         };
-
-        // Initial frame paint while waiting for the first scroll
-        drawFrame(0);
-
-        // --- Intercept the very first scroll/swipe gesture over the intro ---
-        const triggerIfNeeded = (e) => {
-            if (hasPlayed || isPlaying) return;
-            if (!isIntroInView()) return;
-            if (e.cancelable) e.preventDefault();
-            playSequence();
-        };
-
-        window.addEventListener('wheel', triggerIfNeeded, { passive: false });
 
         let touchStartY = 0;
-        window.addEventListener('touchstart', (e) => {
+        const onTouchStart = (e) => {
             touchStartY = e.touches[0].clientY;
-        }, { passive: true });
+        };
 
-        window.addEventListener('touchmove', (e) => {
-            if (hasPlayed || isPlaying) return;
-            if (!isIntroInView()) return;
-            const deltaY = touchStartY - e.touches[0].clientY;
-            if (Math.abs(deltaY) > 10) {
-                if (e.cancelable) e.preventDefault();
-                playSequence();
+        const onTouchMove = (e) => {
+            if (!hasStarted) {
+                const touchCurrentY = e.touches[0].clientY;
+                if (touchStartY - touchCurrentY > 10) {
+                    if (e.cancelable) e.preventDefault();
+                    triggerSequence();
+                }
             }
-        }, { passive: false });
+        };
 
-        // Keyboard scroll keys (space, page down, arrow down) — accessibility
-        window.addEventListener('keydown', (e) => {
-            const keys = ['ArrowDown', 'PageDown', ' '];
-            if (!keys.includes(e.key)) return;
-            if (hasPlayed || isPlaying) return;
-            if (!isIntroInView()) return;
-            e.preventDefault();
-            playSequence();
+        const onKeyDown = (e) => {
+            if (!hasStarted) {
+                if (['ArrowDown', 'PageDown', 'Space', ' '].includes(e.key)) {
+                    if (e.cancelable) e.preventDefault();
+                    triggerSequence();
+                }
+            }
+        };
+
+        window.addEventListener('wheel', onWheel, { passive: false });
+        window.addEventListener('touchstart', onTouchStart, { passive: true });
+        window.addEventListener('touchmove', onTouchMove, { passive: false });
+        window.addEventListener('keydown', onKeyDown);
+
+        window.addEventListener('resize', () => {
+            renderFrame(currentFrameIndex);
         });
 
     } else if (preloader) {
-        // No frame sequence on this page — don't block on it.
         preloader.classList.add('is-hidden');
     }
 
@@ -283,14 +315,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedTheme) {
             body.classList.remove('light-mode', 'dark-mode');
             body.classList.add(savedTheme);
+            document.documentElement.setAttribute('data-theme', savedTheme === 'dark-mode' ? 'dark' : 'light');
+        } else {
+            const isDark = body.classList.contains('dark-mode');
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
         }
 
         themeToggleBtn.addEventListener('click', () => {
             if (body.classList.contains('light-mode')) {
                 body.classList.replace('light-mode', 'dark-mode');
+                document.documentElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('vvisc-theme', 'dark-mode');
             } else {
                 body.classList.replace('dark-mode', 'light-mode');
+                document.documentElement.setAttribute('data-theme', 'light');
                 localStorage.setItem('vvisc-theme', 'light-mode');
             }
         });
@@ -320,15 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleMenu();
         });
 
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                if (href && href !== '#') {
-                    window.location.href = href;
-                } else if (mobileMenu.classList.contains('active')) {
-                    toggleMenu();
-                }
-            });
+        // Use event delegation so all existing and dynamic links or buttons work smoothly
+        mobileMenu.addEventListener('click', (e) => {
+            const item = e.target.closest('a, button');
+            if (item && mobileMenu.classList.contains('active')) {
+                toggleMenu();
+            }
         });
     }
 
@@ -406,7 +441,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateNavOnScroll = () => {
         const scrollY = window.scrollY;
         if (navbar) {
-            navbar.classList.toggle('is-scrolled', scrollY > 20);
+            const hasHero = document.getElementById('hero') || document.querySelector('.hero');
+            const threshold = hasHero ? (0.7 * window.innerHeight) : 60;
+            navbar.classList.toggle('is-scrolled', scrollY > threshold);
         }
         if (scrollProgress) {
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -417,55 +454,167 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', updateNavOnScroll, { passive: true });
     updateNavOnScroll();
 
-    /* ============================================
-       7. Custom Cursor (desktop / mouse only)
-       ============================================ */
-    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (supportsHover) {
+    /* =====================================================================
+       7. Interactive Magnetic Cursor & Button Hover System
+       (Heritage Academic × Modern Engineering)
+       - Resting: Inner dot (8px, #D4AF37) + outer ring (32px, 0.18 lerp)
+       - Interactive hover: expands to 80px with action micro-typography
+       - Standard buttons: scales to 48px with soft gold glow & magnetic pull
+       - Desktop only: window.matchMedia('(pointer: fine)').matches
+       ===================================================================== */
+    const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+    if (isFinePointer) {
+        const cursorContainer = document.createElement('div');
+        cursorContainer.className = 'vvisc-magnetic-cursor';
+        cursorContainer.setAttribute('aria-hidden', 'true');
+
         const cursorDot = document.createElement('div');
         cursorDot.className = 'cursor-dot';
+
         const cursorRing = document.createElement('div');
         cursorRing.className = 'cursor-ring';
-        document.body.appendChild(cursorDot);
-        document.body.appendChild(cursorRing);
-        document.body.classList.add('cursor-active');
 
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let ringX = mouseX;
-        let ringY = mouseY;
+        const cursorLabel = document.createElement('span');
+        cursorLabel.className = 'cursor-label';
+        cursorRing.appendChild(cursorLabel);
+
+        cursorContainer.appendChild(cursorDot);
+        cursorContainer.appendChild(cursorRing);
+        document.body.appendChild(cursorContainer);
+
+        let mouseX = -100;
+        let mouseY = -100;
+        let ringX = -100;
+        let ringY = -100;
+        let isCursorVisible = false;
+        let isMagnetic = false;
+        let magneticX = 0;
+        let magneticY = 0;
+
+        let activeMagneticBtn = null;
 
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-        });
 
-        const animateRing = () => {
-            ringX += (mouseX - ringX) * 0.18;
-            ringY += (mouseY - ringY) * 0.18;
-            cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
-            requestAnimationFrame(animateRing);
+            if (!isCursorVisible) {
+                isCursorVisible = true;
+                cursorDot.style.opacity = '1';
+                cursorRing.style.opacity = '1';
+                ringX = mouseX;
+                ringY = mouseY;
+            }
+
+            cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+
+            // Button magnetic shift: gently translate button toward cursor (max 6-8px)
+            const targetBtn = e.target.closest('.btn, .btn-primary, .btn-secondary, .nav-login-btn, .explore-impact-btn');
+            if (targetBtn) {
+                activeMagneticBtn = targetBtn;
+                const rect = targetBtn.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const shiftX = Math.max(-8, Math.min(8, (mouseX - centerX) * 0.18));
+                const shiftY = Math.max(-6, Math.min(6, (mouseY - centerY) * 0.18));
+                targetBtn.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
+                targetBtn.style.transition = 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)';
+            } else if (activeMagneticBtn) {
+                activeMagneticBtn.style.transform = '';
+                activeMagneticBtn.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+                activeMagneticBtn = null;
+            }
+        }, { passive: true });
+
+        // Physics animation loop using smooth lerp (factor 0.18)
+        const animateCursor = () => {
+            if (isCursorVisible) {
+                const targetX = isMagnetic ? magneticX : mouseX;
+                const targetY = isMagnetic ? magneticY : mouseY;
+
+                ringX += (targetX - ringX) * 0.18;
+                ringY += (targetY - ringY) * 0.18;
+
+                cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+            }
+            requestAnimationFrame(animateCursor);
         };
-        requestAnimationFrame(animateRing);
+        requestAnimationFrame(animateCursor);
 
-        const hoverTargets = 'a, button, .card, .event-card, .department-card, .profile-card, .gallery-item, .carousel-item, input, textarea';
+        // Hover State on Interactive Elements
         document.addEventListener('mouseover', (e) => {
-            if (e.target.closest(hoverTargets)) {
-                cursorRing.classList.add('is-hovering');
+            const cursorTarget = e.target.closest('[data-cursor]');
+            if (cursorTarget) {
+                const actionLabel = cursorTarget.getAttribute('data-cursor');
+                if (actionLabel) {
+                    cursorLabel.textContent = actionLabel.toUpperCase();
+                    cursorRing.classList.add('cursor-ring--expanded');
+                    cursorRing.classList.remove('cursor-ring--hover');
+                    cursorDot.classList.add('cursor-dot--hidden');
+                    return;
+                }
+            }
+
+            // Standard buttons, cards, links without custom action
+            const interactiveTarget = e.target.closest('a, button, .btn, .card, .department-card, .highlight-card, .tilted-impact-card, .past-event-card, input, textarea');
+            if (interactiveTarget) {
+                cursorRing.classList.add('cursor-ring--hover');
+                cursorRing.classList.remove('cursor-ring--expanded');
+                cursorLabel.textContent = '';
+
+                // Magnetic attraction for buttons
+                if (interactiveTarget.matches('.btn, button, .nav-login-btn, .reviews-highlight, .theme-toggle, .nav-monogram-pill')) {
+                    const rect = interactiveTarget.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const dist = Math.hypot(mouseX - centerX, mouseY - centerY);
+                    if (dist < Math.max(rect.width, rect.height) * 0.85) {
+                        isMagnetic = true;
+                        magneticX = centerX + (mouseX - centerX) * 0.25;
+                        magneticY = centerY + (mouseY - centerY) * 0.25;
+                    }
+                }
             }
         });
+
         document.addEventListener('mouseout', (e) => {
-            if (e.target.closest(hoverTargets)) {
-                cursorRing.classList.remove('is-hovering');
+            const related = e.relatedTarget;
+            const currentCursorTarget = e.target.closest('[data-cursor]');
+            const nextCursorTarget = related ? related.closest('[data-cursor]') : null;
+
+            if (currentCursorTarget && (!nextCursorTarget || currentCursorTarget !== nextCursorTarget)) {
+                cursorRing.classList.remove('cursor-ring--expanded');
+                cursorDot.classList.remove('cursor-dot--hidden');
+                cursorLabel.textContent = '';
+            }
+
+            const currentInteractive = e.target.closest('a, button, .btn, .card, .department-card, .highlight-card, .tilted-impact-card, .past-event-card, input, textarea');
+            const nextInteractive = related ? related.closest('a, button, .btn, .card, .department-card, .highlight-card, .tilted-impact-card, .past-event-card, input, textarea') : null;
+
+            if (currentInteractive && (!nextInteractive || currentInteractive !== nextInteractive)) {
+                cursorRing.classList.remove('cursor-ring--hover');
+                isMagnetic = false;
+            }
+
+            if (activeMagneticBtn && (!related || !related.closest('.btn, .btn-primary, .btn-secondary, .nav-login-btn, .explore-impact-btn'))) {
+                activeMagneticBtn.style.transform = '';
+                activeMagneticBtn.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+                activeMagneticBtn = null;
             }
         });
 
         document.addEventListener('mouseleave', () => {
+            isCursorVisible = false;
             cursorDot.style.opacity = '0';
             cursorRing.style.opacity = '0';
+            if (activeMagneticBtn) {
+                activeMagneticBtn.style.transform = '';
+                activeMagneticBtn.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+                activeMagneticBtn = null;
+            }
         });
+
         document.addEventListener('mouseenter', () => {
+            isCursorVisible = true;
             cursorDot.style.opacity = '1';
             cursorRing.style.opacity = '1';
         });
@@ -564,6 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ============================================
        9b. Cursor-Tilt for Event Highlight Cards
        ============================================ */
+    const supportsHover = window.matchMedia ? window.matchMedia('(hover: hover)').matches : false;
     const tiltCards = document.querySelectorAll('.tilt-card');
     if (tiltCards.length > 0 && supportsHover) {
         tiltCards.forEach(card => {
@@ -1789,4 +1939,16 @@ document.addEventListener("DOMContentLoaded", () => {
             card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)";
         });
     });
+
+    // 4. Smooth Footer Back-to-Top
+    const backToTopBtn = document.getElementById("footerBackToTop");
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    }
 });

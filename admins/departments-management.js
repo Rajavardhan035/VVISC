@@ -7,6 +7,7 @@ let departmentList = [];
 document.addEventListener("DOMContentLoaded", async () => {
     requireRole("admin");
     await loadDepartments();
+    await loadTeamSection();
 
     // Modal Triggers
     const addBtn = document.getElementById("addDeptBtn");
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const closeBtn = document.getElementById("closeModalBtn");
     const cancelBtn = document.getElementById("cancelModalBtn");
     const form = document.getElementById("deptForm");
+    const saveTeamBtn = document.getElementById("saveTeamSectionBtn");
 
     if (addBtn) addBtn.onclick = () => openDeptModal();
     if (closeBtn) closeBtn.onclick = () => closeModal();
@@ -25,6 +27,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             await saveDepartment();
         };
     }
+
+    if (saveTeamBtn) {
+        saveTeamBtn.onclick = async (e) => {
+            e.preventDefault();
+            await saveTeamSection();
+        };
+    }
+
+    // Image preview listeners
+    setupImagePreview("facultyImgFile", "facultyImgPreview", "facultyImgUrl");
+    setupImagePreview("studentImgFile", "studentImgPreview", "studentImgUrl");
 });
 
 const DEFAULT_DEPTS = [
@@ -309,4 +322,144 @@ async function deleteDept(id) {
 
 function escapeHtml(str) {
     return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// =========================================================
+// "Meet The Team" Section Management
+// =========================================================
+const DEFAULT_TEAM_DATA = {
+    teamTitle: "Meet The Team",
+    facultyName: "Dr. Naveen Ravela",
+    facultyRole: "Chief Faculty Coordinator",
+    facultyDesc: "Mentors the department, guides projects and supports innovation.",
+    facultyImage: "assets/council/faculty/chief.jpg",
+    studentName: "Lead Coordinator",
+    studentRole: "Student Coordinator",
+    studentDesc: "Leads department activities, workshops and student teams.",
+    studentImage: "assets/nodp.png"
+};
+
+async function loadTeamSection() {
+    try {
+        const team = await CMS.getContent("departmentsTeam", DEFAULT_TEAM_DATA);
+
+        const titleEl = document.getElementById("teamHeadingTitle");
+        const fNameEl = document.getElementById("facultyName");
+        const fRoleEl = document.getElementById("facultyRole");
+        const fDescEl = document.getElementById("facultyDesc");
+        const fImgUrlEl = document.getElementById("facultyImgUrl");
+        const fImgPrevEl = document.getElementById("facultyImgPreview");
+
+        const sNameEl = document.getElementById("studentName");
+        const sRoleEl = document.getElementById("studentRole");
+        const sDescEl = document.getElementById("studentDesc");
+        const sImgUrlEl = document.getElementById("studentImgUrl");
+        const sImgPrevEl = document.getElementById("studentImgPreview");
+
+        if (titleEl) titleEl.value = team.teamTitle || "Meet The Team";
+        if (fNameEl) fNameEl.value = team.facultyName || "Dr. Naveen Ravela";
+        if (fRoleEl) fRoleEl.value = team.facultyRole || "Chief Faculty Coordinator";
+        if (fDescEl) fDescEl.value = team.facultyDesc || "Mentors the department, guides projects and supports innovation.";
+        if (fImgUrlEl) fImgUrlEl.value = team.facultyImage || "assets/council/faculty/chief.jpg";
+        if (fImgPrevEl && team.facultyImage) {
+            fImgPrevEl.src = team.facultyImage.startsWith("http") || team.facultyImage.startsWith("data:")
+                ? team.facultyImage
+                : (team.facultyImage.startsWith("../") ? team.facultyImage : `../${team.facultyImage}`);
+        }
+
+        if (sNameEl) sNameEl.value = team.studentName || "Lead Coordinator";
+        if (sRoleEl) sRoleEl.value = team.studentRole || "Student Coordinator";
+        if (sDescEl) sDescEl.value = team.studentDesc || "Leads department activities, workshops and student teams.";
+        if (sImgUrlEl) sImgUrlEl.value = team.studentImage || "assets/nodp.png";
+        if (sImgPrevEl && team.studentImage) {
+            sImgPrevEl.src = team.studentImage.startsWith("http") || team.studentImage.startsWith("data:")
+                ? team.studentImage
+                : (team.studentImage.startsWith("../") ? team.studentImage : `../${team.studentImage}`);
+        }
+    } catch (e) {
+        console.warn("loadTeamSection error:", e);
+    }
+}
+
+function setupImagePreview(fileInputId, previewImgId, urlInputId) {
+    const fileInput = document.getElementById(fileInputId);
+    const previewImg = document.getElementById(previewImgId);
+    const urlInput = document.getElementById(urlInputId);
+
+    if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (loadEvt) => {
+                    if (previewImg) previewImg.src = loadEvt.target.result;
+                    if (urlInput) urlInput.value = "[Selected local image]";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (urlInput && previewImg) {
+        urlInput.addEventListener("input", (e) => {
+            const val = e.target.value.trim();
+            if (val && !val.startsWith("[")) {
+                previewImg.src = val.startsWith("http") || val.startsWith("data:") ? val : `../${val}`;
+            }
+        });
+    }
+}
+
+async function saveTeamSection() {
+    const saveBtn = document.getElementById("saveTeamSectionBtn");
+    const origText = saveBtn ? saveBtn.textContent : "Save";
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+    }
+
+    try {
+        let facultyImage = document.getElementById("facultyImgUrl").value.trim();
+        const facultyFileInput = document.getElementById("facultyImgFile");
+        const facultyFile = facultyFileInput && facultyFileInput.files ? facultyFileInput.files[0] : null;
+        if (facultyFile) {
+            facultyImage = await CMS.uploadImage(facultyFile, "departments");
+            document.getElementById("facultyImgUrl").value = facultyImage;
+        }
+
+        let studentImage = document.getElementById("studentImgUrl").value.trim();
+        const studentFileInput = document.getElementById("studentImgFile");
+        const studentFile = studentFileInput && studentFileInput.files ? studentFileInput.files[0] : null;
+        if (studentFile) {
+            studentImage = await CMS.uploadImage(studentFile, "departments");
+            document.getElementById("studentImgUrl").value = studentImage;
+        }
+
+        // Clean up if it was left as placeholder
+        if (facultyImage === "[Selected local image]") facultyImage = "assets/council/faculty/chief.jpg";
+        if (studentImage === "[Selected local image]") studentImage = "assets/nodp.png";
+
+        const payload = {
+            teamTitle: document.getElementById("teamHeadingTitle").value.trim() || "Meet The Team",
+            facultyName: document.getElementById("facultyName").value.trim() || "Dr. Naveen Ravela",
+            facultyRole: document.getElementById("facultyRole").value.trim() || "Chief Faculty Coordinator",
+            facultyDesc: document.getElementById("facultyDesc").value.trim(),
+            facultyImage: facultyImage || "assets/council/faculty/chief.jpg",
+            studentName: document.getElementById("studentName").value.trim() || "Lead Coordinator",
+            studentRole: document.getElementById("studentRole").value.trim() || "Student Coordinator",
+            studentDesc: document.getElementById("studentDesc").value.trim(),
+            studentImage: studentImage || "assets/nodp.png"
+        };
+
+        await CMS.saveContent("departmentsTeam", payload);
+        showToast('✅ "Meet The Team" section updated successfully!');
+    } catch (err) {
+        console.error("saveTeamSection error:", err);
+        showToast("Failed to save team section: " + err.message, "error");
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = origText;
+        }
+    }
 }

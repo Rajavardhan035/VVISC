@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <script>
         (function(){
             var t = localStorage.getItem("vviscTheme") || "dark";
@@ -10,7 +11,6 @@
             document.documentElement.setAttribute("data-accent", a);
         })();
     </script>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Management | VVISC Admin Console</title>
 
@@ -32,9 +32,6 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard">
-
-    <!-- Sidebar -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <!-- Sidebar Navigation -->
     <aside id="adminSidebar" class="sidebar">
@@ -71,12 +68,12 @@
 
         <header class="topbar">
             <div>
-                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">&larr; Back to Content Management</a>
                 <h1 style="margin-top:4px;">Contact Page Editor</h1>
                 <p>Manage contact info, office address, map embed, and social handles on contact.html.</p>
             </div>
             <div style="display:flex; gap:10px;">
-                <a href="../contact.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+                <a href="../contact.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page &nearr;</a>
                 <button id="saveContactBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px;">Save Changes</button>
             </div>
         </header>
@@ -85,7 +82,7 @@
 
             <!-- Main Heading Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">📞 Page Heading & Subtitle</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F4DD; Page Heading &amp; Subtitle</h3>
                 
                 <div style="margin-bottom:16px;">
                     <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Page Heading</label>
@@ -100,7 +97,7 @@
 
             <!-- Contact Details Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🏢 Contact Info & Campus Details</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F4CD; Contact Info &amp; Campus Details</h3>
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
                     <div>
@@ -131,7 +128,7 @@
 
             <!-- Social Handles Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🌐 Social Media Handles</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F310; Social Media Handles</h3>
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
                     <div>

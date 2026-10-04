@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security &amp; Audit Logs — VVISC Admin</title>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem("vvisc_admin_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+
+    <style>
+        .audit-table-card {
+            background: var(--card-bg, rgba(30, 41, 59, 0.5));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+            border-radius: 16px;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+        .audit-table th {
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted, #94a3b8);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08));
+            white-space: nowrap;
+        }
+        .audit-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.05));
+            color: var(--text-color, #fff);
+            vertical-align: middle;
+        }
+        .audit-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        .action-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .action-create { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .action-update { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .action-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .action-login { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    </style>
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+            <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+            <div class="sidebar-title">
+                <span>VVISC</span>
+                <small>Admin Console</small>
+            </div>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+            <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+            <a href="audit-logs.html" class="active"><span class="nav-ico" data-icon="shield"></span> Audit Trail</a>
+            <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+            <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+        </nav>
+
+        <div class="theme-toggle-row">
+            <span class="theme-ico ico-sun" data-icon="sun"></span>
+            <label class="theme-switch">
+                <input type="checkbox" class="theme-switch-input">
+                <span class="switch-track"></span>
+            </label>
+            <span class="theme-ico ico-moon" data-icon="moon"></span>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>📜 Security &amp; Audit Trail</h1>
+                <p>Immutable forensic record of all administrative operations, content revisions, and logins.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button id="refreshLogsBtn" class="primary-btn" style="padding: 9px 18px; font-size: 0.85rem;">🔄 Refresh Logs</button>
+                <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
+            </div>
+        </header>
+
+        <!-- Filters -->
+        <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+            <input type="text" id="logSearch" placeholder="🔍 Search logs by admin email or target..." style="flex:1; min-width:240px; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.05)); color:var(--text-color,#fff); font-size:0.88rem;">
+            
+            <select id="logActionFilter" style="padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, #1a2333); color:var(--text-color,#fff); font-size:0.88rem;">
+                <option value="all">All Actions</option>
+                <option value="create">Create</option>
+                <option value="update">Update</option>
+                <option value="delete">Delete</option>
+                <option value="login">Login</option>
+                <option value="toggle">Toggle</option>
+            </select>
+        </div>
+
+        <!-- Table Card -->
+        <section class="audit-table-card">
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Admin User</th>
+                        <th>Action</th>
+                        <th>Target Collection</th>
+                        <th>Document ID</th>
+                        <th>Operation Summary</th>
+                    </tr>
+                </thead>
+                <tbody id="auditTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted, #94a3b8);">
+                            Loading security audit logs...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Firebase Dependencies -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+
+<script src="../firebase-config.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="cms-utils.js"></script>
+<script src="audit-logs.js"></script>
+<script src="logout.js"></script>
+
+</body>
+</html>

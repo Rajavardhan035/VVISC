@@ -1,124 +1,117 @@
-// ======================================
-// VVISC Permissions System
-// ======================================
+// =========================================================
+// VVISC Role-Based Permissions System
+// Enforces 4 Roles: superadmin, admin, content_editor, moderator
+// =========================================================
 
-// -------------------------------
-// Login
-// -------------------------------
-
-function isLoggedIn() {
-
-    return localStorage.getItem("adminLoggedIn") === "true";
-
+function getVerifiedRole() {
+    if (typeof window.getAdminRole === "function") {
+        return window.getAdminRole();
+    }
+    return (localStorage.getItem("adminRole") || "").toLowerCase();
 }
-
-// -------------------------------
-// Current Role
-// -------------------------------
-
-function getRole() {
-
-    return (
-        localStorage.getItem("adminRole") || ""
-    ).toLowerCase();
-
-}
-
-// -------------------------------
-// Admin
-// -------------------------------
-
-function isAdmin() {
-
-    return getRole() === "admin"
-        || getRole() === "superadmin";
-
-}
-
-// -------------------------------
-// Super Admin
-// -------------------------------
 
 function isSuperAdmin() {
-
-    return getRole() === "superadmin";
-
+    return getVerifiedRole() === "superadmin";
 }
 
-// -------------------------------
-// Route Protection
-// -------------------------------
-
-function requireRole(requiredRole) {
-
-    if (!isLoggedIn()) {
-
-        window.location.href = "../login.html";
-
-        return;
-
-    }
-
-    if (
-        requiredRole === "superadmin"
-        && !isSuperAdmin()
-    ) {
-
-        alert("Access Denied.");
-
-        window.location.href = "dashboard.html";
-
-        return;
-
-    }
-
-    if (
-        requiredRole === "admin"
-        && !isAdmin()
-    ) {
-
-        alert("Access Denied.");
-
-        window.location.href = "../login.html";
-
-        return;
-
-    }
-
+function isAdmin() {
+    const r = getVerifiedRole();
+    return r === "admin" || r === "superadmin";
 }
 
-// -------------------------------
-// Hide Super Admin Menu
-// -------------------------------
+function isContentEditor() {
+    const r = getVerifiedRole();
+    return r === "content_editor" || r === "admin" || r === "superadmin";
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+function isModerator() {
+    const r = getVerifiedRole();
+    return r === "moderator" || r === "admin" || r === "superadmin";
+}
 
-    if (!isSuperAdmin()) {
+function hasPermission(required) {
+    const r = getVerifiedRole();
+    if (!r) return false;
+    if (r === "superadmin") return true;
 
-        // Admin Management is superadmin-only.
-        // Settings stays visible to every admin — it now
-        // contains a shared Profile tab, with a separate
-        // System tab that only renders for superadmins.
-        const adminsMenu =
-            document.getElementById("adminsMenu");
-
-        if (adminsMenu)
-            adminsMenu.style.display = "none";
-
+    if (Array.isArray(required)) {
+        return required.some(req => hasPermission(req));
     }
 
-    // Reflect role in the sidebar chip, if present.
+    switch (required) {
+        case "superadmin":
+            return r === "superadmin";
+        case "admin":
+            return r === "admin" || r === "superadmin";
+        case "content_editor":
+            return r === "content_editor" || r === "admin" || r === "superadmin";
+        case "moderator":
+            return r === "moderator" || r === "admin" || r === "superadmin";
+        default:
+            return false;
+    }
+}
+
+// Route Protection function called on page load
+function requireRole(allowedRoles) {
+    const role = getVerifiedRole();
+
+    // Not logged in or no role found
+    if (!role) {
+        window.location.replace("/login.html?error=unauthorized");
+        return;
+    }
+
+    const permitted = hasPermission(allowedRoles);
+    if (!permitted) {
+        console.warn(`Access denied for role '${role}' to section requiring '${JSON.stringify(allowedRoles)}'`);
+        window.location.replace("/admins/dashboard.html?error=permission_denied");
+    }
+}
+
+// Automatically configure Admin Console UI & Sidebar based on verified role
+function applyRoleUiPermissions() {
+    const role = getVerifiedRole();
+    if (!role) return;
+
+    // 1. Reflect role in sidebar chip
     const chip = document.getElementById("roleChip");
-
     if (chip) {
+        const label = chip.querySelector(".chip-label");
+        let displayRole = "Admin";
+        if (role === "superadmin") displayRole = "Super Admin";
+        else if (role === "content_editor") displayRole = "Content Editor";
+        else if (role === "moderator") displayRole = "Moderator";
 
-        const role = isSuperAdmin() ? "Super Admin" : "Admin";
-
-        chip.querySelector(".chip-label").innerText = role;
-
-        if (isSuperAdmin())
-            chip.classList.add("is-super");
-
+        if (label) label.innerText = displayRole;
+        if (role === "superadmin") chip.classList.add("is-super");
+        else chip.classList.remove("is-super");
     }
 
-});
+    // 2. Hide Admins menu for non-superadmins
+    const adminsMenu = document.getElementById("adminsMenu");
+    if (adminsMenu && !isSuperAdmin()) {
+        adminsMenu.style.display = "none";
+    }
+
+    // 3. For Content Editors: hide Testimonials, Messages, Registrations
+    if (role === "content_editor") {
+        const testMenu = document.getElementById("testimonialsMenu");
+        if (testMenu) testMenu.style.display = "none";
+        const msgMenu = document.getElementById("messagesMenu");
+        if (msgMenu) msgMenu.style.display = "none";
+        const regMenu = document.getElementById("registrationsMenu");
+        if (regMenu) regMenu.style.display = "none";
+    }
+
+    // 4. For Moderators: hide Main Content Management & Settings
+    if (role === "moderator") {
+        const contentMenu = document.getElementById("contentMenu");
+        if (contentMenu) contentMenu.style.display = "none";
+        const settingsMenu = document.getElementById("settingsMenu");
+        if (settingsMenu) settingsMenu.style.display = "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", applyRoleUiPermissions);
+window.addEventListener("vvisc:admin-verified", applyRoleUiPermissions);

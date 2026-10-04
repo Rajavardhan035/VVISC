@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VVISC Technical Club - Contact Us</title>
+    <title>VVISC Technical Club - Student Reviews</title>
     <meta name="description"
         content="Get in touch with the VVISC team for collaborations, questions, or joining the club.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -61,27 +61,27 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="index.html" class="logo" data-cursor="HOME">
                 <span class="nav-logo-wrap">
-                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
-                    <span class="nav-logo-pulse"></span>
+                    <img src="assets/logo.png" alt="VVITU IUCEE Logo" class="nav-logo">
                 </span>
-                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+                <span class="logo-text">VVITU <span class="logo-accent">IUCEE</span></span>
             </a>
 
             <div class="nav-links">
 
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
-                <a href="departments.html">Departments</a>
-                <a href="events.html">Events</a>
-                <a href="gallery.html">Gallery</a>
-                <a href="council.html">Council</a>
-                <a href="contact.html">Contact</a>
+                <a href="index.html" data-cursor="OPEN">Home</a>
+                <a href="about.html" data-cursor="OPEN">About</a>
+                <a href="departments.html" data-cursor="OPEN">Departments</a>
+                <a href="projects.html" data-cursor="OPEN">Projects</a>
+                <a href="events.html" data-cursor="OPEN">Events</a>
+                <a href="gallery.html" data-cursor="OPEN">Gallery</a>
+                <a href="council.html" data-cursor="OPEN">Council</a>
+                <a href="contact.html" data-cursor="OPEN">Contact</a>
 
             </div>
 
-            <a href="testimonials.html" class="reviews-highlight">
+            <a href="testimonials.html" class="reviews-highlight active" data-cursor="REVIEWS">
 
                 <span class="review-star">⭐</span>
 
@@ -93,14 +93,36 @@
 
             <div class="nav-actions">
                 <div class="theme-toggle-container">
-                    <span class="theme-label" id="theme-label">Light Mode</span>
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme" data-cursor="THEME">
                         <span class="toggle-icon"></span>
                     </button>
                 </div>
-                <div class="auth-buttons">
-                    <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+                <div class="auth-buttons" id="authContainer">
+                    <!-- Logged Out -->
+                    <a id="loginBtn" class="nav-login-btn" href="login.html" data-cursor="LOGIN">Login</a>
+
+                    <!-- Logged In -->
+                    <div class="user-menu hidden" id="userMenu">
+                        <button class="user-btn" id="userBtn">
+                            <span id="userName">Admin</span>
+                            ▼
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="admins/dashboard.html">📊 Dashboard</a>
+                            <a href="admins/testimonials.html">⭐ Testimonials</a>
+                            <a href="admins/announcements.html">📢 Announcements</a>
+                            <a href="admins/admins.html">👥 Admins</a>
+                            <a href="admins/settings.html">⚙ Settings</a>
+                            <hr>
+                            <button id="logoutBtn">
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <a href="https://vvitguntur.com" target="_blank" rel="noopener noreferrer" class="nav-vvit-brand" data-cursor="VVIT" title="Vasireddy Venkatadri International Technological University">
+                    <img src="assets/vvit-logo.png" alt="VVIT University Logo" class="nav-vvit-logo">
+                </a>
                 <div class="hamburger">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -112,12 +134,13 @@
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="departments.html">Departments</a>
+            <a href="projects.html">Projects</a>
             <a href="events.html">Events</a>
             <a href="gallery.html">Gallery</a>
             <a href="council.html">Council</a>
             <a href="contact.html">Contact</a>
             <a href="testimonials.html">Student Reviews</a>
-            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn">Login</a>
         </div>
         <div class="scroll-progress"></div>
     </nav>
@@ -528,9 +551,129 @@
         </div>
 
     </div>
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        <!-- Unique VVISC Footer -->
+        <!-- Unique VVISC Footer -->
+        <!-- Unique VVISC Footer -->
+    <footer class="vvisc-site-footer">
+        <div class="vvisc-footer-glow" aria-hidden="true"></div>
+        <div class="vvisc-footer-inner">
+            <div class="vvisc-footer-grid">
+
+                <!-- Left Column: Identity & Credential -->
+                <div class="vvisc-footer-col-brand">
+                    <a href="index.html" class="vvisc-footer-brand-lockup" aria-label="VVISC Home">
+                        <div class="vvisc-footer-emblem" aria-hidden="true">
+                            <img src="assets/logo.png" alt="VVISC Logo" class="vvisc-footer-logo-img">
+                        </div>
+                        <div class="vvisc-footer-brand-text">
+                            <span class="vvisc-footer-brand-title">VVISC</span>
+                            <span class="vvisc-footer-brand-tag">STUDENT INNOVATION CHAPTER</span>
+                        </div>
+                    </a>
+                    <p class="vvisc-footer-about-text">
+                        Student innovation and technical community. Where ideas become impact through autonomous robotics, edge intelligence, and disciplined engineering.
+                    </p>
+                    <div class="vvisc-footer-credential">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"></path>
+                        </svg>
+                        <span>Sanctioned Academic &amp; Research Organization</span>
+                    </div>
+                </div>
+
+                <!-- Middle Column: Chapter Navigation (All Website Pages) -->
+                <div class="vvisc-footer-col-nav">
+                    <div class="vvisc-footer-nav-lead">
+                        <div class="vvisc-nav-indicator" aria-hidden="true">
+                            <span class="vvisc-nav-indicator-dot"></span>
+                        </div>
+                        <h4 class="vvisc-footer-heading">CHAPTER NAVIGATION</h4>
+                    </div>
+                    <div class="vvisc-footer-nav-duo">
+                        <ul class="vvisc-footer-link-group">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="departments.html">Departments</a></li>
+                            <li><a href="council.html">Council &amp; Team</a></li>
+                        </ul>
+                        <ul class="vvisc-footer-link-group">
+                            <li><a href="events.html">Events &amp; Workshops</a></li>
+                            <li><a href="gallery.html">Gallery &amp; Archives</a></li>
+                            <li><a href="testimonials.html">Student Testimonials</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column: Connect & Engage -->
+                <div class="vvisc-footer-col-connect">
+                    <div class="vvisc-footer-connect-lead">
+                        <h4 class="vvisc-footer-heading">CONNECT &amp; ENGAGE</h4>
+                    </div>
+                    <ul class="vvisc-footer-social-stack">
+                        <li>
+                            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC GitHub">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">GitHub</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC LinkedIn">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                        <rect x="2" y="9" width="4" height="12"></rect>
+                                        <circle cx="4" cy="4" r="2"></circle>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">LinkedIn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/vvisc_vvitu?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC Instagram">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">Instagram</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:vvisc@vvit.edu.in" class="vvisc-social-item-link" aria-label="Email VVISC">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">Email</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Sub-Bar -->
+            <div class="vvisc-footer-bottom">
+                <p class="vvisc-footer-copy copyright">&copy; 2026 VVISC. All rights reserved.</p>
+                <div class="vvisc-footer-bottom-right">
+                    <span class="vvisc-footer-motto">Heritage Academic Identity &times; Modern Engineering</span>
+                    <button type="button" class="vvisc-footer-scrolltop" id="footerBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" aria-label="Scroll back to top">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </footer>
 

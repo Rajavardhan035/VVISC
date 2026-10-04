@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <script>
         (function(){
             var t = localStorage.getItem("vviscTheme") || "dark";
@@ -10,7 +11,6 @@
             document.documentElement.setAttribute("data-accent", a);
         })();
     </script>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Page Management | VVISC Admin Console</title>
 
@@ -32,9 +32,6 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard">
-
-    <!-- Sidebar -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <!-- Sidebar Navigation -->
     <aside id="adminSidebar" class="sidebar">
@@ -71,12 +68,12 @@
 
         <header class="topbar">
             <div>
-                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">&larr; Back to Content Management</a>
                 <h1 style="margin-top:4px;">About Page Editor</h1>
                 <p>Manage introductory text, vision, mission, and timeline history on about.html.</p>
             </div>
             <div style="display:flex; gap:10px;">
-                <a href="../about.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+                <a href="../about.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page &nearr;</a>
                 <button id="saveAboutBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px;">Save Changes</button>
             </div>
         </header>
@@ -85,7 +82,7 @@
 
             <!-- Overview Section Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">📖 Overview & Introduction</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F4D6; Overview &amp; Introduction</h3>
                 
                 <div style="margin-bottom:16px;">
                     <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Introduction Title</label>
@@ -100,7 +97,7 @@
 
             <!-- Vision & Mission Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🎯 Vision & Mission</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🎯 Vision &amp; Mission</h3>
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
                     <div>
@@ -114,10 +111,57 @@
                 </div>
             </div>
 
+            <!-- 4 Pillar Feature Cards -->
+            <div class="card" style="padding:24px; border-radius:12px;">
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">💎 Four Pillars of VVISC</h3>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div style="background:var(--input-bg); border:1px solid var(--border-color); padding:14px; border-radius:8px;">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 1 Title</label>
+                        <input type="text" id="feat1Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit;" placeholder="Innovation">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 1 Description</label>
+                        <textarea id="feat1Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Building practical solutions..."></textarea>
+                    </div>
+                    <div style="background:var(--input-bg); border:1px solid var(--border-color); padding:14px; border-radius:8px;">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 2 Title</label>
+                        <input type="text" id="feat2Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit;" placeholder="Research">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 2 Description</label>
+                        <textarea id="feat2Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Encouraging students to publish..."></textarea>
+                    </div>
+                    <div style="background:var(--input-bg); border:1px solid var(--border-color); padding:14px; border-radius:8px;">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 3 Title</label>
+                        <input type="text" id="feat3Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit;" placeholder="Leadership">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 3 Description</label>
+                        <textarea id="feat3Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Developing communication..."></textarea>
+                    </div>
+                    <div style="background:var(--input-bg); border:1px solid var(--border-color); padding:14px; border-radius:8px;">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 4 Title</label>
+                        <input type="text" id="feat4Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit;" placeholder="Community">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Pillar 4 Description</label>
+                        <textarea id="feat4Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Connecting students, mentors..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Section Card -->
+            <div class="card" style="padding:24px; border-radius:12px;">
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🚀 Journey Section Heading</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Journey Heading Title</label>
+                        <input type="text" id="journeyTitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Growing Through Innovation">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Journey Subtitle Description</label>
+                        <input type="text" id="journeySubtitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Every milestone reflects our commitment...">
+                    </div>
+                </div>
+            </div>
+
             <!-- Timeline History Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
-                    <h3 style="font-size:1.1rem;">⏳ Timeline & Milestones</h3>
+                    <h3 style="font-size:1.1rem;">⏳ Timeline &amp; Milestones</h3>
                     <button type="button" id="addTimelineBtn" class="secondary-btn" style="padding:6px 14px; font-size:0.85rem;">+ Add Milestone</button>
                 </div>
                 

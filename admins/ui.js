@@ -106,10 +106,10 @@ function showToast(message, type = "success") {
     if (old) old.remove();
 
     const icons = {
-        success: '✓ ',
-        error: '✕ ',
-        warning: '⚠ ',
-        info: 'ℹ '
+        success: '\u2713 ',
+        error: '\u2715 ',
+        warning: '\u26A0 ',
+        info: '\u2139 '
     };
 
     const toast = document.createElement("div");
@@ -175,13 +175,35 @@ function initClock() {
 function initMobileNav() {
     const toggle = document.getElementById("navToggle");
     const sidebar = document.querySelector(".sidebar");
-    const overlay = document.getElementById("sidebarOverlay");
 
     if (!toggle || !sidebar) return;
 
+    // Deduplicate any multiple overlay elements and ensure exactly one overlay on body
+    const allOverlays = document.querySelectorAll(".sidebar-overlay, #sidebarOverlay");
+    for (let i = 1; i < allOverlays.length; i++) {
+        allOverlays[i].remove();
+    }
+
+    let overlay = document.querySelector(".sidebar-overlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "sidebarOverlay";
+        overlay.className = "sidebar-overlay";
+        document.body.appendChild(overlay);
+    }
+
+    // Move sidebar and overlay directly under body to guarantee they are never trapped in a container's stacking context
+    if (sidebar.parentElement && sidebar.parentElement !== document.body) {
+        document.body.appendChild(sidebar);
+    }
+    if (overlay.parentElement && overlay.parentElement !== document.body) {
+        document.body.appendChild(overlay);
+    }
+
     // Inject topbar header for mobile view if not present
-    if (!document.querySelector(".admin-mobile-bar")) {
-        const bar = document.createElement("div");
+    let bar = document.querySelector(".admin-mobile-bar");
+    if (!bar) {
+        bar = document.createElement("div");
         bar.className = "admin-mobile-bar";
         bar.innerHTML = `
             <div class="admin-mobile-brand">
@@ -196,40 +218,64 @@ function initMobileNav() {
     function updateToggleState(isOpen) {
         if (isOpen) {
             sidebar.classList.add("open");
-            if (overlay) overlay.classList.add("show");
+            overlay.classList.add("show");
+            document.body.classList.add("menu-open");
             toggle.setAttribute("aria-expanded", "true");
-            toggle.innerHTML = '<span class="admin-toggle-close">✕</span>';
+            toggle.innerHTML = '<span class="admin-toggle-close" style="font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;">&times;</span>';
         } else {
             sidebar.classList.remove("open");
-            if (overlay) overlay.classList.remove("show");
+            overlay.classList.remove("show");
+            document.body.classList.remove("menu-open");
             toggle.setAttribute("aria-expanded", "false");
             toggle.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>';
         }
     }
 
     toggle.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
         const isOpen = sidebar.classList.contains("open");
         updateToggleState(!isOpen);
     });
 
-    if (overlay) {
-        overlay.addEventListener("click", () => {
-            updateToggleState(false);
-        });
-    }
+    overlay.addEventListener("click", () => {
+        updateToggleState(false);
+    });
 
+    // Automatically detect and mark active nav link
+    const currentFile = window.location.pathname.split("/").pop() || "dashboard.html";
     sidebar.querySelectorAll("nav a").forEach(a => {
-        const navigate = (e) => {
+        const href = a.getAttribute("href");
+        if (href === currentFile || (href === "content-management.html" && currentFile.includes("-management.html"))) {
+            a.classList.add("active");
+        } else {
+            a.classList.remove("active");
+        }
+    });
+
+    // Handle mobile link clicks cleanly (guarantees iOS Safari & Android navigation)
+    sidebar.querySelectorAll("nav a").forEach(a => {
+        a.addEventListener("click", (e) => {
             const href = a.getAttribute("href");
-            if (href && href !== "#") {
+            if (!href || href === "#") {
                 e.preventDefault();
-                e.stopPropagation();
-                window.location.assign(href);
+                updateToggleState(false);
+                return;
             }
-        };
-        a.addEventListener("click", navigate);
-        a.addEventListener("touchend", navigate);
+
+            // If user tapped the page they are already on, simply close the drawer
+            if (href === currentFile) {
+                e.preventDefault();
+                updateToggleState(false);
+                return;
+            }
+
+            // When navigating to another page, navigate directly via window.location.href
+            // Do NOT hide the sidebar synchronously beforehand, which can cause iOS Safari to abort navigation
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = href;
+        });
     });
 }
 

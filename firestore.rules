@@ -1,53 +1,379 @@
 rules_version = '2';
+
+// ===============================================================
+// VVISC IUCEE Student Chapter - Hardened Cloud Firestore Security Rules
+// Project: vvisc-iucee
+// ===============================================================
+//
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: admins
+// Document ID: Firebase Authentication UID (request.auth.uid)
+// Fields:
+//   - role: string ("superadmin" | "admin" | "content_editor" | "moderator")
+//   - active: boolean (true = active, false = disabled)
+//   - email: string (admin email address)
+//   - name: string (full name of admin)
+//   - createdAt: timestamp / string (optional)
+//   - createdBy: string (optional)
+//   - updatedAt: timestamp / string (optional)
+//
+// Collection: websiteContent
+// Document ID: Page/section key (e.g., "home", "about", "contact", "departmentsTeam", "eventsHero", "gallery")
+// Fields:
+//   - Arbitrary CMS key-value content maps defining hero text, stats, descriptions, etc.
+//   - updatedAt: timestamp / string (optional)
+//   - updatedBy: string (optional)
+//
+// Collection: settings & websiteSettings
+// Document ID: Setting key (e.g., "site", "global")
+// Fields:
+//   - Global portal settings, branding, contact details, social links, SEO tags.
+//
+// Collections: events, pastEvents, departments, councilMembers,
+//              galleryAlbums, galleryPhotos, gallery, projects,
+//              achievements, partners, resources
+// Document ID: Auto-generated Firestore ID or slug
+// Fields:
+//   - title / name: string
+//   - description: string (optional)
+//   - active: boolean (optional, true by default)
+//   - displayOrder / order: number (optional)
+//   - imageUrl / profileImage: string (optional)
+//   - createdAt / updatedAt: timestamp / string (optional)
+//
+// Collection: announcements
+// Document ID: Auto-generated Firestore ID
+// Fields:
+//   - title: string (required)
+//   - description: string (required)
+//   - category: string ("general", "event", "high", etc.)
+//   - status: string ("active", "draft", etc.) or active: boolean
+//   - eventDate / eventTime / location / registrationLink: string (optional)
+//   - createdAt / updatedAt: timestamp / string (optional)
+//
+// Collection: testimonials
+// Document ID: Auto-generated Firestore ID
+// Fields:
+//   - name: string (required, 1-100 characters)
+//   - email: string (optional, max 150 characters)
+//   - rating: integer (required, 1 to 5)
+//   - review: string (optional, max 3000 characters)
+//   - department: string (optional, max 100 characters)
+//   - year: string (optional, max 50 characters)
+//   - status: string ("pending" upon submission; "approved" or "rejected" when moderated)
+//   - createdAt: timestamp (optional)
+//
+// Collection: contactMessages
+// Document ID: Auto-generated Firestore ID
+// Fields:
+//   - name: string (required, 1-100 characters)
+//   - email: string (required, 4-150 characters)
+//   - message: string (required, 1-5000 characters)
+//   - phone: string (optional, max 50 characters)
+//   - subject: string (optional, max 200 characters)
+//   - status: string ("new" upon submission)
+//   - createdAt: timestamp (optional)
+//
+// Collection: registrations
+// Document ID: Auto-generated Firestore ID
+// Fields:
+//   - eventId: string (required, 1-100 characters)
+//   - name: string (required, 1-100 characters)
+//   - email: string (required, 4-150 characters)
+//   - phone: string (optional, max 50 characters)
+//   - department: string (optional, max 100 characters)
+//   - rollNumber: string (optional, max 50 characters)
+//   - status: string ("registered" upon submission)
+//   - createdAt: timestamp (optional)
+//
+// Collection: auditLogs
+// Document ID: Auto-generated Firestore ID
+// Fields:
+//   - action: string (required, 1-100 characters)
+//   - performedBy: string (optional, max 200 characters)
+//   - timestamp: timestamp / string (optional)
+//   - details: string / map (optional)
+//   - Strictly immutable: updates and deletions are permanently denied.
+//
+// Collection: media
+// Document ID: Auto-generated Firestore ID or asset key
+// Fields:
+//   - url: string
+//   - fileName: string
+//   - uploadedBy: string
+//   - uploadedAt: timestamp
+//
+// ===============================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper function to check if user is an authenticated admin
-    function isAdmin() {
-      return request.auth != null && 
+
+    // ===============================================================
+    // Helper Functions: Authentication & Role Verification
+    // ===============================================================
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getAdminDoc() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isAdminActive() {
+      return isSignedIn() &&
         exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+        getAdminDoc().data.active == true;
     }
 
-    // Public website content read access (anyone can view active content)
-    match /websiteContent/{document} {
+    function isSuperAdmin() {
+      return isAdminActive() && getAdminDoc().data.role == 'superadmin';
+    }
+
+    function isAdmin() {
+      return isAdminActive() && (
+        getAdminDoc().data.role == 'admin' ||
+        getAdminDoc().data.role == 'superadmin'
+      );
+    }
+
+    function isContentEditor() {
+      return isAdminActive() && (
+        getAdminDoc().data.role == 'content_editor' ||
+        getAdminDoc().data.role == 'admin' ||
+        getAdminDoc().data.role == 'superadmin'
+      );
+    }
+
+    function isModerator() {
+      return isAdminActive() && (
+        getAdminDoc().data.role == 'moderator' ||
+        getAdminDoc().data.role == 'admin' ||
+        getAdminDoc().data.role == 'superadmin'
+      );
+    }
+
+    // ===============================================================
+    // Domain Validation Functions
+    // ===============================================================
+
+    function isValidAdmin(data) {
+      return data.role in ['superadmin', 'admin', 'content_editor', 'moderator'] &&
+        data.active is bool &&
+        data.email is string &&
+        data.email.size() >= 3 &&
+        data.email.size() <= 200 &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 150;
+    }
+
+    function isValidTestimonialSubmission(data) {
+      return data.status == 'pending' &&
+        data.rating is int &&
+        data.rating >= 1 &&
+        data.rating <= 5 &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 100 &&
+        (!('email' in data) || (data.email is string && data.email.size() <= 150)) &&
+        (!('review' in data) || (data.review is string && data.review.size() <= 3000)) &&
+        (!('department' in data) || (data.department is string && data.department.size() <= 100)) &&
+        (!('year' in data) || (data.year is string && data.year.size() <= 50));
+    }
+
+    function isValidTestimonialUpdate(data) {
+      return data.status in [
+        'pending',
+        'approved',
+        'rejected',
+        'pending_admin_request',
+        'approved_admin_request',
+        'rejected_admin_request'
+      ];
+    }
+
+    function isValidContactMessage(data) {
+      return data.status == 'new' &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 100 &&
+        data.email is string &&
+        data.email.size() >= 3 &&
+        data.email.size() <= 150 &&
+        data.message is string &&
+        data.message.size() > 0 &&
+        data.message.size() <= 5000 &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 50)) &&
+        (!('subject' in data) || (data.subject is string && data.subject.size() <= 200));
+    }
+
+    function isValidRegistration(data) {
+      return data.status == 'registered' &&
+        data.eventId is string &&
+        data.eventId.size() > 0 &&
+        data.eventId.size() <= 100 &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 100 &&
+        data.email is string &&
+        data.email.size() >= 3 &&
+        data.email.size() <= 150 &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 50)) &&
+        (!('department' in data) || (data.department is string && data.department.size() <= 100)) &&
+        (!('rollNumber' in data) || (data.rollNumber is string && data.rollNumber.size() <= 50));
+    }
+
+    function isValidAuditLog(data) {
+      return data.action is string &&
+        data.action.size() > 0 &&
+        data.action.size() <= 100 &&
+        (!('performedBy' in data) || (data.performedBy is string && data.performedBy.size() <= 200)) &&
+        (!('details' in data) || (data.details is string && data.details.size() <= 10000));
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // 1. Admin Management Collection
+    // Each doc ID corresponds to the user's Firebase Auth UID.
+    match /admins/{adminId} {
+      allow read: if (isSignedIn() && request.auth.uid == adminId) || isSuperAdmin();
+      allow create: if isSuperAdmin() && isValidAdmin(request.resource.data);
+      allow update: if isSuperAdmin() && isValidAdmin(request.resource.data);
+      allow delete: if isSuperAdmin();
+    }
+
+    // 2. Website Content (CMS Pages & Sections)
+    // Single documents: home, about, contact, departmentsTeam, settings, eventsHero, gallery, etc.
+    match /websiteContent/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update, delete: if isContentEditor();
     }
 
-    match /departments/{deptDoc} {
+    // 3. Settings & Website Settings Collections
+    match /settings/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
-    match /councilMembers/{memberDoc} {
+    match /websiteSettings/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
-    match /events/{eventDoc} {
+    // 4. Public Content Collections
+    // Used by getPublicCollection() and onSnapshot() across public pages.
+    match /events/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update, delete: if isContentEditor();
     }
 
-    match /gallery/{photoDoc} {
+    match /pastEvents/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update, delete: if isContentEditor();
     }
 
-    match /announcements/{announcementDoc} {
+    match /departments/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update, delete: if isContentEditor();
     }
 
-    match /testimonials/{testimonialDoc} {
+    match /councilMembers/{docId} {
       allow read: if true;
-      allow create: if true; // Students can submit testimonials
-      allow update, delete: if request.auth != null;
+      allow create, update, delete: if isContentEditor();
     }
 
-    match /admins/{adminDoc} {
-      allow read, write: if request.auth != null;
+    match /galleryAlbums/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    match /galleryPhotos/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    match /gallery/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    match /projects/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    match /achievements/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    match /partners/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    match /resources/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isContentEditor();
+    }
+
+    // 5. Announcements Collection
+    // Real-time synchronization for notices feed on Home and Events pages.
+    match /announcements/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isModerator() || isContentEditor();
+    }
+
+    // 6. Testimonials Collection
+    // Public read ONLY for approved testimonials; public submissions restricted to pending state.
+    match /testimonials/{docId} {
+      allow read: if (resource.data.status == 'approved') || isModerator();
+      allow create: if isValidTestimonialSubmission(request.resource.data);
+      allow update: if isModerator() && isValidTestimonialUpdate(request.resource.data);
+      allow delete: if isModerator();
+    }
+
+    // 7. Contact Messages Collection
+    // Strictly private: unauthenticated public can submit messages, but only moderators can read.
+    match /contactMessages/{docId} {
+      allow read: if isModerator();
+      allow create: if isValidContactMessage(request.resource.data);
+      allow update, delete: if isModerator();
+    }
+
+    // 8. Event Registrations Collection
+    // Strictly private: participants can submit registrations, only moderators can view/manage.
+    match /registrations/{docId} {
+      allow read: if isModerator();
+      allow create: if isValidRegistration(request.resource.data);
+      allow update, delete: if isModerator();
+    }
+
+    // 9. Audit Logs Collection
+    // Immutable trail: verified admins can create logs; strictly non-modifiable and non-deletable.
+    match /auditLogs/{docId} {
+      allow read: if isAdmin();
+      allow create: if (isContentEditor() || isModerator()) && isValidAuditLog(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // 10. Media Management Collection
+    // Internal assets list accessible to authenticated admins.
+    match /media/{docId} {
+      allow read: if isSignedIn() && isAdminActive();
+      allow create, update, delete: if isContentEditor();
+    }
+
+    // ===============================================================
+    // 11. Catch-all: Deny all other unmatched collections and paths
+    // ===============================================================
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

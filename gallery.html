@@ -8,7 +8,7 @@
     <meta name="description" content="View our gallery of past events, workshops, and student projects.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="apple-touch-icon" href="assets/logo.png">
@@ -19,27 +19,27 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="index.html" class="logo" data-cursor="HOME">
                 <span class="nav-logo-wrap">
-                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
-                    <span class="nav-logo-pulse"></span>
+                    <img src="assets/logo.png" alt="VVITU IUCEE Logo" class="nav-logo">
                 </span>
-                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+                <span class="logo-text">VVITU <span class="logo-accent">IUCEE</span></span>
             </a>
 
             <div class="nav-links">
 
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
-                <a href="departments.html">Departments</a>
-                <a href="events.html">Events</a>
-                <a href="gallery.html">Gallery</a>
-                <a href="council.html">Council</a>
-                <a href="contact.html">Contact</a>
+                <a href="index.html" data-cursor="OPEN">Home</a>
+                <a href="about.html" data-cursor="OPEN">About</a>
+                <a href="departments.html" data-cursor="OPEN">Departments</a>
+                <a href="projects.html" data-cursor="OPEN">Projects</a>
+                <a href="events.html" data-cursor="OPEN">Events</a>
+                <a href="gallery.html" class="active" data-cursor="OPEN">Gallery</a>
+                <a href="council.html" data-cursor="OPEN">Council</a>
+                <a href="contact.html" data-cursor="OPEN">Contact</a>
 
             </div>
 
-            <a href="testimonials.html" class="reviews-highlight">
+            <a href="testimonials.html" class="reviews-highlight" data-cursor="REVIEWS">
 
                 <span class="review-star">⭐</span>
 
@@ -51,14 +51,36 @@
 
             <div class="nav-actions">
                 <div class="theme-toggle-container">
-                    <span class="theme-label" id="theme-label">Light Mode</span>
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme" data-cursor="THEME">
                         <span class="toggle-icon"></span>
                     </button>
                 </div>
-                <div class="auth-buttons">
-                    <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+                <div class="auth-buttons" id="authContainer">
+                    <!-- Logged Out -->
+                    <a id="loginBtn" class="nav-login-btn" href="login.html" data-cursor="LOGIN">Login</a>
+
+                    <!-- Logged In -->
+                    <div class="user-menu hidden" id="userMenu">
+                        <button class="user-btn" id="userBtn">
+                            <span id="userName">Admin</span>
+                            ▼
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="admins/dashboard.html">📊 Dashboard</a>
+                            <a href="admins/testimonials.html">⭐ Testimonials</a>
+                            <a href="admins/announcements.html">📢 Announcements</a>
+                            <a href="admins/admins.html">👥 Admins</a>
+                            <a href="admins/settings.html">⚙ Settings</a>
+                            <hr>
+                            <button id="logoutBtn">
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <a href="https://vvitguntur.com" target="_blank" rel="noopener noreferrer" class="nav-vvit-brand" data-cursor="VVIT" title="Vasireddy Venkatadri International Technological University">
+                    <img src="assets/vvit-logo.png" alt="VVIT University Logo" class="nav-vvit-logo">
+                </a>
                 <div class="hamburger">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -70,12 +92,13 @@
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="departments.html">Departments</a>
+            <a href="projects.html">Projects</a>
             <a href="events.html">Events</a>
             <a href="gallery.html">Gallery</a>
             <a href="council.html">Council</a>
             <a href="contact.html">Contact</a>
             <a href="testimonials.html">Student Reviews</a>
-            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn">Login</a>
         </div>
         <div class="scroll-progress"></div>
     </nav>
@@ -93,18 +116,18 @@
 
             <div class="gallery-hero-content reveal-up">
 
-                <span class="section-tag">
+                <span class="section-tag" id="galleryHeroTag">
                     📸 VVISC MEMORIES
                 </span>
 
-                <h1>
+                <h1 id="galleryHeroHeading">
 
                     Every Event
                     <span>Creates a Story.</span>
 
                 </h1>
 
-                <p>
+                <p id="galleryHeroSubtitle">
 
                     Explore unforgettable moments from hackathons,
                     workshops, seminars, competitions, industrial visits,
@@ -137,24 +160,24 @@
             3D PHOTO SHOWCASE
     ======================================-->
 
-    <section class="photo-showcase">
+    <section class="photo-showcase" id="photoShowcaseSection">
 
         <div class="container">
 
             <div class="section-title">
 
-                <span class="section-tag">
+                <span class="section-tag" id="showcaseTag">
                     🌟 HIGHLIGHTS
                 </span>
 
-                <h2>
+                <h2 id="showcaseHeading">
 
                     Experience Our
                     <span>Best Moments</span>
 
                 </h2>
 
-                <p>
+                <p id="showcaseSubtitle">
 
                     A collection of the most memorable moments
                     from VVISC events.
@@ -163,40 +186,7 @@
 
             </div>
 
-            <div class="carousel-3d">
-
-                <span style="--i:1">
-                    <img src="assets/9.png">
-                </span>
-
-                <span style="--i:2">
-                    <img src="assets/1.png">
-                </span>
-
-                <span style="--i:3">
-                    <img src="assets/10.png">
-                </span>
-
-                <span style="--i:4">
-                    <img src="assets/4.png">
-                </span>
-
-                <span style="--i:5">
-                    <img src="assets/5.png">
-                </span>
-
-                <span style="--i:6">
-                    <img src="assets/6.png">
-                </span>
-
-                <span style="--i:7">
-                    <img src="assets/7.png">
-                </span>
-
-                <span style="--i:8">
-                    <img src="assets/8.png">
-                </span>
-
+            <div class="carousel-3d" id="galleryCarousel3d">
             </div>
 
         </div>
@@ -213,18 +203,18 @@
 
             <div class="section-title reveal-up">
 
-                <span class="section-tag">
+                <span class="section-tag" id="galleryAlbumsTag">
                     📂 EVENT ALBUMS
                 </span>
 
-                <h2>
+                <h2 id="galleryAlbumsHeading">
 
                     Explore Our
                     <span>Memories</span>
 
                 </h2>
 
-                <p>
+                <p id="galleryAlbumsSubtitle">
 
                     Browse photographs from our flagship events,
                     workshops, competitions and student activities.
@@ -233,140 +223,8 @@
 
             </div>
 
-            <div class="album-grid">
-
-                <!-- Album 1 -->
-
-                <div class="album-card reveal-up">
-
-                    <img src="assets/AI-Bootcamp.png" alt="AI Bootcamp">
-
-                    <div class="album-overlay">
-
-                        <span>AI Bootcamp</span>
-
-                        <h3>Artificial Intelligence Bootcamp</h3>
-
-                        <p>120 Photos</p>
-
-                        <a href="#bootcamp-gallery">
-                            Open Album →
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- Album 2 -->
-
-                <div class="album-card reveal-up delay-100">
-
-                    <img src="assets/hackathon.png" alt="Hackathon">
-
-                    <div class="album-overlay">
-
-                        <span>Hackathon</span>
-
-                        <h3>Annual Hackathon</h3>
-
-                        <p>210 Photos</p>
-
-                        <a href="#hackathon-gallery">
-                            Open Album →
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- Album 3 -->
-
-                <div class="album-card reveal-up delay-200">
-
-                    <img src="assets/Ai-summit.png" alt="Workshop">
-
-                    <div class="album-overlay">
-
-                        <span>Workshop</span>
-
-                        <h3>Technical Workshops</h3>
-
-                        <p>150 Photos</p>
-
-                        <a href="#workshop-gallery">
-                            Open Album →
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- Album 4 -->
-
-                <div class="album-card reveal-up delay-300">
-
-                    <img src="assets/1.png" alt="Seminar">
-
-                    <div class="album-overlay">
-
-                        <span>Seminars</span>
-
-                        <h3>Guest Talks & Seminars</h3>
-
-                        <p>95 Photos</p>
-
-                        <a href="#seminar-gallery">
-                            Open Album →
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- Album 5 -->
-
-                <div class="album-card reveal-up delay-400">
-
-                    <img src="assets/2.png" alt="Competition">
-
-                    <div class="album-overlay">
-
-                        <span>Competition</span>
-
-                        <h3>Technical Competitions</h3>
-
-                        <p>180 Photos</p>
-
-                        <a href="#competition-gallery">
-                            Open Album →
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- Album 6 -->
-
-                <div class="album-card reveal-up delay-500">
-
-                    <img src="assets/4.png" alt="Club Activities">
-
-                    <div class="album-overlay">
-
-                        <span>Club Life</span>
-
-                        <h3>VVISC Activities</h3>
-
-                        <p>260 Photos</p>
-
-                        <a href="#club-gallery">
-                            Open Album →
-                        </a>
-
-                    </div>
-
-                </div>
-
+            <div class="album-grid" id="galleryAlbumGrid">
+                <!-- Dynamically populated from active photos in Firestore -->
             </div>
 
         </div>
@@ -376,22 +234,22 @@
             PHOTO GALLERY
     ======================================-->
 
-    <section class="photo-gallery">
+    <section class="photo-gallery" id="photoGallery">
 
         <div class="container">
 
             <div class="section-title reveal-up">
 
-                <span class="section-tag">
+                <span class="section-tag" id="galleryPhotosTag">
                     📸 PHOTO COLLECTION
                 </span>
 
-                <h2>
+                <h2 id="galleryPhotosHeading">
                     Moments We
                     <span>Captured</span>
                 </h2>
 
-                <p>
+                <p id="galleryPhotosSubtitle">
                     Every photograph reflects learning, teamwork,
                     innovation and unforgettable memories.
                 </p>
@@ -400,257 +258,16 @@
 
             <!-- Filter -->
 
-            <div class="gallery-filter">
+            <div class="gallery-filter" id="galleryCategoryFilter">
 
-                <button class="gallery-filter-btn active">All</button>
-                <button class="gallery-filter-btn">Hackathon</button>
-                <button class="gallery-filter-btn">Workshop</button>
-                <button class="gallery-filter-btn">Bootcamp</button>
-                <button class="gallery-filter-btn">Seminar</button>
-                <button class="gallery-filter-btn">Competition</button>
+                <button class="gallery-filter-btn active" data-category="all">All</button>
 
             </div>
 
             <!-- Masonry Gallery -->
 
-            <div class="masonry-gallery">
-
-                <div class="gallery-item large">
-                    <img src="assets/5.png">
-                    <div class="gallery-overlay">
-                        <h3>AI Bootcamp</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="assets/6.png">
-                    <div class="gallery-overlay">
-                        <h3>Hackathon</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item tall">
-                    <img src="assets/7.png">
-                    <div class="gallery-overlay">
-                        <h3>Workshop</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="assets/8.png">
-                    <div class="gallery-overlay">
-                        <h3>Seminar</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item wide">
-                    <img src="assets/9.png">
-                    <div class="gallery-overlay">
-                        <h3>Competition</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="assets/10.png">
-                    <div class="gallery-overlay">
-                        <h3>Club Activity</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item tall">
-                    <img src="assets/1.png">
-                    <div class="gallery-overlay">
-                        <h3>Guest Lecture</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="assets/2.png">
-                    <div class="gallery-overlay">
-                        <h3>Team Work</h3>
-                        <span>View Photo</span>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-    <!-- =====================================
-            AI BOOTCAMP GALLERY
-    ====================================== -->
-
-    <section class="album-section" id="bootcamp-gallery">
-
-        <div class="container">
-
-            <div class="album-header">
-                <h2>🤖 Artificial Intelligence Bootcamp</h2>
-                <p>Highlights from our AI & Machine Learning Bootcamp.</p>
-            </div>
-
-            <div class="masonry-gallery">
-
-                <div class="gallery-item"><img src="assets/1.png"></div>
-                <div class="gallery-item"><img src="assets/2.png"></div>
-                <div class="gallery-item"><img src="assets/3.png"></div>
-                <div class="gallery-item"><img src="assets/4.png"></div>
-                <div class="gallery-item"><img src="assets/5.png"></div>
-                <div class="gallery-item"><img src="assets/6.png"></div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-            HACKATHON GALLERY
-    ====================================== -->
-
-    <section class="album-section" id="hackathon-gallery">
-
-        <div class="container">
-
-            <div class="album-header">
-                <h2>💻 Annual Hackathon</h2>
-                <p>48 hours of coding, teamwork and innovation.</p>
-            </div>
-
-            <div class="masonry-gallery">
-
-                <div class="gallery-item"><img src="assets/7.png"></div>
-                <div class="gallery-item"><img src="assets/8.png"></div>
-                <div class="gallery-item"><img src="assets/9.png"></div>
-                <div class="gallery-item"><img src="assets/10.png"></div>
-                <div class="gallery-item"><img src="assets/1.png"></div>
-                <div class="gallery-item"><img src="assets/2.png"></div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-            WORKSHOP GALLERY
-    ====================================== -->
-
-    <section class="album-section" id="workshop-gallery">
-
-        <div class="container">
-
-            <div class="album-header">
-                <h2>🛠 Technical Workshops</h2>
-                <p>Hands-on learning sessions conducted by experts.</p>
-            </div>
-
-            <div class="masonry-gallery">
-
-                <div class="gallery-item"><img src="assets/3.png"></div>
-                <div class="gallery-item"><img src="assets/4.png"></div>
-                <div class="gallery-item"><img src="assets/5.png"></div>
-                <div class="gallery-item"><img src="assets/6.png"></div>
-                <div class="gallery-item"><img src="assets/7.png"></div>
-                <div class="gallery-item"><img src="assets/8.png"></div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-            SEMINAR GALLERY
-    ====================================== -->
-
-    <section class="album-section" id="seminar-gallery">
-
-        <div class="container">
-
-            <div class="album-header">
-                <h2>🎤 Guest Talks & Seminars</h2>
-                <p>Inspirational sessions from industry professionals.</p>
-            </div>
-
-            <div class="masonry-gallery">
-
-                <div class="gallery-item"><img src="assets/9.png"></div>
-                <div class="gallery-item"><img src="assets/10.png"></div>
-                <div class="gallery-item"><img src="assets/1.png"></div>
-                <div class="gallery-item"><img src="assets/2.png"></div>
-                <div class="gallery-item"><img src="assets/3.png"></div>
-                <div class="gallery-item"><img src="assets/4.png"></div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-            COMPETITION GALLERY
-    ====================================== -->
-
-    <section class="album-section" id="competition-gallery">
-
-        <div class="container">
-
-            <div class="album-header">
-                <h2>🏆 Technical Competitions</h2>
-                <p>Competitions, coding contests and technical challenges.</p>
-            </div>
-
-            <div class="masonry-gallery">
-
-                <div class="gallery-item"><img src="assets/5.png"></div>
-                <div class="gallery-item"><img src="assets/6.png"></div>
-                <div class="gallery-item"><img src="assets/7.png"></div>
-                <div class="gallery-item"><img src="assets/8.png"></div>
-                <div class="gallery-item"><img src="assets/9.png"></div>
-                <div class="gallery-item"><img src="assets/10.png"></div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-            CLUB GALLERY
-    ====================================== -->
-
-    <section class="album-section" id="club-gallery">
-
-        <div class="container">
-
-            <div class="album-header">
-                <h2>🎉 Club Activities</h2>
-                <p>Celebrations, meetings, outreach programs and memories.</p>
-            </div>
-
-            <div class="masonry-gallery">
-
-                <div class="gallery-item"><img src="assets/1.png"></div>
-                <div class="gallery-item"><img src="assets/2.png"></div>
-                <div class="gallery-item"><img src="assets/3.png"></div>
-                <div class="gallery-item"><img src="assets/4.png"></div>
-                <div class="gallery-item"><img src="assets/5.png"></div>
-                <div class="gallery-item"><img src="assets/6.png"></div>
-
+            <div class="masonry-gallery" id="galleryMasonry">
+                <!-- Dynamically populated from active photos in Firestore -->
             </div>
 
         </div>
@@ -694,7 +311,7 @@
                         📷
                     </div>
 
-                    <h3 class="gallery-counter" data-target="2500">0</h3>
+                    <h3 class="gallery-counter" id="statPhotosCount" data-target="2500">2500</h3>
 
                     <span>Total Photos</span>
 
@@ -706,7 +323,7 @@
                         🎉
                     </div>
 
-                    <h3 class="gallery-counter" data-target="85">0</h3>
+                    <h3 class="gallery-counter" id="statEventsCount" data-target="85">85</h3>
 
                     <span>Events Covered</span>
 
@@ -718,7 +335,7 @@
                         👨‍🎓
                     </div>
 
-                    <h3 class="gallery-counter" data-target="5000">0</h3>
+                    <h3 class="gallery-counter" id="statParticipantsCount" data-target="5000">5000</h3>
 
                     <span>Participants</span>
 
@@ -730,9 +347,9 @@
                         🏆
                     </div>
 
-                    <h3 class="gallery-counter" data-target="120">0</h3>
+                    <h3 class="gallery-counter" id="statMemoriesCount" data-target="120">120</h3>
 
-                    <span>Awards Won</span>
+                    <span>Awards &amp; Milestones</span>
 
                 </div>
 
@@ -790,9 +407,129 @@
     </section>
   
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        <!-- Unique VVISC Footer -->
+        <!-- Unique VVISC Footer -->
+        <!-- Unique VVISC Footer -->
+    <footer class="vvisc-site-footer">
+        <div class="vvisc-footer-glow" aria-hidden="true"></div>
+        <div class="vvisc-footer-inner">
+            <div class="vvisc-footer-grid">
+
+                <!-- Left Column: Identity & Credential -->
+                <div class="vvisc-footer-col-brand">
+                    <a href="index.html" class="vvisc-footer-brand-lockup" aria-label="VVISC Home">
+                        <div class="vvisc-footer-emblem" aria-hidden="true">
+                            <img src="assets/logo.png" alt="VVISC Logo" class="vvisc-footer-logo-img">
+                        </div>
+                        <div class="vvisc-footer-brand-text">
+                            <span class="vvisc-footer-brand-title">VVISC</span>
+                            <span class="vvisc-footer-brand-tag">STUDENT INNOVATION CHAPTER</span>
+                        </div>
+                    </a>
+                    <p class="vvisc-footer-about-text">
+                        Student innovation and technical community. Where ideas become impact through autonomous robotics, edge intelligence, and disciplined engineering.
+                    </p>
+                    <div class="vvisc-footer-credential">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"></path>
+                        </svg>
+                        <span>Sanctioned Academic &amp; Research Organization</span>
+                    </div>
+                </div>
+
+                <!-- Middle Column: Chapter Navigation (All Website Pages) -->
+                <div class="vvisc-footer-col-nav">
+                    <div class="vvisc-footer-nav-lead">
+                        <div class="vvisc-nav-indicator" aria-hidden="true">
+                            <span class="vvisc-nav-indicator-dot"></span>
+                        </div>
+                        <h4 class="vvisc-footer-heading">CHAPTER NAVIGATION</h4>
+                    </div>
+                    <div class="vvisc-footer-nav-duo">
+                        <ul class="vvisc-footer-link-group">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="departments.html">Departments</a></li>
+                            <li><a href="council.html">Council &amp; Team</a></li>
+                        </ul>
+                        <ul class="vvisc-footer-link-group">
+                            <li><a href="events.html">Events &amp; Workshops</a></li>
+                            <li><a href="gallery.html">Gallery &amp; Archives</a></li>
+                            <li><a href="testimonials.html">Student Testimonials</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column: Connect & Engage -->
+                <div class="vvisc-footer-col-connect">
+                    <div class="vvisc-footer-connect-lead">
+                        <h4 class="vvisc-footer-heading">CONNECT &amp; ENGAGE</h4>
+                    </div>
+                    <ul class="vvisc-footer-social-stack">
+                        <li>
+                            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC GitHub">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">GitHub</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC LinkedIn">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                        <rect x="2" y="9" width="4" height="12"></rect>
+                                        <circle cx="4" cy="4" r="2"></circle>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">LinkedIn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/vvisc_vvitu?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC Instagram">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">Instagram</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:vvisc@vvit.edu.in" class="vvisc-social-item-link" aria-label="Email VVISC">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">Email</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Sub-Bar -->
+            <div class="vvisc-footer-bottom">
+                <p class="vvisc-footer-copy copyright">&copy; 2026 VVISC. All rights reserved.</p>
+                <div class="vvisc-footer-bottom-right">
+                    <span class="vvisc-footer-motto">Heritage Academic Identity &times; Modern Engineering</span>
+                    <button type="button" class="vvisc-footer-scrolltop" id="footerBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" aria-label="Scroll back to top">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </footer>
     <div class="gallery-lightbox" id="galleryLightbox">

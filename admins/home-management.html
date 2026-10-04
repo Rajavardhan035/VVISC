@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <script>
         (function(){
             var t = localStorage.getItem("vviscTheme") || "dark";
@@ -10,7 +11,6 @@
             document.documentElement.setAttribute("data-accent", a);
         })();
     </script>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page Management | VVISC Admin Console</title>
 
@@ -32,9 +32,6 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard">
-
-    <!-- Sidebar -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <!-- Sidebar Navigation -->
     <aside id="adminSidebar" class="sidebar">
@@ -71,12 +68,12 @@
 
         <header class="topbar">
             <div>
-                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">&larr; Back to Content Management</a>
                 <h1 style="margin-top:4px;">Home Page Editor</h1>
                 <p>Edit hero titles, subtitle, CTAs, achievements impact section, and preview sections on index.html.</p>
             </div>
             <div style="display:flex; gap:10px;">
-                <a href="../index.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+                <a href="../index.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page &nearr;</a>
                 <button id="saveHomeBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px;">Save Changes</button>
             </div>
         </header>
@@ -85,7 +82,7 @@
 
             <!-- Hero Section Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🚀 HERO SECTION</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F680; HERO SECTION</h3>
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
                     <div>
@@ -125,7 +122,7 @@
 
             <!-- Quick Stat Summaries -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">📊 QUICK STAT COUNTERS</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F4CA; QUICK STAT COUNTERS</h3>
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:16px;">
                     <div>
@@ -147,16 +144,189 @@
                 </div>
             </div>
 
+            <!-- EVENT HIGHLIGHTS SECTION ("DON'T MISS THESE") -->
+            <div class="card" id="eventHighlightsSection" style="padding:24px; border-radius:12px; border-left: 4px solid var(--accent-color);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin:0;">✨ EVENT HIGHLIGHTS SECTION ("DON'T MISS THESE")</h3>
+                        <p style="font-size:0.85rem; opacity:0.8; margin-top:4px; margin-bottom:0;">Manage the section titles, tags, and 3 floating 3D event highlight cards displayed on the home page.</p>
+                    </div>
+                    <span style="font-size:0.75rem; background:rgba(99, 102, 241, 0.15); color:var(--accent-color); padding:4px 10px; border-radius:12px; font-weight:600;">Home Section</span>
+                </div>
+
+                <!-- Section Header Text -->
+                <div style="display:grid; grid-template-columns: 1fr 1.2fr 2fr; gap:16px; margin-bottom:20px;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Eyebrow Tag</label>
+                        <input type="text" id="highlightsEyebrow" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Don't Miss These">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Main Heading</label>
+                        <input type="text" id="highlightsTitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Event Highlights">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Subtitle Description</label>
+                        <input type="text" id="highlightsSubtitle" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. The moments worth circling on your calendar.">
+                    </div>
+                </div>
+
+                <!-- Featured Event Linkage -->
+                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); padding:16px; border-radius:10px; margin-bottom:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <label style="display:block; font-size:0.9rem; font-weight:700; color:var(--accent-color); margin-bottom:4px;">🎯 Spotlight Event (Linked to Events Collection)</label>
+                            <span style="font-size:0.8rem; color:var(--text-secondary);">Select an active event from your live database to spotlight automatically:</span>
+                        </div>
+                        <select id="featuredEventSelect" class="form-input" style="min-width:280px; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-size:0.85rem;">
+                            <option value="">-- Manual Entry (Custom Fields Below) --</option>
+                            <option value="auto">Auto (Next Upcoming Event)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- The 3 Cards -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+                    <!-- Card 1 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.95rem; color:#ff7e5f; display:flex; align-items:center; gap:6px;">
+                            <span>⚡</span> Card 1 (Flagship / Orange)
+                        </h5>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Card Tag</label>
+                                <input type="text" id="highlight1Tag" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Flagship">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Badge Style</label>
+                                <select id="highlight1Badge" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                                    <option value="badge-flagship">Flagship (Lightning / Orange)</option>
+                                    <option value="badge-workshop">Workshop (Chip / Purple)</option>
+                                    <option value="badge-symposium">Symposium (Globe / Blue)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Event Title</label>
+                            <input type="text" id="highlight1Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Spring Hackathon">
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Description</label>
+                            <textarea id="highlight1Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Date</label>
+                                <input type="text" id="highlight1Date" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Oct 15">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Location</label>
+                                <input type="text" id="highlight1Location" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Main Auditorium">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Click Link (Optional)</label>
+                            <input type="text" id="highlight1Link" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="events.html">
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.95rem; color:#c084fc; display:flex; align-items:center; gap:6px;">
+                            <span>💡</span> Card 2 (Workshop / Purple)
+                        </h5>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Card Tag</label>
+                                <input type="text" id="highlight2Tag" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Workshop">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Badge Style</label>
+                                <select id="highlight2Badge" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                                    <option value="badge-workshop">Workshop (Chip / Purple)</option>
+                                    <option value="badge-flagship">Flagship (Lightning / Orange)</option>
+                                    <option value="badge-symposium">Symposium (Globe / Blue)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Event Title</label>
+                            <input type="text" id="highlight2Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. AI/ML Bootcamp">
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Description</label>
+                            <textarea id="highlight2Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Date</label>
+                                <input type="text" id="highlight2Date" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Nov 02">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Location</label>
+                                <input type="text" id="highlight2Location" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Lab Block C">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Click Link (Optional)</label>
+                            <input type="text" id="highlight2Link" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="events.html">
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h5 style="margin-bottom:12px; font-size:0.95rem; color:#38bdf8; display:flex; align-items:center; gap:6px;">
+                            <span>🌐</span> Card 3 (Symposium / Blue)
+                        </h5>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Card Tag</label>
+                                <input type="text" id="highlight3Tag" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Symposium">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Badge Style</label>
+                                <select id="highlight3Badge" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;">
+                                    <option value="badge-symposium">Symposium (Globe / Blue)</option>
+                                    <option value="badge-flagship">Flagship (Lightning / Orange)</option>
+                                    <option value="badge-workshop">Workshop (Chip / Purple)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Event Title</label>
+                            <input type="text" id="highlight3Title" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Tech Symposium">
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Description</label>
+                            <textarea id="highlight3Desc" rows="2" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Card description..."></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Date</label>
+                                <input type="text" id="highlight3Date" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Dec 10">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Location</label>
+                                <input type="text" id="highlight3Location" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. Seminar Hall">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; opacity:0.8; display:block; margin-bottom:4px;">Click Link (Optional)</label>
+                            <input type="text" id="highlight3Link" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="events.html">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- ACHIEVEMENTS & IMPACT SECTION EDITOR -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">🏆 OUR ACHIEVEMENTS & IMPACT SECTION</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x1F3C6; OUR ACHIEVEMENTS &amp; IMPACT SECTION</h3>
                 <p style="font-size:0.85rem; opacity:0.8; margin-bottom:20px;">Manage section text, title, button, and all 6 achievement impact cards shown on the home page.</p>
 
                 <!-- Section Text & Title -->
                 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
                     <div>
                         <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Eyebrow Subtitle</label>
-                        <input type="text" id="impactEyebrow" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. ● OUR ACHIEVEMENTS">
+                        <input type="text" id="impactEyebrow" class="form-input" style="width:100%; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="e.g. &#x25CF; OUR ACHIEVEMENTS">
                     </div>
                     <div>
                         <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Title Line 1</label>
@@ -190,7 +360,7 @@
 
                     <!-- Card 1 -->
                     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
-                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 1: Events & Hackathons</h5>
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">&#x1F4CC; Card 1: Events &amp; Hackathons</h5>
                         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
                             <input type="text" id="card1Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 50+)">
                             <input type="text" id="card1Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Events Organized)">
@@ -201,7 +371,7 @@
 
                     <!-- Card 2 -->
                     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
-                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 2: Volunteers & Leads</h5>
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">&#x1F4CC; Card 2: Volunteers &amp; Leads</h5>
                         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
                             <input type="text" id="card2Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 40+)">
                             <input type="text" id="card2Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Active Volunteers)">
@@ -212,7 +382,7 @@
 
                     <!-- Card 3 -->
                     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
-                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 3: Achievements & Awards</h5>
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">&#x1F4CC; Card 3: Achievements &amp; Awards</h5>
                         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
                             <input type="text" id="card3Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 20+)">
                             <input type="text" id="card3Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. National Wins)">
@@ -223,7 +393,7 @@
 
                     <!-- Card 4 -->
                     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
-                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 4: Research & Papers</h5>
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">&#x1F4CC; Card 4: Research &amp; Papers</h5>
                         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
                             <input type="text" id="card4Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 30+)">
                             <input type="text" id="card4Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Research Papers)">
@@ -234,7 +404,7 @@
 
                     <!-- Card 5 -->
                     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
-                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 5: Student Community</h5>
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">&#x1F4CC; Card 5: Student Community</h5>
                         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
                             <input type="text" id="card5Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 500+)">
                             <input type="text" id="card5Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Community Members)">
@@ -245,7 +415,7 @@
 
                     <!-- Card 6 -->
                     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:16px; border-radius:10px;">
-                        <h5 style="margin-bottom:12px; font-size:0.9rem;">📌 Card 6: Industry Mentorship</h5>
+                        <h5 style="margin-bottom:12px; font-size:0.9rem;">&#x1F4CC; Card 6: Industry Mentorship</h5>
                         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
                             <input type="text" id="card6Number" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Count (e.g. 15+)">
                             <input type="text" id="card6Title" class="form-input" style="padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Title (e.g. Expert Mentors)">
@@ -259,7 +429,7 @@
 
             <!-- About Section Preview Card -->
             <div class="card" style="padding:24px; border-radius:12px;">
-                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">ℹ️ ABOUT SECTION PREVIEW</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">&#x2139;&#xFE0F; ABOUT SECTION PREVIEW</h3>
                 
                 <div style="margin-bottom:16px;">
                     <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Title</label>

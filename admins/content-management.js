@@ -55,7 +55,28 @@ async function loadCardStats() {
         if (el) el.textContent = `${photos.length} Photos`;
     } catch (e) {}
 
-    // 5. Check Timestamps for Single Docs
+    // 5. Projects Count
+    try {
+        const projects = await CMS.getCollection("projects");
+        const el = document.getElementById("projectsCount");
+        if (el) el.textContent = `${projects.length} Projects`;
+    } catch (e) {}
+
+    // 6. Inquiries Count
+    try {
+        const msgs = await db.collection("contactMessages").where("status", "==", "new").get();
+        const el = document.getElementById("inquiriesCount");
+        if (el) el.textContent = `${msgs.size} New Inquiries`;
+    } catch (e) {}
+
+    // 7. Registrations Count
+    try {
+        const regs = await db.collection("registrations").get();
+        const el = document.getElementById("registrationsCount");
+        if (el) el.textContent = `${regs.size} Registrations`;
+    } catch (e) {}
+
+    // 8. Check Timestamps for Single Docs
     updateDocTime("home", "homeUpdated");
     updateDocTime("about", "aboutUpdated");
     updateDocTime("contact", "contactUpdated");

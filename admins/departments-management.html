@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <script>
         (function(){
             var t = localStorage.getItem("vviscTheme") || "dark";
@@ -10,7 +11,6 @@
             document.documentElement.setAttribute("data-accent", a);
         })();
     </script>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Management | VVISC Admin Console</title>
 
@@ -32,9 +32,6 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard">
-
-    <!-- Sidebar -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <!-- Sidebar Navigation -->
     <aside id="adminSidebar" class="sidebar">
@@ -71,12 +68,13 @@
 
         <header class="topbar">
             <div>
-                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">← Back to Content Management</a>
+                <a href="content-management.html" style="color:var(--accent-color); text-decoration:none; font-size:0.85rem; font-weight:600;">&larr; Back to Content Management</a>
                 <h1 style="margin-top:4px;">Department Management</h1>
                 <p>Edit department content, responsibilities, skills, and stats rendered on departments.html.</p>
             </div>
-            <div style="display:flex; gap:10px;">
-                <a href="../departments.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page ↗</a>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <a href="../departments.html" target="_blank" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">Preview Page &nearr;</a>
+                <a href="#meetTeamEditor" class="secondary-btn" style="padding:10px 16px; text-decoration:none; border-radius:8px;">👥 Edit "Meet The Team"</a>
                 <button id="addDeptBtn" class="primary-btn" style="padding:10px 20px; border-radius:8px;">+ Add Department</button>
             </div>
         </header>
@@ -86,12 +84,115 @@
             <!-- Loaded dynamically -->
         </div>
 
+        <!-- ========================================================
+             Meet The Team Leadership Section Management
+        ======================================================== -->
+        <section id="meetTeamEditor" class="card" style="margin-top:35px; padding:24px; border-radius:14px; border:1px solid var(--border-color); background:var(--card-bg);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:14px; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                <div>
+                    <h2 style="font-size:1.25rem; margin:0; display:flex; align-items:center; gap:8px;">
+                        👥 "Meet The Team" Section Editor
+                    </h2>
+                    <p style="margin:4px 0 0 0; font-size:0.85rem; opacity:0.8;">
+                        Configure the Faculty Coordinator and Student Lead cards displayed at the bottom of departments.html.
+                    </p>
+                </div>
+                <button type="button" id="saveTeamSectionBtn" class="primary-btn" style="padding:10px 22px; border-radius:8px; font-weight:600; cursor:pointer;">
+                    💾 Save Team Section
+                </button>
+            </div>
+
+            <form id="teamSectionForm" style="display:grid; gap:20px;">
+                <!-- Section Heading -->
+                <div>
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Section Heading Title</label>
+                    <input type="text" id="teamHeadingTitle" class="form-input" style="width:100%; max-width:400px; padding:10px; border-radius:8px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Meet The Team" value="Meet The Team">
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
+                    
+                    <!-- Faculty Coordinator Card Editor -->
+                    <div style="padding:20px; border-radius:10px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02);">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+                            <span style="font-size:1.4rem;">👨‍🏫</span>
+                            <h3 style="margin:0; font-size:1.05rem;">Faculty Coordinator Card</h3>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Full Name *</label>
+                                <input type="text" id="facultyName" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Dr. Naveen Ravela">
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Role / Designation</label>
+                                <input type="text" id="facultyRole" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Chief Faculty Coordinator">
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Bio / Description</label>
+                                <textarea id="facultyDesc" rows="3" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Mentors the department, guides projects and supports innovation."></textarea>
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Coordinator Photo</label>
+                                <div style="display:flex; gap:12px; align-items:center;">
+                                    <img id="facultyImgPreview" src="../assets/council/faculty/chief.jpg" alt="Faculty Preview" style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); flex-shrink:0;">
+                                    <div style="flex:1;">
+                                        <input type="text" id="facultyImgUrl" class="form-input" style="width:100%; padding:6px 8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-size:0.8rem; margin-bottom:6px;" placeholder="Image URL / Path">
+                                        <input type="file" id="facultyImgFile" accept="image/*" style="font-size:0.75rem; color:inherit;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Coordinator Card Editor -->
+                    <div style="padding:20px; border-radius:10px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02);">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+                            <span style="font-size:1.4rem;">🎓</span>
+                            <h3 style="margin:0; font-size:1.05rem;">Student Coordinator Card</h3>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Full Name *</label>
+                                <input type="text" id="studentName" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Lead Coordinator">
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Role / Designation</label>
+                                <input type="text" id="studentRole" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="Student Coordinator">
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Bio / Description</label>
+                                <textarea id="studentDesc" rows="3" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-family:inherit;" placeholder="Leads department activities, workshops and student teams."></textarea>
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Coordinator Photo</label>
+                                <div style="display:flex; gap:12px; align-items:center;">
+                                    <img id="studentImgPreview" src="../assets/nodp.png" alt="Student Preview" style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); flex-shrink:0;">
+                                    <div style="flex:1;">
+                                        <input type="text" id="studentImgUrl" class="form-input" style="width:100%; padding:6px 8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit; font-size:0.8rem; margin-bottom:6px;" placeholder="Image URL / Path">
+                                        <input type="file" id="studentImgFile" accept="image/*" style="font-size:0.75rem; color:inherit;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
         <!-- Add/Edit Department Modal -->
         <div id="deptModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
             <div class="card" style="width:100%; max-width:650px; max-height:90vh; overflow-y:auto; padding:24px; border-radius:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
                     <h3 id="modalTitle">Edit Department</h3>
-                    <button type="button" id="closeModalBtn" style="background:none; border:none; color:inherit; font-size:1.4rem; cursor:pointer;">✕</button>
+                    <button type="button" id="closeModalBtn" style="background:none; border:none; color:inherit; font-size:1.4rem; cursor:pointer;">&times;</button>
                 </div>
 
                 <form id="deptForm" style="display:grid; gap:14px;">
@@ -108,7 +209,7 @@
                         </div>
                         <div>
                             <label style="font-size:0.8rem; font-weight:600;">Icon Emoji</label>
-                            <input type="text" id="deptIcon" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="💻">
+                            <input type="text" id="deptIcon" class="form-input" style="width:100%; padding:8px; border-radius:6px; background:var(--input-bg); border:1px solid var(--border-color); color:inherit;" placeholder="&#x1F4BB;">
                         </div>
                     </div>
 

@@ -17,7 +17,11 @@ const CMS = {
         try {
             const doc = await db.collection("websiteContent").doc(docKey).get();
             if (doc.exists) {
-                return { ...fallbackData, ...doc.data(), ...localData };
+                const cloudData = doc.data();
+                try {
+                    localStorage.setItem("vvisc_cms_" + docKey, JSON.stringify(cloudData));
+                } catch (e) {}
+                return { ...fallbackData, ...localData, ...cloudData };
             }
         } catch (err) {
             console.warn(`CMS getContent warning for ${docKey}:`, err);
@@ -25,11 +29,14 @@ const CMS = {
         return { ...fallbackData, ...localData };
     },
 
-    async saveContent(docKey, data) {
+    async saveContent(docKey, data, options = {}) {
+        const adminEmail = localStorage.getItem("adminEmail") || (firebase.auth().currentUser && firebase.auth().currentUser.email) || "admin@vvisc.net";
+        const adminName = localStorage.getItem("adminName") || (firebase.auth().currentUser && firebase.auth().currentUser.displayName) || "Admin";
+
         const payload = {
             ...data,
             updatedAt: new Date().toISOString(),
-            updatedBy: localStorage.getItem("adminEmail") || localStorage.getItem("adminName") || "Admin"
+            updatedBy: adminEmail
         };
 
         try {
@@ -42,6 +49,16 @@ const CMS = {
                 updatedAt: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
             };
             await db.collection("websiteContent").doc(docKey).set(fsPayload, { merge: true });
+
+            // Create revision snapshot
+            if (options.createRevision !== false) {
+                this.saveRevision("websiteContent", docKey, data);
+            }
+
+            // Record audit log
+            this.logAudit("UPDATE", "websiteContent", docKey, `Updated page content for ${docKey}`, {
+                fields: Object.keys(data)
+            });
         } catch (err) {
             console.warn(`Firestore saveContent permission notice for ${docKey} (saved locally):`, err);
         }
@@ -53,16 +70,9 @@ const CMS = {
     // --------------------------------------------------
     async getCollection(colName, options = {}) {
         let localList = [];
-        let localMap = new Map();
         try {
             const raw = localStorage.getItem("vvisc_col_" + colName);
-            if (raw) {
-                localList = JSON.parse(raw);
-                localList.forEach(item => {
-                    if (item.id) localMap.set(item.id, item);
-                    if (item.slug) localMap.set(item.slug, item);
-                });
-            }
+            if (raw) localList = JSON.parse(raw);
         } catch (e) {}
 
         try {
@@ -74,22 +84,13 @@ const CMS = {
             const results = [];
             if (!snapshot.empty) {
                 snapshot.forEach(doc => {
-                    const fsData = { id: doc.id, ...doc.data() };
-                    const localItem = localMap.get(doc.id) || localMap.get(fsData.slug);
-                    if (localItem) {
-                        results.push({ ...fsData, ...localItem });
-                        localMap.delete(doc.id);
-                        if (fsData.slug) localMap.delete(fsData.slug);
-                    } else {
-                        results.push(fsData);
-                    }
+                    results.push({ id: doc.id, ...doc.data() });
                 });
-                // Append remaining local items
-                localMap.forEach(item => {
-                    if (!results.some(r => r.id === item.id || (r.slug && r.slug === item.slug))) {
-                        results.push(item);
-                    }
-                });
+
+                // Update local storage cache with live cloud data
+                try {
+                    localStorage.setItem("vvisc_col_" + colName, JSON.stringify(results));
+                } catch (e) {}
 
                 if (options.orderBy) {
                     const key = options.orderBy;
@@ -124,45 +125,59 @@ const CMS = {
         return localList;
     },
 
-    async saveDoc(colName, docId, data) {
+    async saveDoc(colName, docId, data, options = {}) {
+        const adminEmail = localStorage.getItem("adminEmail") || (firebase.auth().currentUser && firebase.auth().currentUser.email) || "admin@vvisc.net";
+        const adminName = localStorage.getItem("adminName") || (firebase.auth().currentUser && firebase.auth().currentUser.displayName) || "Admin";
+
         const payload = {
             ...data,
             updatedAt: new Date().toISOString(),
-            updatedBy: localStorage.getItem("adminEmail") || localStorage.getItem("adminName") || "Admin"
+            updatedBy: adminEmail
         };
 
-        const targetId = docId || ("local_" + Date.now());
-        payload.id = targetId;
+        let targetId = docId;
 
-        // Local storage update
-        try {
-            let localList = [];
-            const raw = localStorage.getItem("vvisc_col_" + colName);
-            if (raw) localList = JSON.parse(raw);
-            const idx = localList.findIndex(item => item.id === targetId);
-            if (idx >= 0) localList[idx] = { ...localList[idx], ...payload };
-            else localList.push(payload);
-            localStorage.setItem("vvisc_col_" + colName, JSON.stringify(localList));
-        } catch (e) {}
-
+        // Save directly to Firestore cloud first!
         try {
             const fsPayload = {
                 ...payload,
                 updatedAt: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
             };
             delete fsPayload.id;
-            if (!docId) {
+
+            const isNew = !targetId || targetId.startsWith("local_");
+            if (isNew) {
                 fsPayload.createdAt = firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString();
                 const newDocRef = await db.collection(colName).add(fsPayload);
-                return newDocRef.id;
+                targetId = newDocRef.id;
             } else {
-                await db.collection(colName).doc(docId).set(fsPayload, { merge: true });
-                return docId;
+                await db.collection(colName).doc(targetId).set(fsPayload, { merge: true });
             }
+
+            // Record audit log
+            this.logAudit(isNew ? "CREATE" : "UPDATE", colName, targetId, `${isNew ? "Created" : "Updated"} document in ${colName} (${targetId})`, {
+                fields: Object.keys(data),
+                title: data.name || data.title || data.eventName || ""
+            });
         } catch (err) {
-            console.warn(`Firestore saveDoc permission notice for ${colName}/${targetId} (saved locally):`, err);
-            return targetId;
+            console.error(`Firestore saveDoc error for ${colName}/${targetId}:`, err);
+            if (!targetId) targetId = "local_" + Date.now();
         }
+
+        payload.id = targetId;
+
+        // Update local storage cache
+        try {
+            let localList = [];
+            const raw = localStorage.getItem("vvisc_col_" + colName);
+            if (raw) localList = JSON.parse(raw);
+            const idx = localList.findIndex(item => item.id === targetId || (docId && item.id === docId));
+            if (idx >= 0) localList[idx] = { ...localList[idx], ...payload };
+            else localList.push(payload);
+            localStorage.setItem("vvisc_col_" + colName, JSON.stringify(localList));
+        } catch (e) {}
+
+        return targetId;
     },
 
     async deleteDoc(colName, docId) {
@@ -176,6 +191,7 @@ const CMS = {
 
         try {
             await db.collection(colName).doc(docId).delete();
+            this.logAudit("DELETE", colName, docId, `Deleted document from ${colName} (${docId})`);
         } catch (err) {
             console.warn(`Firestore deleteDoc notice for ${colName}/${docId}:`, err);
         }
@@ -183,46 +199,198 @@ const CMS = {
     },
 
     // --------------------------------------------------
-    // 3. Image Upload Helper (Storage / Base64 Fallback)
+    // Audit Logging Helper
+    // --------------------------------------------------
+    async logAudit(action, colName, docId, summary, details = {}) {
+        try {
+            const user = firebase.auth && firebase.auth().currentUser;
+            const adminEmail = (user && user.email) || localStorage.getItem("adminEmail") || "admin@vvisc.net";
+            const adminName = (user && user.displayName) || localStorage.getItem("adminName") || "Admin";
+
+            const logEntry = {
+                action: action || "ACTION",
+                collection: colName || "general",
+                documentId: String(docId || ""),
+                summary: summary || `${action} on ${colName}`,
+                performedBy: adminEmail,
+                details: typeof details === "string" ? details : JSON.stringify(details || {}),
+                timestamp: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
+            };
+
+            await db.collection("auditLogs").add(logEntry);
+        } catch (e) {
+            console.info("Audit log note:", e.message || e);
+        }
+    },
+
+    // --------------------------------------------------
+    // Content Revisions / Snapshot Helper
+    // --------------------------------------------------
+    async saveRevision(colName, docId, contentSnapshot) {
+        try {
+            const user = firebase.auth && firebase.auth().currentUser;
+            const adminEmail = (user && user.email) || localStorage.getItem("adminEmail") || "admin@vvisc.net";
+            await db.collection("auditLogs").add({
+                action: "REVISION",
+                collection: colName,
+                documentId: String(docId),
+                summary: `Snapshot for ${colName}/${docId}`,
+                snapshot: contentSnapshot,
+                userEmail: adminEmail,
+                timestamp: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
+            });
+        } catch (e) {
+            console.warn("Save revision warning:", e);
+        }
+    },
+
+    // --------------------------------------------------
+    // Media Library Tracker
+    // --------------------------------------------------
+    async recordMediaUpload(mediaData) {
+        try {
+            const user = firebase.auth && firebase.auth().currentUser;
+            const adminEmail = (user && user.email) || localStorage.getItem("adminEmail") || "admin@vvisc.net";
+            const entry = {
+                url: mediaData.url,
+                fileName: mediaData.fileName || "image.jpg",
+                folder: mediaData.folder || "cms",
+                size: mediaData.size || 0,
+                mimeType: mediaData.mimeType || "image/jpeg",
+                uploadedAt: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+                uploadedBy: adminEmail
+            };
+            await db.collection("media").add(entry);
+        } catch (e) {
+            console.warn("Media registry warning:", e);
+        }
+    },
+
+    // Compatibility aliases for collection item CRUD and file handling
+    async saveCollectionItem(colName, docId, data) {
+        return this.saveDoc(colName, docId, data);
+    },
+
+    async deleteCollectionItem(colName, docId) {
+        return this.deleteDoc(colName, docId);
+    },
+
+    async fileToBase64(file) {
+        return this.uploadImage(file, "gallery");
+    },
+
+    // --------------------------------------------------
+    // 3. Image Upload Helper (Storage / Auto-Compressed Fallback)
     // --------------------------------------------------
     async uploadImage(file, folder = "cms") {
         if (!file) return null;
 
-        // Size check (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            throw new Error("File size exceeds 5MB limit. Please choose a smaller image.");
-        }
-
-        const readAsDataURL = (f) => new Promise((resolve, reject) => {
+        // Helper to compress an image file to a lightweight dataURL (< 50KB)
+        const compressImage = (f) => new Promise((resolve) => {
             const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (err) => reject(err);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const maxDim = 460;
+                    let w = img.naturalWidth || img.width;
+                    let h = img.naturalHeight || img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w >= h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, w, h);
+                    resolve(canvas.toDataURL("image/jpeg", 0.78));
+                };
+                img.onerror = () => resolve(e.target.result);
+                img.src = e.target.result;
+            };
+            reader.onerror = () => resolve("assets/nodp.png");
             reader.readAsDataURL(f);
         });
 
-        // Try Firebase Storage with 3s timeout first if available
+        let uploadedUrl = null;
+
+        // 1. Try Firebase Storage with 5s timeout first if available
         try {
             if (firebase.storage && typeof firebase.storage === "function") {
                 const uploadPromise = (async () => {
                     const storageRef = firebase.storage().ref();
-                    const fileName = `${folder}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+                    const fileName = `${folder}/${Date.now()}_${(file.name || "img").replace(/[^a-zA-Z0-9.-]/g, "_")}`;
                     const fileRef = storageRef.child(fileName);
                     const snapshot = await fileRef.put(file);
                     return await snapshot.ref.getDownloadURL();
                 })();
 
                 const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("Storage timeout")), 3000)
+                    setTimeout(() => reject(new Error("Storage timeout")), 5000)
                 );
 
-                return await Promise.race([uploadPromise, timeoutPromise]);
+                uploadedUrl = await Promise.race([uploadPromise, timeoutPromise]);
             }
         } catch (err) {
-            console.warn("Firebase Storage upload notice (falling back to instant base64):", err);
+            console.warn("Storage upload notice (using optimized image format):", err);
         }
 
-        // Base64 DataURL Fallback (Instant success guaranteed)
-        return await readAsDataURL(file);
+        // 2. High-efficiency compressed dataURL fallback (Guaranteed Firestore safe, ~35KB)
+        if (!uploadedUrl) {
+            uploadedUrl = await compressImage(file);
+        }
+
+        // 3. Register media in media collection
+        if (uploadedUrl) {
+            this.recordMediaUpload({
+                url: uploadedUrl,
+                fileName: file.name || "image.jpg",
+                folder: folder,
+                size: file.size || 0,
+                mimeType: file.type || "image/jpeg"
+            });
+        }
+
+        return uploadedUrl;
+    },
+
+    // Helper to ensure any existing dataUrl or image string is compressed (< 50KB)
+    compressDataUrl(dataUrl, maxDim = 460, quality = 0.78) {
+        return new Promise((resolve) => {
+            if (!dataUrl || typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
+                return resolve(dataUrl);
+            }
+            if (dataUrl.length < 50000) {
+                return resolve(dataUrl);
+            }
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let w = img.naturalWidth || img.width;
+                let h = img.naturalHeight || img.height;
+                if (w > maxDim || h > maxDim) {
+                    if (w >= h) {
+                        h = Math.round((h * maxDim) / w);
+                        w = maxDim;
+                    } else {
+                        w = Math.round((w * maxDim) / h);
+                        h = maxDim;
+                    }
+                }
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL("image/jpeg", quality));
+            };
+            img.onerror = () => resolve(dataUrl);
+            img.src = dataUrl;
+        });
     },
 
     // --------------------------------------------------
@@ -254,7 +422,35 @@ const CMS = {
                 aboutTitle: "Empowering Next-Gen Engineers",
                 aboutDescription: "VVISC IUCEE Student Chapter provides a vibrant platform for technology enthusiasts to collaborate on real-world projects, attend technical workshops, hackathons, and industry mentorship sessions.",
                 featuredSectionHeading: "Featured Events & Activities",
-                featuredSectionSubtitle: "Participate in hands-on workshops, challenges, and hackathons organized by VVISC."
+                featuredSectionSubtitle: "Participate in hands-on workshops, challenges, and hackathons organized by VVISC.",
+
+                highlightsEyebrow: "Don't Miss These",
+                highlightsTitle: "Event Highlights",
+                highlightsSubtitle: "The moments worth circling on your calendar.",
+
+                highlight1Tag: "Flagship",
+                highlight1Badge: "badge-flagship",
+                highlight1Title: "Spring Hackathon",
+                highlight1Desc: "48 hours. One idea. Real impact. Our biggest build event of the year.",
+                highlight1Date: "Oct 15",
+                highlight1Location: "Main Auditorium",
+                highlight1Link: "events.html",
+
+                highlight2Tag: "Workshop",
+                highlight2Badge: "badge-workshop",
+                highlight2Title: "AI/ML Bootcamp",
+                highlight2Desc: "Hands-on neural networks and computer vision, taught by our top performers.",
+                highlight2Date: "Nov 02",
+                highlight2Location: "Lab Block C",
+                highlight2Link: "events.html",
+
+                highlight3Tag: "Symposium",
+                highlight3Badge: "badge-symposium",
+                highlight3Title: "Tech Symposium",
+                highlight3Desc: "Guest speakers, live demos, and networking with industry alumni.",
+                highlight3Date: "Dec 10",
+                highlight3Location: "Seminar Hall",
+                highlight3Link: "events.html"
             });
 
             // 2. About Page Seed
@@ -408,10 +604,10 @@ const CMS = {
             // 6. Seed Council Members
             const initialCouncil = [
                 {
-                    name: "Dr. Faculty Mentor",
+                    name: "Dr. Naveen Ravela",
+                    memberType: "Chief Faculty",
                     role: "Chief Faculty Coordinator",
-                    department: "AI & ML Department",
-                    memberType: "Faculty",
+                    department: "Mech Department",
                     description: "Passionate educator dedicated to mentoring students in innovation, research and leadership.",
                     profileImage: "assets/council/faculty/chief.jpg",
                     email: "faculty@vvit.net",
@@ -421,29 +617,172 @@ const CMS = {
                     active: true
                 },
                 {
-                    name: "Student Lead",
-                    role: "President / Student President",
-                    department: "Executive Council",
-                    memberType: "Student",
-                    description: "Leading VVISC vision, team coordination, and inter-departmental collaboration.",
-                    profileImage: "assets/nodp.png",
-                    email: "president@vvisc.net",
+                    name: "Dr. Faculty Member 1",
+                    memberType: "Faculty Coordinator",
+                    role: "Faculty Coordinator",
+                    department: "Computer Science",
+                    description: "Mentoring student technical teams and research projects.",
+                    profileImage: "assets/council/faculty/faculty1.jpg",
+                    email: "faculty1@vvit.net",
                     linkedin: "#",
-                    github: "#",
+                    github: "",
                     displayOrder: 2,
                     active: true
                 },
                 {
-                    name: "Vice President",
+                    name: "Dr. Faculty Member 2",
+                    memberType: "Faculty Coordinator",
+                    role: "Faculty Coordinator",
+                    department: "Information Technology",
+                    description: "Guiding workshops and innovation activities.",
+                    profileImage: "assets/council/faculty/faculty2.jpg",
+                    email: "faculty2@vvit.net",
+                    linkedin: "#",
+                    github: "",
+                    displayOrder: 3,
+                    active: true
+                },
+                {
+                    name: "Dr. Faculty Member 3",
+                    memberType: "Faculty Coordinator",
+                    role: "Faculty Coordinator",
+                    department: "Electronics & Communication",
+                    description: "Supporting leadership and student development.",
+                    profileImage: "assets/council/faculty/faculty3.jpg",
+                    email: "faculty3@vvit.net",
+                    linkedin: "#",
+                    github: "",
+                    displayOrder: 4,
+                    active: true
+                },
+                {
+                    name: "Soniya K",
+                    memberType: "Student Leader",
+                    role: "President",
+                    department: "Executive Council",
+                    description: "Leads the entire council, coordinates departments and represents VVISC.",
+                    profileImage: "assets/nodp.png",
+                    email: "president@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 5,
+                    active: true
+                },
+                {
+                    name: "Yeshitha B",
+                    memberType: "Student Leader",
                     role: "Vice President",
                     department: "Executive Council",
-                    memberType: "Student",
-                    description: "Overseeing operations, student engagement, and strategic execution.",
+                    description: "Supports the President, oversees departments and manages council operations.",
                     profileImage: "assets/nodp.png",
                     email: "vp@vvisc.net",
                     linkedin: "#",
                     github: "#",
-                    displayOrder: 3,
+                    displayOrder: 6,
+                    active: true
+                },
+                {
+                    name: "Abid Sk",
+                    memberType: "Student Leader",
+                    role: "Secretary",
+                    department: "Executive Council",
+                    description: "Maintains records, meeting minutes and official documentation.",
+                    profileImage: "assets/nodp.png",
+                    email: "secretary@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 7,
+                    active: true
+                },
+                {
+                    name: "Lalith B",
+                    memberType: "Student Leader",
+                    role: "Treasurer",
+                    department: "Executive Council",
+                    description: "Manages finances, sponsorship budgets and expenditures.",
+                    profileImage: "assets/nodp.png",
+                    email: "treasurer@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 8,
+                    active: true
+                },
+                {
+                    name: "Harshitha Ch",
+                    memberType: "Student Leader",
+                    role: "Research & Development Co-ordinator",
+                    department: "Research & Development",
+                    description: "Oversees research and development initiatives, coordinates projects and ensures alignment with organizational goals.",
+                    profileImage: "assets/nodp.png",
+                    email: "rnd@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 9,
+                    active: true
+                },
+                {
+                    name: "Rajavardhan P",
+                    memberType: "Student Leader",
+                    role: "Digital Infrastructure Co-ordinator",
+                    department: "Digital Infrastructure",
+                    description: "Manages digital infrastructure, including networks, servers, and IT systems.",
+                    profileImage: "assets/nodp.png",
+                    email: "digital@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 10,
+                    active: true
+                },
+                {
+                    name: "Harika K",
+                    memberType: "Student Leader",
+                    role: "Public Relations Co-ordinator",
+                    department: "Public Relations",
+                    description: "Manages public relations, media outreach, and communication strategies to enhance the organization's image.",
+                    profileImage: "assets/nodp.png",
+                    email: "pr@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 11,
+                    active: true
+                },
+                {
+                    name: "Praveena B",
+                    memberType: "Student Leader",
+                    role: "Operations Co-ordinator",
+                    department: "Operations",
+                    description: "Manages operations, logistics, and ensures smooth execution of events and activities.",
+                    profileImage: "assets/nodp.png",
+                    email: "operations@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 12,
+                    active: true
+                },
+                {
+                    name: "Nishitha M",
+                    memberType: "Student Leader",
+                    role: "Strategic Planning & Content Development Co-ordinator",
+                    department: "Strategic Planning",
+                    description: "Manages strategic planning and content development for the organization.",
+                    profileImage: "assets/nodp.png",
+                    email: "strategy@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 13,
+                    active: true
+                },
+                {
+                    name: "Abhishek B",
+                    memberType: "Student Leader",
+                    role: "Media & Visual Arts Co-ordinator",
+                    department: "Media & Visual Arts",
+                    description: "Manages public relations, media outreach, and communication strategies to enhance the organization's image.",
+                    profileImage: "assets/nodp.png",
+                    email: "media@vvisc.net",
+                    linkedin: "#",
+                    github: "#",
+                    displayOrder: 14,
                     active: true
                 }
             ];

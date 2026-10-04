@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Management | VVISC Admin Console</title>
     <script>
         (function(){
             var t = localStorage.getItem("vviscTheme") || "dark";
@@ -10,9 +13,6 @@
             document.documentElement.setAttribute("data-accent", a);
         })();
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Management | VVISC Admin Console</title>
 
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="dashboard.css">
@@ -32,9 +32,6 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard">
-
-    <!-- Sidebar -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <!-- Sidebar Navigation -->
     <aside id="adminSidebar" class="sidebar">
@@ -75,7 +72,7 @@
                 <p>Manage all public pages, sections, departments, team members, and settings in real-time.</p>
             </div>
             <div style="display:flex; align-items:center; gap:12px;">
-                <button id="seedDataBtn" class="primary-btn" style="padding: 8px 16px; font-size: 0.85rem; background: var(--card-bg, rgba(255,255,255,0.08)); border:1px solid var(--border-color);">🌱 Seed Defaults</button>
+                <button id="seedDataBtn" class="primary-btn" style="padding: 8px 16px; font-size: 0.85rem; background: var(--card-bg, rgba(255,255,255,0.08)); border:1px solid var(--border-color);">&#x1F331; Seed Defaults</button>
                 <div class="console-clock"><span class="live-dot"></span><span id="consoleClock"></span></div>
             </div>
         </header>
@@ -90,12 +87,16 @@
                         <span class="badge" style="background:rgba(99, 102, 241, 0.15); color:var(--accent-color); padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Main Page</span>
                         <span class="updated-at" id="homeUpdated" style="font-size:0.75rem; opacity:0.6;">Loading...</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🏠 Home Page</h3>
-                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Hero title, description, CTA buttons, stats counters, section headings.</p>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F3E0; Home Page</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:12px;">Hero title, <strong>Event Highlights ("Don't Miss These")</strong>, quick stats counters, and achievements impact cards.</p>
+                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,126,95,0.12); color:#ff7e5f; padding:4px 10px; border-radius:6px; font-size:0.78rem; font-weight:600; margin-bottom:12px;">
+                        <span>✨</span> Includes Event Highlights Editor
+                    </div>
                 </div>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <a href="home-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Edit Content</a>
-                    <a href="../index.html" target="_blank" class="secondary-btn" style="padding:10px 14px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Preview</a>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+                    <a href="home-management.html" class="primary-btn" style="flex:1; min-width:130px; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Edit Home Page</a>
+                    <a href="home-management.html#eventHighlightsSection" class="secondary-btn" style="padding:10px 12px; font-size:0.85rem; text-decoration:none; border-radius:8px; color:var(--accent-color); font-weight:600;">✨ Highlights</a>
+                    <a href="../index.html" target="_blank" class="secondary-btn" style="padding:10px 12px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Preview</a>
                 </div>
             </div>
 
@@ -106,7 +107,7 @@
                         <span class="badge" style="background:rgba(99, 102, 241, 0.15); color:var(--accent-color); padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Page Content</span>
                         <span class="updated-at" id="aboutUpdated" style="font-size:0.75rem; opacity:0.6;">Loading...</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📖 About Page</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F4D6; About Page</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Introduction, Vision, Mission, Objectives, and Timeline items.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
@@ -122,12 +123,13 @@
                         <span class="badge" style="background:rgba(34, 197, 94, 0.15); color:#22c55e; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="deptCount">0 Departments</span>
                         <span class="updated-at" id="deptUpdated" style="font-size:0.75rem; opacity:0.6;">Live</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🧪 Department Management</h3>
-                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Add, edit, enable/disable, or reorder VVISC technical and non-technical teams.</p>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F9EA; Department Management</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Add, edit, enable/disable, or reorder VVISC departments, and configure the "Meet The Team" leadership cards.</p>
                 </div>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <a href="departments-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Teams</a>
-                    <a href="../departments.html" target="_blank" class="secondary-btn" style="padding:10px 14px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Preview</a>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:15px;">
+                    <a href="departments-management.html" class="primary-btn" style="flex:1; min-width:130px; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Depts</a>
+                    <a href="departments-management.html#meetTeamEditor" class="secondary-btn" style="padding:10px 12px; font-size:0.85rem; text-decoration:none; border-radius:8px; color:var(--accent-color); font-weight:600;">👥 Meet The Team</a>
+                    <a href="../departments.html" target="_blank" class="secondary-btn" style="padding:10px 12px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Preview</a>
                 </div>
             </div>
 
@@ -138,11 +140,11 @@
                         <span class="badge" style="background:rgba(234, 179, 8, 0.15); color:#eab308; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="councilCount">0 Members</span>
                         <span class="updated-at" id="councilUpdated" style="font-size:0.75rem; opacity:0.6;">Live</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">👥 Council / Team</h3>
-                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Faculty mentors, student leads, coordinators, and core council members.</p>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F465; Council / Team</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Faculty mentors, student leads, coordinators & interactive profile photo adjustment studio.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
-                    <a href="council-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Council</a>
+                    <a href="council-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Council & Photos</a>
                     <a href="../council.html" target="_blank" class="secondary-btn" style="padding:10px 14px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Preview</a>
                 </div>
             </div>
@@ -154,7 +156,7 @@
                         <span class="badge" style="background:rgba(236, 72, 153, 0.15); color:#ec4899; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="eventsCount">0 Events</span>
                         <span class="updated-at" id="eventsUpdated" style="font-size:0.75rem; opacity:0.6;">Live</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📅 Events & Workshops</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F4C5; Events & Workshops</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Publish upcoming hackathons, past events, registration links, and posters.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
@@ -170,7 +172,7 @@
                         <span class="badge" style="background:rgba(14, 165, 233, 0.15); color:#0ea5e9; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="galleryCount">0 Photos</span>
                         <span class="updated-at" id="galleryUpdated" style="font-size:0.75rem; opacity:0.6;">Live</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🖼️ Gallery Management</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F5BC;&#xFE0F; Gallery Management</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Upload event photos, set titles, descriptions, and filter categories.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
@@ -186,7 +188,7 @@
                         <span class="badge" style="background:rgba(99, 102, 241, 0.15); color:var(--accent-color); padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Page Content</span>
                         <span class="updated-at" id="contactUpdated" style="font-size:0.75rem; opacity:0.6;">Loading...</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📞 Contact Info & Maps</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F4DE; Contact Info & Maps</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Edit email, phone, office hours, address, map link, and social handles.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
@@ -202,7 +204,7 @@
                         <span class="badge" style="background:rgba(168, 85, 247, 0.15); color:#a855f7; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Submissions</span>
                         <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">⭐ Student Testimonials</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x2B50; Student Testimonials</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Approve or decline student reviews submitted on the public website.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
@@ -218,23 +220,143 @@
                         <span class="badge" style="background:rgba(239, 68, 68, 0.15); color:#ef4444; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Updates</span>
                         <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📢 Announcements</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x1F4E2; Announcements</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Post updates, notifications, and banners displayed across pages.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">
                     <a href="announcements.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Announcements</a>
                 </div>
             </div>
+
+            <!-- 10. Technical Projects -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(99, 102, 241, 0.15); color:var(--accent-color); padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="projectsCount">Live</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🚀 Technical Projects</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Manage research prototypes, software applications, robotics systems, and GitHub repositories.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="projects-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Projects</a>
+                    <a href="../projects.html" target="_blank" class="secondary-btn" style="padding:10px 14px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Preview</a>
+                </div>
             </div>
 
-            <!-- 10. Website Settings -->
+            <!-- 11. Contact Inquiries -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(16, 185, 129, 0.15); color:#10b981; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="inquiriesCount">Live</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📬 Contact Inquiries</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">View and respond to inquiries submitted via the public contact form.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="contact-messages.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">View Inquiries</a>
+                </div>
+            </div>
+
+            <!-- 12. Event Registrations -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(236, 72, 153, 0.15); color:#ec4899; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;" id="registrationsCount">Live</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📥 Event Registrations</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Student registrations for workshops and hackathons, attendance tracking, and CSV export.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="registrations-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">View Registrations</a>
+                </div>
+            </div>
+
+            <!-- 13. Achievements & Awards -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(234, 179, 8, 0.15); color:#eab308; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Recognition</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🏆 Achievements &amp; Awards</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Hackathon wins, publications, national student awards, and patent filings.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="achievements-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Achievements</a>
+                </div>
+            </div>
+
+            <!-- 14. Partners & Sponsors -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(59, 130, 246, 0.15); color:#3b82f6; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Industry</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🤝 Partners &amp; Sponsors</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Industry collaborators, sponsors, partner universities, and technology providers.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="partners-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Partners</a>
+                </div>
+            </div>
+
+            <!-- 15. Resources & Downloads -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(20, 184, 166, 0.15); color:#14b8a6; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Downloads</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📚 Resources &amp; Files</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Study guides, rulebooks, event brochures, and downloadable club documents.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="resources-management.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Manage Resources</a>
+                </div>
+            </div>
+
+            <!-- 16. Media Library -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(168, 85, 247, 0.15); color:#a855f7; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Assets</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">🖼️ Media Library</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Browse, search, copy URLs, and manage all images and PDFs uploaded across the platform.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="media-library.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">Open Media Library</a>
+                </div>
+            </div>
+
+            <!-- 17. Security & Audit Logs -->
+            <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                        <span class="badge" style="background:rgba(239, 68, 68, 0.15); color:#ef4444; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Security</span>
+                        <span class="updated-at" style="font-size:0.75rem; opacity:0.6;">Live</span>
+                    </div>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">📜 Audit &amp; Activity Logs</h3>
+                    <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Immutable chronological records of admin operations, logins, edits, and deletions.</p>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="audit-logs.html" class="primary-btn" style="flex:1; text-align:center; padding:10px; font-size:0.85rem; text-decoration:none; border-radius:8px;">View Logs</a>
+                </div>
+            </div>
+
+            <!-- 18. Website Settings -->
             <div class="card cms-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:20px; border-radius:12px;">
                 <div>
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
                         <span class="badge" style="background:rgba(100, 116, 139, 0.15); color:#94a3b8; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">Global Config</span>
                         <span class="updated-at" id="settingsUpdated" style="font-size:0.75rem; opacity:0.6;">Loading...</span>
                     </div>
-                    <h3 style="font-size:1.2rem; margin-bottom:6px;">⚙️ Website Settings</h3>
+                    <h3 style="font-size:1.2rem; margin-bottom:6px;">&#x2699;&#xFE0F; Website Settings</h3>
                     <p style="font-size:0.88rem; opacity:0.8; line-height:1.4; margin-bottom:16px;">Site name, branding logo, SEO metadata, copyright footer.</p>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:15px;">

@@ -8,7 +8,7 @@
     <meta name="description" content="Discover upcoming hackathons, workshops, and symposia hosted by VVISC.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="apple-touch-icon" href="assets/logo.png">
@@ -19,27 +19,27 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="index.html" class="logo" data-cursor="HOME">
                 <span class="nav-logo-wrap">
-                    <img src="assets/logo.png" alt="VVISC Logo" class="nav-logo">
-                    <span class="nav-logo-pulse"></span>
+                    <img src="assets/logo.png" alt="VVITU IUCEE Logo" class="nav-logo">
                 </span>
-                <span class="logo-text">VVISC <span class="logo-accent">IUCEE </span></span>
+                <span class="logo-text">VVITU <span class="logo-accent">IUCEE</span></span>
             </a>
 
             <div class="nav-links">
 
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
-                <a href="departments.html">Departments</a>
-                <a href="events.html">Events</a>
-                <a href="gallery.html">Gallery</a>
-                <a href="council.html">Council</a>
-                <a href="contact.html">Contact</a>
+                <a href="index.html" data-cursor="OPEN">Home</a>
+                <a href="about.html" data-cursor="OPEN">About</a>
+                <a href="departments.html" data-cursor="OPEN">Departments</a>
+                <a href="projects.html" data-cursor="OPEN">Projects</a>
+                <a href="events.html" class="active" data-cursor="OPEN">Events</a>
+                <a href="gallery.html" data-cursor="OPEN">Gallery</a>
+                <a href="council.html" data-cursor="OPEN">Council</a>
+                <a href="contact.html" data-cursor="OPEN">Contact</a>
 
             </div>
 
-            <a href="testimonials.html" class="reviews-highlight">
+            <a href="testimonials.html" class="reviews-highlight" data-cursor="REVIEWS">
 
                 <span class="review-star">⭐</span>
 
@@ -51,14 +51,36 @@
 
             <div class="nav-actions">
                 <div class="theme-toggle-container">
-                    <span class="theme-label" id="theme-label">Light Mode</span>
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme" data-cursor="THEME">
                         <span class="toggle-icon"></span>
                     </button>
                 </div>
-                <div class="auth-buttons">
-                    <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+                <div class="auth-buttons" id="authContainer">
+                    <!-- Logged Out -->
+                    <a id="loginBtn" class="nav-login-btn" href="login.html" data-cursor="LOGIN">Login</a>
+
+                    <!-- Logged In -->
+                    <div class="user-menu hidden" id="userMenu">
+                        <button class="user-btn" id="userBtn">
+                            <span id="userName">Admin</span>
+                            ▼
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="admins/dashboard.html">📊 Dashboard</a>
+                            <a href="admins/testimonials.html">⭐ Testimonials</a>
+                            <a href="admins/announcements.html">📢 Announcements</a>
+                            <a href="admins/admins.html">👥 Admins</a>
+                            <a href="admins/settings.html">⚙ Settings</a>
+                            <hr>
+                            <button id="logoutBtn">
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <a href="https://vvitguntur.com" target="_blank" rel="noopener noreferrer" class="nav-vvit-brand" data-cursor="VVIT" title="Vasireddy Venkatadri International Technological University">
+                    <img src="assets/vvit-logo.png" alt="VVIT University Logo" class="nav-vvit-logo">
+                </a>
                 <div class="hamburger">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -70,12 +92,13 @@
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="departments.html">Departments</a>
+            <a href="projects.html">Projects</a>
             <a href="events.html">Events</a>
             <a href="gallery.html">Gallery</a>
             <a href="council.html">Council</a>
             <a href="contact.html">Contact</a>
             <a href="testimonials.html">Student Reviews</a>
-            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn comic-button">🔑 Login / Admin Console</a>
+            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn">Login</a>
         </div>
         <div class="scroll-progress"></div>
     </nav>
@@ -981,11 +1004,206 @@
 
     </section>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 VVISC Technical Club. All rights reserved.</p>
+        <!-- Unique VVISC Footer -->
+        <!-- Unique VVISC Footer -->
+        <!-- Unique VVISC Footer -->
+    <footer class="vvisc-site-footer">
+        <div class="vvisc-footer-glow" aria-hidden="true"></div>
+        <div class="vvisc-footer-inner">
+            <div class="vvisc-footer-grid">
+
+                <!-- Left Column: Identity & Credential -->
+                <div class="vvisc-footer-col-brand">
+                    <a href="index.html" class="vvisc-footer-brand-lockup" aria-label="VVISC Home">
+                        <div class="vvisc-footer-emblem" aria-hidden="true">
+                            <img src="assets/logo.png" alt="VVISC Logo" class="vvisc-footer-logo-img">
+                        </div>
+                        <div class="vvisc-footer-brand-text">
+                            <span class="vvisc-footer-brand-title">VVISC</span>
+                            <span class="vvisc-footer-brand-tag">STUDENT INNOVATION CHAPTER</span>
+                        </div>
+                    </a>
+                    <p class="vvisc-footer-about-text">
+                        Student innovation and technical community. Where ideas become impact through autonomous robotics, edge intelligence, and disciplined engineering.
+                    </p>
+                    <div class="vvisc-footer-credential">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"></path>
+                        </svg>
+                        <span>Sanctioned Academic &amp; Research Organization</span>
+                    </div>
+                </div>
+
+                <!-- Middle Column: Chapter Navigation (All Website Pages) -->
+                <div class="vvisc-footer-col-nav">
+                    <div class="vvisc-footer-nav-lead">
+                        <div class="vvisc-nav-indicator" aria-hidden="true">
+                            <span class="vvisc-nav-indicator-dot"></span>
+                        </div>
+                        <h4 class="vvisc-footer-heading">CHAPTER NAVIGATION</h4>
+                    </div>
+                    <div class="vvisc-footer-nav-duo">
+                        <ul class="vvisc-footer-link-group">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="departments.html">Departments</a></li>
+                            <li><a href="council.html">Council &amp; Team</a></li>
+                        </ul>
+                        <ul class="vvisc-footer-link-group">
+                            <li><a href="events.html">Events &amp; Workshops</a></li>
+                            <li><a href="gallery.html">Gallery &amp; Archives</a></li>
+                            <li><a href="testimonials.html">Student Testimonials</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column: Connect & Engage -->
+                <div class="vvisc-footer-col-connect">
+                    <div class="vvisc-footer-connect-lead">
+                        <h4 class="vvisc-footer-heading">CONNECT &amp; ENGAGE</h4>
+                    </div>
+                    <ul class="vvisc-footer-social-stack">
+                        <li>
+                            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC GitHub">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">GitHub</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC LinkedIn">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                        <rect x="2" y="9" width="4" height="12"></rect>
+                                        <circle cx="4" cy="4" r="2"></circle>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">LinkedIn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/vvisc_vvitu?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="vvisc-social-item-link" aria-label="VVISC Instagram">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">Instagram</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:vvisc@vvit.edu.in" class="vvisc-social-item-link" aria-label="Email VVISC">
+                                <span class="vvisc-social-icon-box">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="vvisc-social-item-label">Email</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Sub-Bar -->
+            <div class="vvisc-footer-bottom">
+                <p class="vvisc-footer-copy copyright">&copy; 2026 VVISC. All rights reserved.</p>
+                <div class="vvisc-footer-bottom-right">
+                    <span class="vvisc-footer-motto">Heritage Academic Identity &times; Modern Engineering</span>
+                    <button type="button" class="vvisc-footer-scrolltop" id="footerBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" aria-label="Scroll back to top">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Event Registration Modal -->
+    <div class="modal-overlay" id="eventRegisterModal" role="dialog" aria-modal="true" aria-labelledby="regModalTitle" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:99999; align-items:center; justify-content:center; padding:20px;">
+        <div class="modal-card" style="background:var(--card-bg, #1a2333); border:1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius:20px; max-width:550px; width:100%; max-height:92vh; overflow-y:auto; padding:30px; position:relative; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <button class="modal-close-btn" id="closeRegModal" aria-label="Close registration modal" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:var(--text-muted, #94a3b8); font-size:1.6rem; cursor:pointer;">&times;</button>
+            
+            <div style="margin-bottom:20px;">
+                <span class="badge" style="background:rgba(99,102,241,0.15); color:var(--accent-color, #6366f1); padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700;">REGISTRATION DESK</span>
+                <h2 id="regModalTitle" style="font-size:1.5rem; margin-top:8px; margin-bottom:4px; color:var(--text-color, #fff);">Register for Event</h2>
+                <p id="regModalSubtitle" style="color:var(--text-muted, #94a3b8); font-size:0.9rem;">Fill in your details below to reserve your seat.</p>
+            </div>
+
+            <div id="regStatusAlert" style="display:none; padding:12px; border-radius:10px; font-size:0.88rem; margin-bottom:16px;"></div>
+
+            <form id="eventRegistrationForm">
+                <input type="hidden" id="regEventId" value="">
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">Selected Event</label>
+                    <input type="text" id="regEventTitle" readonly style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:var(--text-color, #fff); font-size:0.9rem;">
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <label for="regStudentName" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">Full Name *</label>
+                        <input type="text" id="regStudentName" required placeholder="John Doe" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color, #fff); font-size:0.9rem;">
+                    </div>
+                    <div>
+                        <label for="regStudentEmail" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">College Email *</label>
+                        <input type="email" id="regStudentEmail" required placeholder="name@vvit.net" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color, #fff); font-size:0.9rem;">
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <label for="regRollNumber" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">Roll Number / Reg ID *</label>
+                        <input type="text" id="regRollNumber" required placeholder="22BQ1A05XX" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color, #fff); font-size:0.9rem;">
+                    </div>
+                    <div>
+                        <label for="regPhone" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">Phone Number *</label>
+                        <input type="tel" id="regPhone" required placeholder="9876543210" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, rgba(255,255,255,0.06)); color:var(--text-color, #fff); font-size:0.9rem;">
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <label for="regBranch" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">Branch / Dept</label>
+                        <select id="regBranch" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, #1a2333); color:var(--text-color, #fff); font-size:0.9rem;">
+                            <option value="CSE">Computer Science (CSE)</option>
+                            <option value="IT">Information Technology (IT)</option>
+                            <option value="CSM">AI & Machine Learning (CSM)</option>
+                            <option value="CSD">Data Science (CSD)</option>
+                            <option value="ECE">Electronics (ECE)</option>
+                            <option value="EEE">Electrical (EEE)</option>
+                            <option value="MECH">Mechanical (MECH)</option>
+                            <option value="CIVIL">Civil (CIVIL)</option>
+                            <option value="OTHER">Other / Non-VVIT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="regYear" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-muted, #94a3b8);">Year of Study</label>
+                        <select id="regYear" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border-color, rgba(255,255,255,0.15)); background:var(--card-bg, #1a2333); color:var(--text-color, #fff); font-size:0.9rem;">
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year" selected>3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="regSubmitBtn" class="primary-btn btn-glow" style="width:100%; padding:12px; font-size:0.95rem; font-weight:700; border-radius:10px; margin-top:10px; cursor:pointer;">
+                    Complete Registration &rarr;
+                </button>
+            </form>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 
