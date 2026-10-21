@@ -20,6 +20,7 @@
       { "source": "/admins/testimonials", "destination": "/admins/testimonials.html" },
       { "source": "/admins/website-settings", "destination": "/admins/website-settings.html" },
       { "source": "/admins/projects-management", "destination": "/admins/projects-management.html" },
+      { "source": "/admins/project-upload", "destination": "/admins/project-upload.html" },
       { "source": "/admins/registrations-management", "destination": "/admins/registrations-management.html" },
       { "source": "/admins/contact-messages", "destination": "/admins/contact-messages.html" },
       { "source": "/admins/achievements-management", "destination": "/admins/achievements-management.html" },

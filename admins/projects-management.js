@@ -187,9 +187,13 @@ function initEventListeners() {
     if (catFilter) catFilter.addEventListener("change", renderProjectsTable);
     if (statusFilter) statusFilter.addEventListener("change", renderProjectsTable);
 
-    // Add Project Button
+    // Add Project Button -> Redirect to dedicated upload page
     const btnAdd = document.getElementById("btnAddNewProject");
-    if (btnAdd) btnAdd.addEventListener("click", openAddModal);
+    if (btnAdd) {
+        btnAdd.addEventListener("click", function(e) {
+            // Default link navigation to project-upload.html
+        });
+    }
 
     // Seed Button
     const btnSeed = document.getElementById("btnSeedProjects");
@@ -462,77 +466,7 @@ function openAddModal() {
 }
 
 window.editProject = function(id) {
-    const project = projectsList.find(p => p.id === id);
-    if (!project) return;
-
-    document.getElementById("projectForm").reset();
-    document.getElementById("editDocId").value = id;
-    document.getElementById("modalTitle").textContent = "Edit Project: " + project.title;
-    document.getElementById("btnSubmitProject").textContent = "Update & Save";
-
-    document.getElementById("projInputTitle").value = project.title || "";
-    
-    // Category check
-    const catSelect = document.getElementById("projInputCategory");
-    const customCatField = document.getElementById("customCategoryField");
-    const standardCategories = ["AI & Machine Learning", "Robotics", "Web Development", "IoT", "Cybersecurity"];
-    if (standardCategories.includes(project.category)) {
-        catSelect.value = project.category;
-        customCatField.style.display = "none";
-    } else {
-        catSelect.value = "Other";
-        customCatField.style.display = "block";
-        document.getElementById("projInputCustomCat").value = project.category || "";
-    }
-
-    document.getElementById("projInputShortDesc").value = project.shortDescription || "";
-    document.getElementById("projInputFullDesc").value = project.description || "";
-    document.getElementById("projInputProblem").value = project.problemStatement || "";
-    document.getElementById("projInputSolution").value = project.solution || "";
-    
-    if (Array.isArray(project.features)) {
-        document.getElementById("projInputFeatures").value = project.features.join("\n");
-    } else {
-        document.getElementById("projInputFeatures").value = project.features || "";
-    }
-
-    if (Array.isArray(project.technologies)) {
-        document.getElementById("projInputTech").value = project.technologies.join(", ");
-    } else {
-        document.getElementById("projInputTech").value = project.technologies || "";
-    }
-
-    if (Array.isArray(project.teamMembers)) {
-        document.getElementById("projInputTeam").value = project.teamMembers.join(", ");
-    } else {
-        document.getElementById("projInputTeam").value = project.teamMembers || "";
-    }
-
-    document.getElementById("projInputGithub").value = project.githubUrl || "";
-    document.getElementById("projInputDemo").value = project.demoUrl || "";
-    document.getElementById("projInputDocs").value = project.documentationUrl || "";
-    document.getElementById("projInputVideo").value = project.videoUrl || "";
-    document.getElementById("projInOutcomes").value = project.outcomes || "";
-    document.getElementById("projInputStatus").value = project.status || "published";
-    document.getElementById("projInputFeatured").checked = !!project.featured;
-
-    // Cover Image
-    selectedCoverFile = null;
-    selectedGalleryFiles = [];
-    document.getElementById("coverImageUrl").value = project.coverImageUrl || "";
-    if (project.coverImageUrl) {
-        document.getElementById("coverPreviewImg").src = project.coverImageUrl;
-        document.getElementById("coverPreviewContainer").style.display = "block";
-    } else {
-        document.getElementById("coverPreviewContainer").style.display = "none";
-    }
-
-    // Gallery
-    editingGalleryImages = Array.isArray(project.galleryImages) ? [...project.galleryImages] : [];
-    renderGalleryPreviews();
-
-    document.getElementById("projectModal").classList.add("active");
-    document.body.style.overflow = "hidden";
+    window.location.href = `project-upload.html?id=${encodeURIComponent(id)}`;
 };
 
 function closeModal() {
