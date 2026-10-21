@@ -1,350 +1,863 @@
-// =========================================================
-// Technical Projects Management — Real-time Firestore Sync
-// =========================================================
+// ===============================================================
+// VVISC IUCEE - Technical Projects Management System
+// Admin Dashboard Controller & Firebase Integration
+// ===============================================================
 
 let projectsList = [];
-let unsubscribeProjects = null;
+let editingGalleryImages = []; // Stores existing or added gallery image objects { url, path }
+let selectedCoverFile = null;
+let selectedGalleryFiles = [];
 
-const DEFAULT_PROJECTS = [
+const DEFAULT_SEED_PROJECTS = [
     {
-        title: "Autonomous Campus Delivery Rover",
-        departmentId: "rnd",
-        departmentName: "Research & Development",
-        status: "Featured",
-        year: "2025-26",
-        shortDescription: "Self-navigating GPS & LiDAR delivery rover designed to transport materials between lab blocks.",
-        description: "The Autonomous Campus Delivery Rover utilizes ROS2, SLAM algorithms, and depth cameras for real-time obstacle avoidance and path planning across campus corridors. Engineered by the R&D hardware division.",
-        technologies: "ROS2, Python, LiDAR, C++, Raspberry Pi",
-        teamMembers: "Harshitha Ch, Naveen R, Team R&D",
-        githubUrl: "https://github.com/vvisc",
-        demoUrl: "#",
-        imageUrl: "assets/4.png",
+        title: "KrishiNet: Edge AI Crop Health Diagnostics",
+        category: "AI & Machine Learning",
+        shortDescription: "Autonomous edge computer vision system deployed on low-cost drones for real-time crop disease diagnosis, pesticide recommendation, and yield projection.",
+        description: "KrishiNet bridges agricultural agronomy and edge artificial intelligence. Built for smallholder farmers across rural India, the platform analyzes multispectral leaf imagery captured by handheld devices or autonomous UAVs, instantly classifying 40+ fungal and bacterial leaf pathologies offline with 96.4% precision.",
+        problemStatement: "Rural agriculturalists face delayed crop disease diagnosis that leads to excessive crop loss (up to 35% annually) and indiscriminate chemical pesticide usage that degrades soil health and increases operational expenses.",
+        solution: "An ultra-quantized lightweight convolutional neural network (MobileNetV3 backbone) optimized with TensorRT to execute directly on a Raspberry Pi 4 edge module attached to a drone. Farmers receive audio-visual alerts in vernacular Telugu and English with tailored organic remedies.",
+        features: [
+            "Sub-50ms inference latency running directly on-device without active internet connectivity.",
+            "Multi-disease classification covering Paddy, Cotton, Chili, and Maize cultivars.",
+            "Autonomous waypoint tracking integration with ArduPilot drone flight controllers.",
+            "Cloud telemetry synchronization whenever Wi-Fi or cellular connectivity is restored."
+        ],
+        technologies: ["PyTorch", "OpenCV", "TensorRT", "Raspberry Pi 4", "Flutter", "Python"],
+        teamMembers: ["Sai Vardhan (Lead AI Engineer)", "Harika R. (Hardware Lead)", "Kiran Kumar (Agronomy Researcher)"],
+        githubUrl: "https://github.com",
+        demoUrl: "https://vvisc-iucee.web.app",
+        documentationUrl: "https://github.com",
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        coverImageUrl: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=1200&q=80",
+        coverImagePath: "",
+        galleryImages: [
+            { url: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=800&q=80", path: "" },
+            { url: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=800&q=80", path: "" }
+        ],
+        outcomes: "Validated across 12 agricultural plots in Guntur district with 94.2% diagnostic accuracy. Awarded 1st place in Smart Agriculture category at the IUCEE Regional Hackathon 2025.",
+        status: "published",
         featured: true,
-        active: true,
         displayOrder: 1
     },
     {
-        title: "VVISC Central Cloud Portal & CMS",
-        departmentId: "digital",
-        departmentName: "Digital Infrastructure",
-        status: "Completed",
-        year: "2025-26",
-        shortDescription: "High-performance dynamic web architecture and role-secured admin portal for chapter operations.",
-        description: "Modern, lightweight, edge-optimized platform providing complete dynamic CMS controls, real-time Firestore synchronization, audit trails, and student registration pipelines.",
-        technologies: "HTML5, Vanilla JS, Firebase Firestore, Cloud Storage",
-        teamMembers: "Rajavardhan P, Tech Leads",
-        githubUrl: "https://github.com/vvisc",
-        demoUrl: "https://vvisc-iucee.web.app",
-        imageUrl: "assets/1.png",
+        title: "AeroSwarm: Autonomous Decentralized Drone Mesh",
+        category: "Robotics",
+        shortDescription: "Decentralized UAV swarm architecture using custom peer-to-peer radio frequency meshes for disaster search, obstacle avoidance, and perimeter surveillance.",
+        description: "AeroSwarm demonstrates resilient decentralized swarm coordination for emergency search-and-rescue. Eliminating single-point-of-failure ground control stations, every drone dynamically elects cluster heads, distributes search grid zones, and relays high-bandwidth thermal telemetry across multi-hop RF packet radios.",
+        problemStatement: "In severe flood and earthquake scenarios, cellular towers and terrestrial infrastructure fail, leaving conventional remote-controlled drones incapable of operating beyond visual line of sight.",
+        solution: "A consensus-driven Flocking Algorithm running atop ROS 2 (Robot Operating System). Thermal infrared sensor streams are aggregated collaboratively, triangulating human heat signatures under foliage.",
+        features: [
+            "Decentralized ad-hoc 868MHz mesh network supporting up to 16 autonomous units.",
+            "Dynamic leader election with failover in under 200 milliseconds.",
+            "Coordinated spatial coverage planning avoiding mutual drone collision envelopes.",
+            "Live thermal human-detection bounding box streaming."
+        ],
+        technologies: ["ROS 2", "C++", "Gazebo", "PX4 Autopilot", "Python", "LiDAR"],
+        teamMembers: ["Ravi Teja (Robotics Lead)", "M. Anusha (Control Systems)", "Suresh V. (RF Communications)"],
+        githubUrl: "https://github.com",
+        demoUrl: "",
+        documentationUrl: "https://github.com",
+        videoUrl: "",
+        coverImageUrl: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80",
+        coverImagePath: "",
+        galleryImages: [
+            { url: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80", path: "" },
+            { url: "https://images.unsplash.com/photo-1516542076529-1ea3854896f2?auto=format&fit=crop&w=800&q=80", path: "" }
+        ],
+        outcomes: "Successfully deployed in mock disaster search drill, discovering 3 simulated targets in under 8 minutes across a 2-kilometer radius.",
+        status: "published",
         featured: true,
-        active: true,
         displayOrder: 2
     },
     {
-        title: "Smart Campus Energy Monitoring Grid",
-        departmentId: "rnd",
-        departmentName: "Research & Development",
-        status: "Ongoing",
-        year: "2025-26",
-        shortDescription: "IoT sensor grid tracking power consumption across college laboratories in real-time.",
-        description: "Custom ESP32 microcontrollers deployed across engineering blocks stream wattage, voltage fluctuation, and temperature telemetry to an analytics dashboard to minimize carbon footprint.",
-        technologies: "ESP32, MQTT, Node.js, TimescaleDB, Chart.js",
-        teamMembers: "Student Innovators, Faculty Advisors",
-        githubUrl: "https://github.com/vvisc",
-        demoUrl: "#",
-        imageUrl: "assets/2.png",
+        title: "GridSense: Smart Campus IoT Energy Microgrid",
+        category: "IoT",
+        shortDescription: "Microgrid energy telemetry and load-balancing hardware integrating bidirectional smart meters, LoRaWAN transmitters, and cloud forecasting dashboards.",
+        description: "GridSense transforms university campus electrical substations into an autonomous smart grid. Custom edge measurement nodes capture real-time voltage sags, power factors, and departmental kilowatt-hour consumption, dispatching battery storage reserves during peak load windows.",
+        problemStatement: "Educational campuses suffer heavy electricity demand surges during midday hours with inefficient energy allocation, high utility bills, and zero granular visibility into departmental waste.",
+        solution: "A low-power hardware sensor network communicating over long-range LoRaWAN gateways to an influx time-series engine with machine learning models forecasting hour-ahead cooling loads.",
+        features: [
+            "Sub-second phase synchronization across 18 campus electrical panels.",
+            "LoRaWAN range coverage exceeding 4 kilometers without line-of-sight constraints.",
+            "Automated capacitor bank toggling to maintain >0.98 power factor.",
+            "Real-time administrative anomaly alert web dashboard."
+        ],
+        technologies: ["ESP32", "LoRaWAN", "MQTT", "TimeScaleDB", "Node.js", "Grafana"],
+        teamMembers: ["V. Bhavani (Embedded Engineer)", "T. Praneeth (Hardware Dev)"],
+        githubUrl: "https://github.com",
+        demoUrl: "",
+        coverImageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+        coverImagePath: "",
+        galleryImages: [],
+        outcomes: "Achieved an estimated 14% monthly electrical cost reduction during summer laboratory operations across Block A and Block B.",
+        status: "published",
         featured: false,
-        active: true,
         displayOrder: 3
+    },
+    {
+        title: "VVISC CampusHub: Engineering Knowledge Mesh",
+        category: "Web Development",
+        shortDescription: "Ultra-fast progressive web app connecting university student innovators with project mentors, patent guidance, and interactive hackathon project submissions.",
+        description: "An open collaborative portal engineered from the ground up for VVISC student chapters. Students register ideas, match with faculty research advisors, browse open-source student repositories, and submit technical papers for collegiate symposium review.",
+        problemStatement: "Student research projects remain siloed across individual student hard drives and private groups, leading to duplicated technical efforts and lost intellectual property.",
+        solution: "A high-performance modern web application utilizing serverless Firestore databases, instant fuzzy search indexing, and real-time activity channels.",
+        features: [
+            "Decentralized project discovery directory with tag-based search.",
+            "Mentor review workflows with inline feedback annotations.",
+            "Automated PDF abstract extraction and citation generation.",
+            "Light/Dark theme support with responsive mobile-first architecture."
+        ],
+        technologies: ["JavaScript ES6+", "Firestore", "Firebase Storage", "Cloud Functions", "PWA"],
+        teamMembers: ["VVISC Web Team", "Akash Sharma (Full-Stack Dev)"],
+        githubUrl: "https://github.com",
+        demoUrl: "https://vvisc-iucee.web.app",
+        coverImageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+        coverImagePath: "",
+        galleryImages: [],
+        outcomes: "Adopted by 500+ active student chapter members with 99.9% uptime and sub-second page loads.",
+        status: "published",
+        featured: true,
+        displayOrder: 4
+    },
+    {
+        title: "SentinelShield: Zero-Trust Adaptive Network Sentinel",
+        category: "Cybersecurity",
+        shortDescription: "Lightweight network anomaly detection framework powered by unsupervised autoencoders to identify stealth lateral movement and zero-day packet anomalies.",
+        description: "SentinelShield passively inspects internal enterprise local area networks for anomalous protocol traffic. By reconstructing baseline packet metadata through deep autoencoders, it highlights malicious command-and-control beacons and ARP cache poisoning in real time without decrypting user payloads.",
+        problemStatement: "Traditional signature-based antivirus and intrusion detection tools fail against polymorphic malware, internal compromised credentials, and zero-day threat actors.",
+        solution: "An unsupervised neural network scoring packet header sequences with sliding entropy windows, alerting security administrators before ransomware payloads execute.",
+        features: [
+            "Zero payload decryption requirement preserving user privacy and compliance.",
+            "Real-time packet capture processing up to 10 Gbps line rates.",
+            "Automated firewall block rule generation through eBPF linux kernel hooks.",
+            "Integration with standard SIEM and Syslog monitoring tools."
+        ],
+        technologies: ["Python", "Scapy", "Snort", "Docker", "FastAPI", "PyTorch"],
+        teamMembers: ["Deepak N. (Security Researcher)", "Sneha Priya (Security Analyst)"],
+        githubUrl: "https://github.com",
+        demoUrl: "",
+        coverImageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+        coverImagePath: "",
+        galleryImages: [],
+        outcomes: "Recognized with Best Research Paper Award at the International Conference on Applied Cyber Defense 2025.",
+        status: "published",
+        featured: false,
+        displayOrder: 5
+    },
+    {
+        title: "RoboLogix: Automated Guided Warehouse Rover",
+        category: "Robotics",
+        shortDescription: "SLAM-guided differential drive logistics robot engineered for automated indoor material transit with LiDAR mapping and ultrasonic safety curtains.",
+        description: "An autonomous industrial mobile robot platform engineered for internal component delivery across engineering labs. Features simultaneous localization and mapping (SLAM), dynamic re-routing around human obstacles, and auto-docking inductive battery recharging.",
+        problemStatement: "Manual material handling between hardware fabrication workshops and testing labs incurs labor overhead and safety hazards in heavy machinery environments.",
+        solution: "Differential-drive robot chassis equipped with 360-degree 2D LiDAR, ultrasonic safety bumper rings, and high-torque brushless DC motors controlled via CAN bus.",
+        features: [
+            "Real-time 2D Hector SLAM mapping with +/- 2cm positional repeatability.",
+            "Dynamic path planning with costmap inflation for human pedestrian avoidance.",
+            "Autonomous battery voltage monitoring with auto-docking return-to-base routine.",
+            "Payload capacity of 45 kilograms with low-center-of-gravity steel chassis."
+        ],
+        technologies: ["SLAM", "LiDAR", "Arduino Mega", "Python", "ROS", "OpenCV"],
+        teamMembers: ["G. Rohith (Hardware Architect)", "B. Sumanth (Firmware Dev)", "K. Divya (CAD Modeling)"],
+        githubUrl: "https://github.com",
+        demoUrl: "",
+        coverImageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=80",
+        coverImagePath: "",
+        galleryImages: [],
+        outcomes: "Operational across VVIT Mechanical and Robotics laboratories, logging over 120km of autonomous material transport.",
+        status: "published",
+        featured: false,
+        displayOrder: 6
     }
 ];
 
-document.addEventListener("DOMContentLoaded", async () => {
-    requireRole("content_editor");
-    setupEventListeners();
+// Document Ready Initialization
+document.addEventListener("DOMContentLoaded", async function() {
+    initEventListeners();
     await loadProjects();
-    initRealtimeProjects();
 });
 
-function setupEventListeners() {
-    const addBtn = document.getElementById("addProjectBtn");
-    const closeBtn = document.getElementById("closeProjectModalBtn");
-    const cancelBtn = document.getElementById("cancelProjectBtn");
-    const form = document.getElementById("projectForm");
-    const fileInput = document.getElementById("projectImageFile");
-    const searchInput = document.getElementById("searchProject");
-    const deptFilter = document.getElementById("filterDepartment");
-    const statusFilter = document.getElementById("filterStatus");
+function initEventListeners() {
+    // Search & Filter Listeners
+    const searchInput = document.getElementById("adminSearchInput");
+    const catFilter = document.getElementById("adminCategoryFilter");
+    const statusFilter = document.getElementById("adminStatusFilter");
 
-    if (addBtn) addBtn.onclick = () => openProjectModal();
-    if (closeBtn) closeBtn.onclick = closeProjectModal;
-    if (cancelBtn) cancelBtn.onclick = closeProjectModal;
+    if (searchInput) searchInput.addEventListener("input", renderProjectsTable);
+    if (catFilter) catFilter.addEventListener("change", renderProjectsTable);
+    if (statusFilter) statusFilter.addEventListener("change", renderProjectsTable);
 
-    if (searchInput) searchInput.addEventListener("input", renderProjects);
-    if (deptFilter) deptFilter.addEventListener("change", renderProjects);
-    if (statusFilter) statusFilter.addEventListener("change", renderProjects);
+    // Add Project Button
+    const btnAdd = document.getElementById("btnAddNewProject");
+    if (btnAdd) btnAdd.addEventListener("click", openAddModal);
 
-    if (fileInput) {
-        fileInput.addEventListener("change", async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            showToast("Uploading project image...");
-            try {
-                const url = await CMS.uploadImage(file, "projects");
-                if (url) {
-                    document.getElementById("projectImageUrl").value = url;
-                    showToast("Cover photo uploaded!");
-                }
-            } catch (err) {
-                showToast("Upload failed: " + err.message, "error");
+    // Seed Button
+    const btnSeed = document.getElementById("btnSeedProjects");
+    if (btnSeed) btnSeed.addEventListener("click", seedDefaultProjects);
+
+    // Modal Close & Cancel
+    const modalClose = document.getElementById("modalCloseBtn");
+    const btnCancel = document.getElementById("btnCancelModal");
+    if (modalClose) modalClose.addEventListener("click", closeModal);
+    if (btnCancel) btnCancel.addEventListener("click", closeModal);
+
+    // Custom Category Toggle
+    const catSelect = document.getElementById("projInputCategory");
+    const customCatField = document.getElementById("customCategoryField");
+    if (catSelect && customCatField) {
+        catSelect.addEventListener("change", function() {
+            if (this.value === "Other") {
+                customCatField.style.display = "block";
+            } else {
+                customCatField.style.display = "none";
             }
         });
     }
 
-    if (form) {
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            await saveProject();
-        };
+    // Cover Image File Selection & Preview
+    const coverFileInput = document.getElementById("coverImageFile");
+    const coverUrlInput = document.getElementById("coverImageUrl");
+    const coverPreviewContainer = document.getElementById("coverPreviewContainer");
+    const coverPreviewImg = document.getElementById("coverPreviewImg");
+
+    if (coverFileInput) {
+        coverFileInput.addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert("Selected file exceeds 10MB limit. Please select a smaller image.");
+                    this.value = "";
+                    return;
+                }
+                selectedCoverFile = file;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    coverPreviewImg.src = evt.target.result;
+                    coverPreviewContainer.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     }
+
+    if (coverUrlInput) {
+        coverUrlInput.addEventListener("input", function(e) {
+            const val = e.target.value.trim();
+            if (val && !selectedCoverFile) {
+                coverPreviewImg.src = val;
+                coverPreviewContainer.style.display = "block";
+            }
+        });
+    }
+
+    // Gallery Files Selection
+    const galleryFilesInput = document.getElementById("galleryFiles");
+    if (galleryFilesInput) {
+        galleryFilesInput.addEventListener("change", function(e) {
+            const files = Array.from(e.target.files);
+            selectedGalleryFiles.push(...files);
+            renderGalleryPreviews();
+        });
+    }
+
+    // Save as Draft Button in Form
+    const btnDraft = document.getElementById("btnSaveDraft");
+    if (btnDraft) {
+        btnDraft.addEventListener("click", function(e) {
+            e.preventDefault();
+            document.getElementById("projInputStatus").value = "draft";
+            handleProjectSubmit(e);
+        });
+    }
+
+    // Form Submit
+    const form = document.getElementById("projectForm");
+    if (form) form.addEventListener("submit", handleProjectSubmit);
 }
 
+// -----------------------------------------------------------------
+// Data Loading & Live Sync
+// -----------------------------------------------------------------
 async function loadProjects() {
     try {
-        let list = await CMS.getCollection("projects", { orderBy: "displayOrder", orderDirection: "asc" });
-        if (!list || list.length === 0) {
-            // Seed defaults
-            console.log("Seeding initial projects dataset...");
-            for (const p of DEFAULT_PROJECTS) {
-                await CMS.saveDoc("projects", null, p);
-            }
-            list = await CMS.getCollection("projects", { orderBy: "displayOrder", orderDirection: "asc" });
+        let list = [];
+        if (window.db) {
+            const snapshot = await db.collection("projects").get();
+            snapshot.forEach(doc => {
+                list.push({ id: doc.id, ...doc.data() });
+            });
         }
+
+        // Auto-seed if empty
+        if (list.length === 0) {
+            console.log("No projects found in database. Initializing seed data...");
+            for (const item of DEFAULT_SEED_PROJECTS) {
+                const docRef = await db.collection("projects").add({
+                    ...item,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    publishedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                list.push({ id: docRef.id, ...item });
+            }
+        }
+
         projectsList = list;
         updateStats();
-        renderProjects();
+        renderProjectsTable();
     } catch (err) {
-        console.error("Error loading projects:", err);
+        console.error("Error loading projects from Firestore:", err);
+        const tbody = document.getElementById("projectsTableBody");
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#ef4444;">Error accessing Firestore: ${escapeHtml(err.message)}</td></tr>`;
+        }
     }
-}
-
-function initRealtimeProjects() {
-    if (typeof db === "undefined") return;
-    try {
-        if (unsubscribeProjects) unsubscribeProjects();
-        unsubscribeProjects = db.collection("projects").onSnapshot((snapshot) => {
-            if (snapshot.empty) return;
-            const liveList = [];
-            snapshot.forEach(doc => liveList.push({ id: doc.id, ...doc.data() }));
-            liveList.sort((a, b) => (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999));
-            projectsList = liveList;
-            try {
-                localStorage.setItem("vvisc_col_projects", JSON.stringify(liveList));
-            } catch (e) {}
-            updateStats();
-            renderProjects();
-        }, (err) => {
-            console.warn("Real-time projects notice:", err);
-        });
-    } catch (e) {}
 }
 
 function updateStats() {
-    const totalEl = document.getElementById("totalProjectsCount");
-    const featEl = document.getElementById("featuredProjectsCount");
-    const activeEl = document.getElementById("activeProjectsCount");
+    const totalEl = document.getElementById("statTotalProjects");
+    const pubEl = document.getElementById("statPublishedProjects");
+    const draftEl = document.getElementById("statDraftProjects");
+    const archEl = document.getElementById("statArchivedProjects");
 
-    if (totalEl) totalEl.textContent = projectsList.length;
-    if (featEl) featEl.textContent = projectsList.filter(p => p.featured === true).length;
-    if (activeEl) activeEl.textContent = projectsList.filter(p => p.active !== false).length;
+    const total = projectsList.length;
+    const pub = projectsList.filter(p => p.status === "published").length;
+    const draft = projectsList.filter(p => p.status === "draft").length;
+    const arch = projectsList.filter(p => p.status === "archived").length;
+
+    if (totalEl) totalEl.textContent = total;
+    if (pubEl) pubEl.textContent = pub;
+    if (draftEl) draftEl.textContent = draft;
+    if (archEl) archEl.textContent = arch;
 }
 
-function renderProjects() {
-    const grid = document.getElementById("projectsGrid");
-    if (!grid) return;
-    grid.innerHTML = "";
+// -----------------------------------------------------------------
+// Table Rendering & Filters
+// -----------------------------------------------------------------
+function renderProjectsTable() {
+    const tbody = document.getElementById("projectsTableBody");
+    if (!tbody) return;
 
-    const searchVal = (document.getElementById("searchProject")?.value || "").toLowerCase().trim();
-    const deptVal = document.getElementById("filterDepartment")?.value || "all";
-    const statusVal = document.getElementById("filterStatus")?.value || "all";
+    const query = (document.getElementById("adminSearchInput")?.value || "").toLowerCase().trim();
+    const cat = document.getElementById("adminCategoryFilter")?.value || "all";
+    const status = document.getElementById("adminStatusFilter")?.value || "all";
 
     const filtered = projectsList.filter(p => {
-        if (deptVal !== "all" && p.departmentId !== deptVal) return false;
-        if (statusVal !== "all" && p.status !== statusVal) return false;
-        if (searchVal) {
-            const t = (p.title || "").toLowerCase();
-            const d = (p.description || "").toLowerCase();
-            const tech = (p.technologies || "").toLowerCase();
-            const team = (p.teamMembers || "").toLowerCase();
-            if (!t.includes(searchVal) && !d.includes(searchVal) && !tech.includes(searchVal) && !team.includes(searchVal)) {
-                return false;
+        if (cat !== "all" && (p.category || "").toLowerCase() !== cat.toLowerCase()) return false;
+        if (status !== "all" && (p.status || "published").toLowerCase() !== status.toLowerCase()) return false;
+
+        if (query) {
+            const titleMatch = (p.title || "").toLowerCase().includes(query);
+            const descMatch = (p.shortDescription || p.description || "").toLowerCase().includes(query);
+            const catMatch = (p.category || "").toLowerCase().includes(query);
+            
+            let techMatch = false;
+            if (Array.isArray(p.technologies)) {
+                techMatch = p.technologies.some(t => t.toLowerCase().includes(query));
+            } else if (typeof p.technologies === "string") {
+                techMatch = p.technologies.toLowerCase().includes(query);
             }
+
+            let memberMatch = false;
+            if (Array.isArray(p.teamMembers)) {
+                memberMatch = p.teamMembers.some(m => m.toLowerCase().includes(query));
+            } else if (typeof p.teamMembers === "string") {
+                memberMatch = p.teamMembers.toLowerCase().includes(query);
+            }
+
+            return titleMatch || descMatch || catMatch || techMatch || memberMatch;
         }
         return true;
     });
 
     if (filtered.length === 0) {
-        grid.innerHTML = `<div class="card" style="grid-column:1/-1; padding:35px; text-align:center; color:var(--text-secondary);">No projects match your filter criteria. Click "+ Add Project" to create one.</div>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:35px; color:var(--text-color); opacity:0.7;">No projects match your filter criteria. Click "+ Add Project" to create one.</td></tr>`;
         return;
     }
 
+    let html = "";
     filtered.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.cssText = "padding:20px; border-radius:12px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden;";
-
-        const imgUrl = getAdminImgSrc(p.imageUrl || "assets/1.png");
-        const status = p.status || "Completed";
-        let statusBadge = `<span style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:rgba(46,204,113,0.15); color:#2ecc71; font-weight:600;">${escapeHtml(status)}</span>`;
-        if (status === "Ongoing") {
-            statusBadge = `<span style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:rgba(52,152,219,0.15); color:#3498db; font-weight:600;">Ongoing</span>`;
-        } else if (status === "Featured") {
-            statusBadge = `<span style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:rgba(230,126,34,0.15); color:#e67e22; font-weight:600;">Featured</span>`;
+        const coverImg = p.coverImageUrl || "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80";
+        
+        let statusBadge = `<span class="proj-badge-pub">Published</span>`;
+        if (p.status === "draft") {
+            statusBadge = `<span class="proj-badge-draft">Draft</span>`;
+        } else if (p.status === "archived") {
+            statusBadge = `<span class="proj-badge-archived">Archived</span>`;
         }
 
-        const techTags = (p.technologies || "").split(",").map(t => t.trim()).filter(Boolean).slice(0, 3)
-            .map(t => `<span style="font-size:0.72rem; padding:2px 6px; border-radius:4px; background:var(--input-bg); border:1px solid var(--border-color);">${escapeHtml(t)}</span>`).join(" ");
+        let techList = [];
+        if (Array.isArray(p.technologies)) {
+            techList = p.technologies;
+        } else if (typeof p.technologies === "string" && p.technologies.trim()) {
+            techList = p.technologies.split(",").map(t => t.trim());
+        }
 
-        card.innerHTML = `
-            <div>
-                <div style="height:140px; border-radius:8px; overflow:hidden; margin-bottom:14px; position:relative; background:#111;">
-                    <img src="${imgUrl}" alt="${escapeHtml(p.title)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='../assets/1.png';">
-                    ${p.featured ? `<span style="position:absolute; top:8px; right:8px; font-size:0.7rem; font-weight:700; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); color:var(--accent-color); padding:3px 8px; border-radius:6px; border:1px solid var(--accent-color);">★ Spotlight</span>` : ""}
-                </div>
+        let authors = "VVISC Team";
+        if (Array.isArray(p.teamMembers) && p.teamMembers.length > 0) {
+            authors = p.teamMembers.join(", ");
+        } else if (typeof p.teamMembers === "string" && p.teamMembers.trim()) {
+            authors = p.teamMembers;
+        }
 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:0.75rem; color:var(--accent-color); font-weight:700; text-transform:uppercase;">${escapeHtml(p.departmentName || p.departmentId || "Tech")}</span>
-                    ${statusBadge}
-                </div>
+        let dateStr = "Recent";
+        if (p.updatedAt && p.updatedAt.seconds) {
+            dateStr = new Date(p.updatedAt.seconds * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        } else if (p.publishedAt && p.publishedAt.seconds) {
+            dateStr = new Date(p.publishedAt.seconds * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        }
 
-                <h3 style="font-size:1.1rem; margin-bottom:6px; line-height:1.3;">${escapeHtml(p.title)}</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
-                    ${escapeHtml(p.shortDescription || p.description || "")}
-                </p>
+        html += `
+            <tr>
+                <td>
+                    <img src="${escapeHtml(coverImg)}" alt="Thumbnail" class="thumb-preview-box" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80'">
+                </td>
+                <td>
+                    <div style="font-weight:600; color:var(--heading-color);">${escapeHtml(p.title)}</div>
+                    <div style="font-size:0.78rem; color:var(--color-gold-highlight); font-family:var(--font-mono);">${escapeHtml(p.category || "General")}</div>
+                </td>
+                <td>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px; max-width:240px;">
+                        ${techList.slice(0, 3).map(t => `<span style="background:rgba(197,168,128,0.1); border:1px solid rgba(197,168,128,0.25); color:var(--color-gold-accent); padding:2px 8px; border-radius:4px; font-size:0.75rem; font-family:var(--font-mono);">${escapeHtml(t)}</span>`).join("")}
+                        ${techList.length > 3 ? `<span style="font-size:0.75rem; opacity:0.7;">+${techList.length - 3}</span>` : ""}
+                    </div>
+                </td>
+                <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(authors)}">
+                    ${escapeHtml(authors)}
+                </td>
+                <td>${statusBadge}</td>
+                <td style="font-family:var(--font-mono); font-size:0.8rem; opacity:0.8;">${escapeHtml(dateStr)}</td>
+                <td style="text-align:right; white-space:nowrap;">
+                    <button class="secondary-btn" style="padding:6px 12px; font-size:0.8rem; margin-right:4px;" onclick="editProject('${escapeHtml(p.id)}')">✏️ Edit</button>
+                    <button class="secondary-btn" style="padding:6px 10px; font-size:0.8rem; margin-right:4px;" onclick="togglePublish('${escapeHtml(p.id)}', '${escapeHtml(p.status || "published")}')" title="Quick toggle between published and draft">${p.status === "draft" ? "🚀 Publish" : "📝 Draft"}</button>
+                    <a href="../project-details.html?id=${encodeURIComponent(p.id)}" target="_blank" class="secondary-btn" style="padding:6px 10px; font-size:0.8rem; text-decoration:none; margin-right:4px;" title="Preview project details in new tab">🔗</a>
+                    <button class="secondary-btn" style="padding:6px 10px; font-size:0.8rem; color:#ef4444; border-color:rgba(239,68,68,0.3);" onclick="deleteProject('${escapeHtml(p.id)}', '${escapeHtml(p.title.replace(/'/g, "\\'"))}')" title="Delete innovation permanently">🗑️</button>
+                </td>
+            </tr>
+        `;
+    });
 
-                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
-                    ${techTags}
-                </div>
-            </div>
+    tbody.innerHTML = html;
+}
 
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:12px; margin-top:8px;">
-                <div style="display:flex; gap:8px;">
-                    ${p.githubUrl ? `<a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener" style="font-size:0.8rem; color:inherit; text-decoration:none;" title="GitHub">💻 Code</a>` : ""}
-                    ${p.demoUrl && p.demoUrl !== "#" ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" style="font-size:0.8rem; color:var(--accent-color); text-decoration:none;" title="Live Demo">🔗 Demo</a>` : ""}
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="edit-btn secondary-btn" style="padding:6px 12px; font-size:0.8rem; border-radius:6px; cursor:pointer;">Edit</button>
-                    <button class="delete-btn secondary-btn" style="padding:6px 10px; font-size:0.8rem; border-radius:6px; color:#e74c3c; cursor:pointer;" title="Delete">🗑</button>
-                </div>
+// -----------------------------------------------------------------
+// Modal & Form Controller
+// -----------------------------------------------------------------
+function openAddModal() {
+    document.getElementById("projectForm").reset();
+    document.getElementById("editDocId").value = "";
+    document.getElementById("modalTitle").textContent = "Add New Innovation Project";
+    document.getElementById("btnSubmitProject").textContent = "Publish Project";
+    document.getElementById("projInputStatus").value = "published";
+    document.getElementById("coverPreviewContainer").style.display = "none";
+    document.getElementById("customCategoryField").style.display = "none";
+    
+    selectedCoverFile = null;
+    selectedGalleryFiles = [];
+    editingGalleryImages = [];
+    renderGalleryPreviews();
+
+    document.getElementById("projectModal").classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+window.editProject = function(id) {
+    const project = projectsList.find(p => p.id === id);
+    if (!project) return;
+
+    document.getElementById("projectForm").reset();
+    document.getElementById("editDocId").value = id;
+    document.getElementById("modalTitle").textContent = "Edit Project: " + project.title;
+    document.getElementById("btnSubmitProject").textContent = "Update & Save";
+
+    document.getElementById("projInputTitle").value = project.title || "";
+    
+    // Category check
+    const catSelect = document.getElementById("projInputCategory");
+    const customCatField = document.getElementById("customCategoryField");
+    const standardCategories = ["AI & Machine Learning", "Robotics", "Web Development", "IoT", "Cybersecurity"];
+    if (standardCategories.includes(project.category)) {
+        catSelect.value = project.category;
+        customCatField.style.display = "none";
+    } else {
+        catSelect.value = "Other";
+        customCatField.style.display = "block";
+        document.getElementById("projInputCustomCat").value = project.category || "";
+    }
+
+    document.getElementById("projInputShortDesc").value = project.shortDescription || "";
+    document.getElementById("projInputFullDesc").value = project.description || "";
+    document.getElementById("projInputProblem").value = project.problemStatement || "";
+    document.getElementById("projInputSolution").value = project.solution || "";
+    
+    if (Array.isArray(project.features)) {
+        document.getElementById("projInputFeatures").value = project.features.join("\n");
+    } else {
+        document.getElementById("projInputFeatures").value = project.features || "";
+    }
+
+    if (Array.isArray(project.technologies)) {
+        document.getElementById("projInputTech").value = project.technologies.join(", ");
+    } else {
+        document.getElementById("projInputTech").value = project.technologies || "";
+    }
+
+    if (Array.isArray(project.teamMembers)) {
+        document.getElementById("projInputTeam").value = project.teamMembers.join(", ");
+    } else {
+        document.getElementById("projInputTeam").value = project.teamMembers || "";
+    }
+
+    document.getElementById("projInputGithub").value = project.githubUrl || "";
+    document.getElementById("projInputDemo").value = project.demoUrl || "";
+    document.getElementById("projInputDocs").value = project.documentationUrl || "";
+    document.getElementById("projInputVideo").value = project.videoUrl || "";
+    document.getElementById("projInOutcomes").value = project.outcomes || "";
+    document.getElementById("projInputStatus").value = project.status || "published";
+    document.getElementById("projInputFeatured").checked = !!project.featured;
+
+    // Cover Image
+    selectedCoverFile = null;
+    selectedGalleryFiles = [];
+    document.getElementById("coverImageUrl").value = project.coverImageUrl || "";
+    if (project.coverImageUrl) {
+        document.getElementById("coverPreviewImg").src = project.coverImageUrl;
+        document.getElementById("coverPreviewContainer").style.display = "block";
+    } else {
+        document.getElementById("coverPreviewContainer").style.display = "none";
+    }
+
+    // Gallery
+    editingGalleryImages = Array.isArray(project.galleryImages) ? [...project.galleryImages] : [];
+    renderGalleryPreviews();
+
+    document.getElementById("projectModal").classList.add("active");
+    document.body.style.overflow = "hidden";
+};
+
+function closeModal() {
+    document.getElementById("projectModal").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+function renderGalleryPreviews() {
+    const strip = document.getElementById("galleryPreviewsStrip");
+    if (!strip) return;
+
+    let html = "";
+    
+    // Existing stored images
+    editingGalleryImages.forEach((img, idx) => {
+        const url = typeof img === "string" ? img : img.url;
+        html += `
+            <div class="gallery-preview-pill">
+                <img src="${escapeHtml(url)}" alt="Existing image">
+                <button type="button" class="gallery-preview-remove" onclick="removeExistingGalleryImage(${idx})">&times;</button>
             </div>
         `;
+    });
 
-        card.querySelector(".edit-btn").addEventListener("click", () => openProjectModal(p));
-        card.querySelector(".delete-btn").addEventListener("click", () => deleteProject(p.id));
+    // Newly selected pending files
+    selectedGalleryFiles.forEach((file, idx) => {
+        const tempUrl = URL.createObjectURL(file);
+        html += `
+            <div class="gallery-preview-pill" style="border-color:#10b981;">
+                <img src="${tempUrl}" alt="Pending upload">
+                <button type="button" class="gallery-preview-remove" onclick="removePendingGalleryFile(${idx})">&times;</button>
+            </div>
+        `;
+    });
 
-        grid.appendChild(card);
+    strip.innerHTML = html;
+}
+
+window.removeExistingGalleryImage = function(idx) {
+    editingGalleryImages.splice(idx, 1);
+    renderGalleryPreviews();
+};
+
+window.removePendingGalleryFile = function(idx) {
+    selectedGalleryFiles.splice(idx, 1);
+    renderGalleryPreviews();
+};
+
+// -----------------------------------------------------------------
+// Storage Upload Utilities (projects/ID/cover & projects/ID/gallery)
+// -----------------------------------------------------------------
+async function uploadToStorage(file, folderPath) {
+    // 1. Try Firebase Storage API
+    try {
+        if (firebase.storage && typeof firebase.storage === "function") {
+            const storageRef = firebase.storage().ref();
+            const cleanName = (file.name || "img.webp").replace(/[^a-zA-Z0-9.-]/g, "_");
+            const fullPath = `${folderPath}/${Date.now()}_${cleanName}`;
+            const fileRef = storageRef.child(fullPath);
+            
+            const uploadTask = fileRef.put(file);
+            const snapshot = await uploadTask;
+            const downloadUrl = await snapshot.ref.getDownloadURL();
+            return { url: downloadUrl, path: fullPath };
+        }
+    } catch (err) {
+        console.warn("Storage API notice (switching to resilient fallback):", err);
+    }
+
+    // 2. High-efficiency local dataURL compression fallback
+    const dataUrl = await compressImageToDataUrl(file);
+    return { url: dataUrl, path: "" };
+}
+
+function compressImageToDataUrl(file, maxWidth = 1200, quality = 0.82) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let w = img.width;
+                let h = img.height;
+                if (w > maxWidth) {
+                    h = Math.round((h * maxWidth) / w);
+                    w = maxWidth;
+                }
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL("image/webp", quality));
+            };
+            img.onerror = () => resolve(e.target.result);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80");
+        reader.readAsDataURL(file);
     });
 }
 
-function openProjectModal(project = null) {
-    const modal = document.getElementById("projectModal");
-    const title = document.getElementById("projectModalTitle");
-    const form = document.getElementById("projectForm");
-    if (!modal || !form) return;
+// -----------------------------------------------------------------
+// Project Form Submission (Create or Update)
+// -----------------------------------------------------------------
+async function handleProjectSubmit(e) {
+    e.preventDefault();
+    const btnSubmit = document.getElementById("btnSubmitProject");
+    const originalText = btnSubmit.textContent;
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Saving to Cloud...";
 
-    form.reset();
+    try {
+        const docId = document.getElementById("editDocId").value.trim();
+        const title = document.getElementById("projInputTitle").value.trim();
+        
+        let category = document.getElementById("projInputCategory").value;
+        if (category === "Other") {
+            const customVal = document.getElementById("projInputCustomCat").value.trim();
+            category = customVal || "Other Innovations";
+        }
 
-    if (project) {
-        title.textContent = "Edit Project";
-        document.getElementById("projectId").value = project.id;
-        document.getElementById("projectTitle").value = project.title || "";
-        document.getElementById("projectStatus").value = project.status || "Completed";
-        document.getElementById("projectDept").value = project.departmentId || "rnd";
-        document.getElementById("projectYear").value = project.year || "2025-26";
-        document.getElementById("projectShortDesc").value = project.shortDescription || "";
-        document.getElementById("projectFullDesc").value = project.description || "";
-        document.getElementById("projectTech").value = project.technologies || "";
-        document.getElementById("projectTeam").value = project.teamMembers || "";
-        document.getElementById("projectGithub").value = project.githubUrl || "";
-        document.getElementById("projectDemo").value = project.demoUrl || "";
-        document.getElementById("projectImageUrl").value = project.imageUrl || "";
-        document.getElementById("projectFeatured").checked = project.featured === true;
-        document.getElementById("projectActive").checked = project.active !== false;
-    } else {
-        title.textContent = "Add New Project";
-        document.getElementById("projectId").value = "";
-        document.getElementById("projectYear").value = "2025-26";
-        document.getElementById("projectActive").checked = true;
+        const shortDescription = document.getElementById("projInputShortDesc").value.trim();
+        const description = document.getElementById("projInputFullDesc").value.trim();
+        const problemStatement = document.getElementById("projInputProblem").value.trim();
+        const solution = document.getElementById("projInputSolution").value.trim();
+        
+        const featuresRaw = document.getElementById("projInputFeatures").value;
+        const features = featuresRaw.split("\n").map(f => f.trim()).filter(Boolean);
+
+        const techRaw = document.getElementById("projInputTech").value;
+        const technologies = techRaw.split(",").map(t => t.trim()).filter(Boolean);
+
+        const teamRaw = document.getElementById("projInputTeam").value;
+        const teamMembers = teamRaw.split(",").map(m => m.trim()).filter(Boolean);
+
+        const githubUrl = document.getElementById("projInputGithub").value.trim();
+        const demoUrl = document.getElementById("projInputDemo").value.trim();
+        const documentationUrl = document.getElementById("projInputDocs").value.trim();
+        const videoUrl = document.getElementById("projInputVideo").value.trim();
+        const outcomes = document.getElementById("projInOutcomes").value.trim();
+        const status = document.getElementById("projInputStatus").value;
+        const featured = document.getElementById("projInputFeatured").checked;
+
+        // Target target ID for Storage folder
+        const stableId = docId || ("proj_" + Date.now());
+
+        // Cover Image Handling
+        let coverImageUrl = document.getElementById("coverImageUrl").value.trim();
+        let coverImagePath = "";
+
+        if (selectedCoverFile) {
+            btnSubmit.textContent = "Uploading Cover Image...";
+            const res = await uploadToStorage(selectedCoverFile, `projects/${stableId}/cover`);
+            coverImageUrl = res.url;
+            coverImagePath = res.path;
+        }
+
+        if (!coverImageUrl) {
+            coverImageUrl = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80";
+        }
+
+        // Gallery Images Handling
+        let finalGalleryImages = [...editingGalleryImages];
+        if (selectedGalleryFiles.length > 0) {
+            btnSubmit.textContent = `Uploading ${selectedGalleryFiles.length} Gallery Files...`;
+            for (const gFile of selectedGalleryFiles) {
+                const gRes = await uploadToStorage(gFile, `projects/${stableId}/gallery`);
+                finalGalleryImages.push({ url: gRes.url, path: gRes.path });
+            }
+        }
+
+        const payload = {
+            title,
+            category,
+            shortDescription,
+            description,
+            problemStatement,
+            solution,
+            features,
+            technologies,
+            teamMembers,
+            githubUrl,
+            demoUrl,
+            documentationUrl,
+            videoUrl,
+            outcomes,
+            status,
+            featured,
+            coverImageUrl,
+            coverImagePath,
+            galleryImages: finalGalleryImages,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (status === "published") {
+            payload.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
+
+        if (docId) {
+            // Update existing
+            await db.collection("projects").doc(docId).set(payload, { merge: true });
+            if (window.CMS && typeof CMS.logAction === "function") {
+                await CMS.logAction("projects", docId, "UPDATE", `Updated project: ${title} (${status})`);
+            }
+        } else {
+            // Create new
+            payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            payload.displayOrder = projectsList.length + 1;
+            const newRef = await db.collection("projects").add(payload);
+            if (window.CMS && typeof CMS.logAction === "function") {
+                await CMS.logAction("projects", newRef.id, "CREATE", `Created new project: ${title} (${status})`);
+            }
+        }
+
+        closeModal();
+        await loadProjects();
+        alert(docId ? "Project updated successfully!" : "New innovation project published!");
+    } catch (err) {
+        console.error("Error saving project:", err);
+        alert("Failed to save project: " + err.message);
+    } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = originalText;
     }
-
-    modal.style.display = "flex";
 }
 
-function closeProjectModal() {
-    const modal = document.getElementById("projectModal");
-    if (modal) modal.style.display = "none";
-}
+// -----------------------------------------------------------------
+// Quick Status Toggle & Archive
+// -----------------------------------------------------------------
+window.togglePublish = async function(id, currentStatus) {
+    try {
+        const nextStatus = (currentStatus === "published") ? "draft" : "published";
+        const updateData = {
+            status: nextStatus,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (nextStatus === "published") {
+            updateData.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
 
-async function saveProject() {
-    const docId = document.getElementById("projectId").value;
-    const title = document.getElementById("projectTitle").value.trim();
-    if (!title) {
-        showToast("Please enter a project title.", "warning");
+        await db.collection("projects").doc(id).update(updateData);
+        if (window.CMS && typeof CMS.logAction === "function") {
+            await CMS.logAction("projects", id, "STATUS_CHANGE", `Toggled project status to: ${nextStatus}`);
+        }
+        await loadProjects();
+    } catch (err) {
+        console.error("Error toggling status:", err);
+        alert("Failed to change status: " + err.message);
+    }
+};
+
+// -----------------------------------------------------------------
+// Delete Project & Clean up Storage Images
+// -----------------------------------------------------------------
+window.deleteProject = async function(id, title) {
+    if (!confirm(`Are you sure you want to permanently delete "${title}"?\nAll engineering descriptions, specs, and storage files will be removed.`)) {
         return;
     }
 
-    const deptSelect = document.getElementById("projectDept");
-    const deptId = deptSelect.value;
-    const deptName = deptSelect.options[deptSelect.selectedIndex]?.text || deptId;
+    try {
+        const project = projectsList.find(p => p.id === id);
+        
+        // Clean up Storage cover image if stored as storage path
+        if (project && project.coverImagePath && firebase.storage) {
+            try {
+                await firebase.storage().ref().child(project.coverImagePath).delete();
+            } catch (ignore) {}
+        }
 
-    const payload = {
-        title,
-        status: document.getElementById("projectStatus").value,
-        departmentId: deptId,
-        departmentName: deptName,
-        year: document.getElementById("projectYear").value.trim() || "2025-26",
-        shortDescription: document.getElementById("projectShortDesc").value.trim(),
-        description: document.getElementById("projectFullDesc").value.trim(),
-        technologies: document.getElementById("projectTech").value.trim(),
-        teamMembers: document.getElementById("projectTeam").value.trim(),
-        githubUrl: document.getElementById("projectGithub").value.trim(),
-        demoUrl: document.getElementById("projectDemo").value.trim(),
-        imageUrl: document.getElementById("projectImageUrl").value.trim() || "assets/1.png",
-        featured: document.getElementById("projectFeatured").checked,
-        active: document.getElementById("projectActive").checked,
-        displayOrder: 1
-    };
+        // Clean up Storage gallery images
+        if (project && Array.isArray(project.galleryImages) && firebase.storage) {
+            for (const img of project.galleryImages) {
+                if (img.path) {
+                    try {
+                        await firebase.storage().ref().child(img.path).delete();
+                    } catch (ignore) {}
+                }
+            }
+        }
+
+        // Delete Firestore Record
+        await db.collection("projects").doc(id).delete();
+        if (window.CMS && typeof CMS.logAction === "function") {
+            await CMS.logAction("projects", id, "DELETE", `Deleted project: ${title}`);
+        }
+
+        await loadProjects();
+        alert(`"${title}" has been permanently deleted.`);
+    } catch (err) {
+        console.error("Error deleting project:", err);
+        alert("Failed to delete project: " + err.message);
+    }
+};
+
+// -----------------------------------------------------------------
+// Seed Initial Curated Innovations
+// -----------------------------------------------------------------
+async function seedDefaultProjects() {
+    if (!confirm("This will add the 6 curated VVISC innovation projects (AI Crop Diagnostic, Drone Mesh, IoT Microgrid, CampusHub, SentinelShield, and Warehouse Rover) to Cloud Firestore. Proceed?")) {
+        return;
+    }
 
     try {
-        await CMS.saveDoc("projects", docId, payload);
-        showToast(`Project "${title}" saved successfully!`);
-        closeProjectModal();
+        for (const item of DEFAULT_SEED_PROJECTS) {
+            await db.collection("projects").add({
+                ...item,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                publishedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        if (window.CMS && typeof CMS.logAction === "function") {
+            await CMS.logAction("projects", "seed", "SEED", "Seeded 6 default innovation prototypes into Firestore");
+        }
         await loadProjects();
+        alert("Successfully seeded 6 innovation projects!");
     } catch (err) {
-        showToast("Error saving project: " + err.message, "error");
+        console.error("Error seeding projects:", err);
+        alert("Failed to seed projects: " + err.message);
     }
-}
-
-async function deleteProject(id) {
-    if (!confirm("Are you sure you want to permanently delete this project?")) return;
-    try {
-        await CMS.deleteDoc("projects", id);
-        showToast("Project deleted.");
-        await loadProjects();
-    } catch (err) {
-        showToast("Error deleting project: " + err.message, "error");
-    }
-}
-
-function getAdminImgSrc(src) {
-    if (!src) return "../assets/1.png";
-    if (src.startsWith("data:") || src.startsWith("http://") || src.startsWith("https://")) return src;
-    if (src.startsWith("../")) return src;
-    return "../" + src;
 }
 
 function escapeHtml(str) {
-    return (str || "")
+    if (!str) return "";
+    return String(str)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")

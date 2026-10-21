@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Project Details | VVISC IUCEE</title>
+    <meta name="description" id="pageDescription" content="Explore technical architecture, problem statement, and engineering details for student innovations at VVISC.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+
+    <style>
+        /* =====================================================================
+           Project Deep-Dive & Details Page Styles
+           ===================================================================== */
+        
+        .project-detail-hero {
+            padding: 130px 24px 60px;
+            background: radial-gradient(circle at 50% 20%, rgba(11, 43, 38, 0.6) 0%, var(--bg-color) 85%);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .detail-hero-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .back-nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--color-gold-accent);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .back-nav-link:hover {
+            color: var(--heading-color);
+            transform: translateX(-4px);
+        }
+
+        .detail-header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .detail-category-pill {
+            background: rgba(197, 168, 128, 0.12);
+            border: 1px solid var(--color-gold-border);
+            color: var(--color-gold-highlight);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-status-pill {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #10b981;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        .detail-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 700;
+            line-height: 1.18;
+            color: var(--heading-color);
+            margin-bottom: 18px;
+        }
+
+        .detail-tagline {
+            font-family: var(--font-body);
+            font-size: clamp(1.05rem, 2vw, 1.25rem);
+            line-height: 1.65;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 820px;
+            margin-bottom: 30px;
+        }
+
+        /* Action Buttons Row */
+        .detail-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .btn-action-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.92rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(197, 168, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-action-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.45);
+        }
+
+        .btn-action-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            color: var(--heading-color);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.92rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action-secondary:hover {
+            border-color: var(--color-gold-accent);
+            transform: translateY(-2px);
+            color: var(--color-gold-highlight);
+        }
+
+        /* Main Cover Media Card */
+        .detail-cover-card {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #020f0c;
+            box-shadow: var(--shadow);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .detail-cover-img {
+            width: 100%;
+            max-height: 520px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .detail-cover-card:hover .detail-cover-img {
+            transform: scale(1.02);
+        }
+
+        .cover-click-hint {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(5, 31, 26, 0.75);
+            border: 1px solid var(--color-gold-border);
+            color: var(--color-gold-highlight);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            backdrop-filter: blur(8px);
+            pointer-events: none;
+        }
+
+        /* =====================================================================
+           Content Sections Layout
+           ===================================================================== */
+        
+        .detail-main-layout {
+            padding: 60px 24px 100px;
+            background: var(--bg-color);
+        }
+
+        .detail-grid-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2.2fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .detail-grid-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        /* Content Blocks */
+        .detail-section-block {
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .detail-block-title {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--heading-color);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+        }
+
+        .detail-block-title .title-icon {
+            color: var(--color-gold-highlight);
+            font-size: 1.4rem;
+        }
+
+        .detail-body-text {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--text-color);
+            opacity: 0.9;
+            white-space: pre-line;
+        }
+
+        /* Features List */
+        .features-bullet-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(197, 168, 128, 0.05);
+            border: 1px solid rgba(197, 168, 128, 0.15);
+            border-radius: 10px;
+            font-size: 0.96rem;
+            line-height: 1.5;
+            color: var(--text-color);
+        }
+
+        .feature-check-icon {
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Gallery Grid */
+        .project-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .gallery-thumb-item {
+            height: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            background: #020f0c;
+        }
+
+        .gallery-thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-thumb-item:hover .gallery-thumb-img {
+            transform: scale(1.08);
+        }
+
+        /* Sidebar Meta Box */
+        .sidebar-meta-card {
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar-card-heading {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-gold-highlight);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .sidebar-meta-group {
+            margin-bottom: 22px;
+        }
+
+        .sidebar-meta-label {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--text-color);
+            opacity: 0.65;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-tech-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .sidebar-chip {
+            background: rgba(197, 168, 128, 0.1);
+            border: 1px solid var(--color-gold-border);
+            color: var(--color-gold-accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+
+        .sidebar-members-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-member-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.92rem;
+            color: var(--heading-color);
+        }
+
+        .member-avatar-placeholder {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(197, 168, 128, 0.2);
+            color: var(--color-gold-highlight);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Video Embed */
+        .video-embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-top: 14px;
+            background: #000;
+        }
+
+        .video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Interactive Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 20, 17, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 12px;
+            border: 1px solid var(--color-gold-border);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8);
+            object-fit: contain;
+        }
+
+        .lightbox-close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: rgba(5, 31, 26, 0.8);
+            border: 1px solid var(--color-gold-border);
+            color: var(--heading-color);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.2s ease;
+        }
+
+        .lightbox-close-btn:hover {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        /* Loading / Not Found State */
+        .state-container {
+            max-width: 600px;
+            margin: 120px auto;
+            text-align: center;
+            padding: 60px 30px;
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo" data-cursor="HOME">
+                <span class="nav-logo-wrap">
+                    <img src="assets/logo.png" alt="VVITU IUCEE Logo" class="nav-logo">
+                </span>
+                <span class="logo-text">VVITU <span class="logo-accent">IUCEE</span></span>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" data-cursor="OPEN">Home</a>
+                <a href="about.html" data-cursor="OPEN">About</a>
+                <a href="departments.html" data-cursor="OPEN">Departments</a>
+                <a href="projects.html" class="active" data-cursor="OPEN">Projects</a>
+                <a href="events.html" data-cursor="OPEN">Events</a>
+                <a href="gallery.html" data-cursor="OPEN">Gallery</a>
+                <a href="council.html" data-cursor="OPEN">Council</a>
+                <a href="contact.html" data-cursor="OPEN">Contact</a>
+                <a href="testimonials.html" data-cursor="OPEN">Reviews</a>
+            </div>
+
+            <div class="nav-actions">
+                <div class="theme-toggle-container">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme" data-cursor="THEME">
+                        <span class="toggle-icon"></span>
+                    </button>
+                </div>
+                <div class="auth-buttons" id="authContainer">
+                    <a id="loginBtn" class="nav-login-btn" href="login.html" data-cursor="LOGIN">Login</a>
+                    <div class="user-menu hidden" id="userMenu">
+                        <button class="user-btn" id="userBtn">
+                            <span id="userName">Admin</span> ▼
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="admins/dashboard.html">📊 Dashboard</a>
+                            <a href="admins/projects-management.html">🚀 Projects CMS</a>
+                            <hr>
+                            <button id="logoutBtn">🚪 Logout</button>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://vvitguntur.com" target="_blank" rel="noopener noreferrer" class="nav-vvit-brand" data-cursor="VVIT" title="Vasireddy Venkatadri International Technological University">
+                    <img src="assets/vvit-logo.png" alt="VVIT University Logo" class="nav-vvit-logo">
+                </a>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="departments.html">Departments</a>
+            <a href="projects.html" class="active">Projects</a>
+            <a href="events.html">Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="council.html">Council</a>
+            <a href="contact.html">Contact</a>
+            <a href="testimonials.html">Student Reviews</a>
+            <a href="login.html" id="mobileLoginBtn" class="mobile-login-btn">Login</a>
+        </div>
+        <div class="scroll-progress"></div>
+    </nav>
+
+    <!-- Project Details Loading / Content Container -->
+    <div id="projectLoadingState" class="state-container">
+        <div style="font-size:2.2rem; margin-bottom:14px; animation:spin 1s infinite linear;">⚙️</div>
+        <h2 style="font-family:var(--font-display); color:var(--heading-color);">Loading Engineering Specifications...</h2>
+        <p style="color:var(--text-color); opacity:0.8;">Querying project architecture from Cloud Firestore.</p>
+    </div>
+
+    <div id="projectNotFoundState" class="state-container" style="display:none;">
+        <div style="font-size:3rem; margin-bottom:14px;">🔍</div>
+        <h2 style="font-family:var(--font-display); color:var(--heading-color);">Project Not Found</h2>
+        <p style="color:var(--text-color); opacity:0.8; margin-bottom:24px;">The requested innovation could not be found or is currently an unreleased draft.</p>
+        <a href="projects.html" class="btn-action-primary">Browse All Projects</a>
+    </div>
+
+    <main id="projectContentWrapper" style="display:none;">
+        <!-- Hero Header -->
+        <header class="project-detail-hero">
+            <div class="detail-hero-container">
+                <a href="projects.html" class="back-nav-link">
+                    &larr; Back to Innovations Portfolio
+                </a>
+
+                <div class="detail-header-meta">
+                    <span class="detail-category-pill" id="projCategory">Domain</span>
+                    <span class="detail-status-pill" id="projStatus">Active Prototype</span>
+                    <span id="projDate" style="font-family:var(--font-mono); font-size:0.82rem; color:var(--text-color); opacity:0.75;"></span>
+                </div>
+
+                <h1 class="detail-title" id="projTitle">Project Title</h1>
+                <p class="detail-tagline" id="projTagline">Project short summary.</p>
+
+                <!-- Action Links (GitHub, Demo, Docs, Video) -->
+                <div class="detail-actions-row" id="projActionLinks">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Cover Image Card -->
+                <div class="detail-cover-card" id="coverImageCard" title="Click to view full image in lightbox">
+                    <img id="projCoverImg" src="" alt="Project Cover" class="detail-cover-img">
+                    <div class="cover-click-hint">🔍 Click to Expand</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Grid Layout -->
+        <section class="detail-main-layout">
+            <div class="detail-grid-container">
+                <!-- Left Main Content Column -->
+                <div class="detail-main-col">
+                    <!-- 1. Full Description -->
+                    <div class="detail-section-block" id="blockDescription">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">📄</span>
+                            <span>Project Overview</span>
+                        </h2>
+                        <div class="detail-body-text" id="projFullDescription"></div>
+                    </div>
+
+                    <!-- 2. Problem Statement -->
+                    <div class="detail-section-block" id="blockProblem">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">🎯</span>
+                            <span>Problem Statement</span>
+                        </h2>
+                        <div class="detail-body-text" id="projProblemStatement"></div>
+                    </div>
+
+                    <!-- 3. Proposed Solution & Architecture -->
+                    <div class="detail-section-block" id="blockSolution">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">💡</span>
+                            <span>Engineered Solution</span>
+                        </h2>
+                        <div class="detail-body-text" id="projSolution"></div>
+                    </div>
+
+                    <!-- 4. Key Engineering Features -->
+                    <div class="detail-section-block" id="blockFeatures">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">⚡</span>
+                            <span>Key Engineering Features</span>
+                        </h2>
+                        <ul class="features-bullet-list" id="projFeaturesList"></ul>
+                    </div>
+
+                    <!-- 5. Additional Gallery Showcase -->
+                    <div class="detail-section-block" id="blockGallery" style="display:none;">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">🖼️</span>
+                            <span>Visual Showcase &amp; Schematics</span>
+                        </h2>
+                        <div class="project-gallery-grid" id="projGalleryGrid"></div>
+                    </div>
+
+                    <!-- 6. Video Demonstration -->
+                    <div class="detail-section-block" id="blockVideo" style="display:none;">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">🎬</span>
+                            <span>Demonstration Video</span>
+                        </h2>
+                        <div class="video-embed-container" id="videoEmbedContainer"></div>
+                    </div>
+
+                    <!-- 7. Outcomes & Future Enhancements -->
+                    <div class="detail-section-block" id="blockOutcomes" style="display:none;">
+                        <h2 class="detail-block-title">
+                            <span class="title-icon">🚀</span>
+                            <span>Outcomes &amp; Future Scope</span>
+                        </h2>
+                        <div class="detail-body-text" id="projOutcomes"></div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar Meta Column -->
+                <aside class="detail-sidebar-col">
+                    <div class="sidebar-meta-card">
+                        <div class="sidebar-card-heading">Engineering Specs</div>
+
+                        <!-- Technologies Used -->
+                        <div class="sidebar-meta-group">
+                            <div class="sidebar-meta-label">Technology Stack</div>
+                            <div class="sidebar-tech-chips" id="projTechChips"></div>
+                        </div>
+
+                        <!-- Team & Contributors -->
+                        <div class="sidebar-meta-group">
+                            <div class="sidebar-meta-label">Engineers &amp; Mentors</div>
+                            <ul class="sidebar-members-list" id="projMembersList"></ul>
+                        </div>
+
+                        <!-- Category & Subsystem -->
+                        <div class="sidebar-meta-group">
+                            <div class="sidebar-meta-label">Innovation Domain</div>
+                            <div style="font-weight:600; color:var(--heading-color);" id="projDomainText">General Engineering</div>
+                        </div>
+
+                        <!-- Back Button -->
+                        <div style="margin-top:28px;">
+                            <a href="projects.html" class="btn-action-secondary" style="width:100%; justify-content:center;">
+                                &larr; Return to All Projects
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal">
+        <button class="lightbox-close-btn" id="lightboxCloseBtn" aria-label="Close modal">&times;</button>
+        <img src="" alt="Full view" class="lightbox-img" id="lightboxImg">
+    </div>
+
+    <!-- Standard VVISC Footer -->
+    <footer class="vvisc-footer" role="contentinfo">
+        <div class="vvisc-footer-wrapper">
+            <div class="vvisc-footer-main">
+                <div class="vvisc-footer-col vvisc-footer-brand-col">
+                    <a href="index.html" class="vvisc-footer-brand-link">
+                        <span class="vvisc-footer-crest-box">
+                            <img src="assets/logo.png" alt="VVISC IUCEE Crest" class="vvisc-footer-crest">
+                        </span>
+                        <div class="vvisc-footer-brand-text">
+                            <span class="vvisc-footer-brand-title">VVITU <span class="vvisc-footer-brand-accent">IUCEE</span></span>
+                            <span class="vvisc-footer-brand-tag">STUDENT CHAPTER</span>
+                        </div>
+                    </a>
+                    <p class="vvisc-footer-desc">
+                        Fostering engineering excellence, collaborative problem-solving, and transformative technical education under the IUCEE umbrella at VVIT.
+                    </p>
+                </div>
+
+                <div class="vvisc-footer-col">
+                    <h4 class="vvisc-footer-heading">NAVIGATION</h4>
+                    <ul class="vvisc-footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Chapter</a></li>
+                        <li><a href="departments.html">Departments</a></li>
+                        <li><a href="projects.html">Projects &amp; Innovation</a></li>
+                        <li><a href="events.html">Events &amp; Workshops</a></li>
+                        <li><a href="gallery.html">Photo Gallery</a></li>
+                        <li><a href="council.html">Executive Council</a></li>
+                        <li><a href="testimonials.html">Student Reviews</a></li>
+                    </ul>
+                </div>
+
+                <div class="vvisc-footer-col">
+                    <h4 class="vvisc-footer-heading">CHAPTER DESK</h4>
+                    <ul class="vvisc-footer-contact-list">
+                        <li>
+                            <span class="vvisc-contact-icon">📍</span>
+                            <span>VVIT Campus, Nambur, Guntur, AP - 522508</span>
+                        </li>
+                        <li>
+                            <span class="vvisc-contact-icon">✉️</span>
+                            <a href="mailto:vvisc@vvit.edu.in">vvisc@vvit.edu.in</a>
+                        </li>
+                        <li>
+                            <span class="vvisc-contact-icon">🏛️</span>
+                            <span>Affiliated with IUCEE Global</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="vvisc-footer-bottom">
+                <p class="vvisc-footer-copy copyright">&copy; 2026 VVISC. All rights reserved.</p>
+                <div class="vvisc-footer-bottom-right">
+                    <span class="vvisc-footer-motto">Heritage Academic Identity &times; Modern Engineering</span>
+                    <button type="button" class="vvisc-footer-scrolltop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" aria-label="Scroll back to top">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
+    <script src="main.js"></script>
+
+    <!-- Details Page Controller Script -->
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get("id");
+
+            const loadingEl = document.getElementById("projectLoadingState");
+            const notFoundEl = document.getElementById("projectNotFoundState");
+            const contentEl = document.getElementById("projectContentWrapper");
+
+            const DEFAULT_SEED_PROJECTS = {
+                "seed-ai-agri": {
+                    title: "KrishiNet: Edge AI Crop Health Diagnostics",
+                    category: "AI & Machine Learning",
+                    shortDescription: "Autonomous edge computer vision system deployed on low-cost drones for real-time crop disease diagnosis, pesticide recommendation, and yield projection.",
+                    description: "KrishiNet bridges agricultural agronomy and edge artificial intelligence. Built for smallholder farmers across rural India, the platform analyzes multispectral leaf imagery captured by handheld devices or autonomous UAVs, instantly classifying 40+ fungal and bacterial leaf pathologies offline with 96.4% precision.",
+                    problemStatement: "Rural agriculturalists face delayed crop disease diagnosis that leads to excessive crop loss (up to 35% annually) and indiscriminate chemical pesticide usage that degrades soil health and increases operational expenses.",
+                    solution: "An ultra-quantized lightweight convolutional neural network (MobileNetV3 backbone) optimized with TensorRT to execute directly on a Raspberry Pi 4 edge module attached to a drone. Farmers receive audio-visual alerts in vernacular Telugu and English with tailored organic remedies.",
+                    features: [
+                        "Sub-50ms inference latency running directly on-device without active internet connectivity.",
+                        "Multi-disease classification covering Paddy, Cotton, Chili, and Maize cultivars.",
+                        "Autonomous waypoint tracking integration with ArduPilot drone flight controllers.",
+                        "Cloud telemetry synchronization whenever Wi-Fi or cellular connectivity is restored."
+                    ],
+                    technologies: ["PyTorch", "OpenCV", "TensorRT", "Raspberry Pi 4", "Flutter", "Python"],
+                    teamMembers: ["Sai Vardhan (Lead AI Engineer)", "Harika R. (Hardware Lead)", "Kiran Kumar (Agronomy Researcher)"],
+                    githubUrl: "https://github.com",
+                    demoUrl: "https://vvisc-iucee.web.app",
+                    documentationUrl: "https://github.com",
+                    coverImageUrl: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=1200&q=80",
+                    galleryImages: [
+                        "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=800&q=80"
+                    ],
+                    outcomes: "Validated across 12 agricultural plots in Guntur district with 94.2% diagnostic accuracy. Awarded 1st place in Smart Agriculture category at the IUCEE Regional Hackathon 2025."
+                },
+                "seed-robotics-swarm": {
+                    title: "AeroSwarm: Autonomous Decentralized Drone Mesh",
+                    category: "Robotics",
+                    shortDescription: "Decentralized UAV swarm architecture using custom peer-to-peer radio frequency meshes for disaster search, obstacle avoidance, and perimeter surveillance.",
+                    description: "AeroSwarm demonstrates resilient decentralized swarm coordination for emergency search-and-rescue. Eliminating single-point-of-failure ground control stations, every drone dynamically elects cluster heads, distributes search grid zones, and relays high-bandwidth thermal telemetry across multi-hop RF packet radios.",
+                    problemStatement: "In severe flood and earthquake scenarios, cellular towers and terrestrial infrastructure fail, leaving conventional remote-controlled drones incapable of operating beyond visual line of sight.",
+                    solution: "A consensus-driven Flocking Algorithm running atop ROS 2 (Robot Operating System). Thermal infrared sensor streams are aggregated collaboratively, triangulating human heat signatures under foliage.",
+                    features: [
+                        "Decentralized ad-hoc 868MHz mesh network supporting up to 16 autonomous units.",
+                        "Dynamic leader election with failover in under 200 milliseconds.",
+                        "Coordinated spatial coverage planning avoiding mutual drone collision envelopes.",
+                        "Live thermal human-detection bounding box streaming."
+                    ],
+                    technologies: ["ROS 2", "C++", "Gazebo", "PX4 Autopilot", "Python", "LiDAR"],
+                    teamMembers: ["Ravi Teja (Robotics Lead)", "M. Anusha (Control Systems)", "Suresh V. (RF Communications)"],
+                    githubUrl: "https://github.com",
+                    demoUrl: "",
+                    coverImageUrl: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80",
+                    galleryImages: [
+                        "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1516542076529-1ea3854896f2?auto=format&fit=crop&w=800&q=80"
+                    ],
+                    outcomes: "Successfully deployed in mock disaster search drill, discovering 3 simulated targets in under 8 minutes across a 2-kilometer radius."
+                }
+            };
+
+            async function loadProjectDetails() {
+                if (!projectId) {
+                    showNotFound();
+                    return;
+                }
+
+                try {
+                    let projectData = null;
+
+                    if (window.db) {
+                        const docRef = db.collection("projects").doc(projectId);
+                        const docSnap = await docRef.get();
+                        if (docSnap.exists) {
+                            projectData = { id: docSnap.id, ...docSnap.data() };
+                        }
+                    }
+
+                    // Check default seeds if not found in live Firestore
+                    if (!projectData && DEFAULT_SEED_PROJECTS[projectId]) {
+                        projectData = { id: projectId, ...DEFAULT_SEED_PROJECTS[projectId] };
+                    }
+
+                    if (!projectData) {
+                        showNotFound();
+                        return;
+                    }
+
+                    // Verify publication status or admin session
+                    const isAdmin = window.auth && window.auth.currentUser;
+                    if (projectData.status && projectData.status !== "published" && !isAdmin) {
+                        showNotFound();
+                        return;
+                    }
+
+                    renderProjectData(projectData);
+                } catch (err) {
+                    console.error("Error loading project details:", err);
+                    showNotFound();
+                }
+            }
+
+            function showNotFound() {
+                loadingEl.style.display = "none";
+                notFoundEl.style.display = "block";
+                contentEl.style.display = "none";
+            }
+
+            function renderProjectData(p) {
+                loadingEl.style.display = "none";
+                notFoundEl.style.display = "none";
+                contentEl.style.display = "block";
+
+                // Page Meta
+                document.title = `${p.title || "Project"} | VVISC IUCEE Innovations`;
+                document.getElementById("pageTitle").textContent = `${p.title || "Project"} | VVISC IUCEE`;
+                if (p.shortDescription) {
+                    document.getElementById("pageDescription").setAttribute("content", p.shortDescription);
+                }
+
+                // Header elements
+                document.getElementById("projCategory").textContent = p.category || "Engineering";
+                document.getElementById("projTitle").textContent = p.title || "Untitled Project";
+                document.getElementById("projTagline").textContent = p.shortDescription || p.description || "";
+                document.getElementById("projDomainText").textContent = p.category || "Technical Innovation";
+
+                // Status pill
+                const statusEl = document.getElementById("projStatus");
+                if (p.status === "draft") {
+                    statusEl.textContent = "Draft Preview (Admin Only)";
+                    statusEl.style.color = "#f59e0b";
+                    statusEl.style.borderColor = "rgba(245, 158, 11, 0.4)";
+                } else if (p.status === "archived") {
+                    statusEl.textContent = "Archived Innovation";
+                    statusEl.style.color = "#94a3b8";
+                    statusEl.style.borderColor = "rgba(148, 163, 184, 0.4)";
+                } else {
+                    statusEl.textContent = "Published Prototype";
+                }
+
+                // Date
+                const dateEl = document.getElementById("projDate");
+                if (p.publishedAt && p.publishedAt.seconds) {
+                    const d = new Date(p.publishedAt.seconds * 1000);
+                    dateEl.textContent = "Released " + d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+                }
+
+                // Action Links
+                const actionsRow = document.getElementById("projActionLinks");
+                let actionsHtml = "";
+                if (p.githubUrl && p.githubUrl.trim()) {
+                    actionsHtml += `
+                        <a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener noreferrer" class="btn-action-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                            </svg>
+                            <span>GitHub Repository &nearr;</span>
+                        </a>
+                    `;
+                }
+                if (p.demoUrl && p.demoUrl.trim()) {
+                    actionsHtml += `
+                        <a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener noreferrer" class="btn-action-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                            </svg>
+                            <span>Live Demonstration &nearr;</span>
+                        </a>
+                    `;
+                }
+                if (p.documentationUrl && p.documentationUrl.trim()) {
+                    actionsHtml += `
+                        <a href="${escapeHtml(p.documentationUrl)}" target="_blank" rel="noopener noreferrer" class="btn-action-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <span>Documentation &nearr;</span>
+                        </a>
+                    `;
+                }
+                actionsRow.innerHTML = actionsHtml;
+
+                // Cover Image
+                const coverImg = document.getElementById("projCoverImg");
+                const fallbackImg = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80";
+                coverImg.src = p.coverImageUrl || fallbackImg;
+                coverImg.onerror = () => coverImg.src = fallbackImg;
+
+                document.getElementById("coverImageCard").addEventListener("click", () => {
+                    openLightbox(coverImg.src);
+                });
+
+                // Full Description
+                document.getElementById("projFullDescription").textContent = p.description || p.shortDescription || "No detailed description provided.";
+
+                // Problem Statement (optional)
+                const problemBlock = document.getElementById("blockProblem");
+                if (p.problemStatement && p.problemStatement.trim()) {
+                    problemBlock.style.display = "block";
+                    document.getElementById("projProblemStatement").textContent = p.problemStatement;
+                } else {
+                    problemBlock.style.display = "none";
+                }
+
+                // Solution (optional)
+                const solBlock = document.getElementById("blockSolution");
+                if (p.solution && p.solution.trim()) {
+                    solBlock.style.display = "block";
+                    document.getElementById("projSolution").textContent = p.solution;
+                } else {
+                    solBlock.style.display = "none";
+                }
+
+                // Key Features (optional)
+                const featBlock = document.getElementById("blockFeatures");
+                let featuresList = [];
+                if (Array.isArray(p.features) && p.features.length > 0) {
+                    featuresList = p.features;
+                } else if (typeof p.features === "string" && p.features.trim()) {
+                    featuresList = p.features.split("\n").filter(f => f.trim());
+                }
+
+                if (featuresList.length > 0) {
+                    featBlock.style.display = "block";
+                    const featUl = document.getElementById("projFeaturesList");
+                    featUl.innerHTML = featuresList.map(f => `
+                        <li class="feature-item">
+                            <span class="feature-check-icon">&#10003;</span>
+                            <span>${escapeHtml(f.replace(/^[•\-\*]\s*/, ''))}</span>
+                        </li>
+                    `).join("");
+                } else {
+                    featBlock.style.display = "none";
+                }
+
+                // Gallery Images (optional)
+                const galleryBlock = document.getElementById("blockGallery");
+                let galleryList = [];
+                if (Array.isArray(p.galleryImages)) {
+                    galleryList = p.galleryImages.map(img => (typeof img === "string" ? img : img.url)).filter(Boolean);
+                }
+
+                if (galleryList.length > 0) {
+                    galleryBlock.style.display = "block";
+                    const grid = document.getElementById("projGalleryGrid");
+                    grid.innerHTML = galleryList.map((url, i) => `
+                        <div class="gallery-thumb-item" onclick="window.openLightbox('${escapeHtml(url)}')">
+                            <img src="${escapeHtml(url)}" alt="Schematic ${i + 1}" class="gallery-thumb-img" loading="lazy">
+                        </div>
+                    `).join("");
+                } else {
+                    galleryBlock.style.display = "none";
+                }
+
+                // Video Demonstration (optional)
+                const videoBlock = document.getElementById("blockVideo");
+                if (p.videoUrl && p.videoUrl.trim()) {
+                    videoBlock.style.display = "block";
+                    const container = document.getElementById("videoEmbedContainer");
+                    let embedUrl = p.videoUrl.trim();
+                    if (embedUrl.includes("youtube.com/watch?v=")) {
+                        const vidId = embedUrl.split("v=")[1].split("&")[0];
+                        embedUrl = `https://www.youtube-nocookie.com/embed/${vidId}`;
+                    } else if (embedUrl.includes("youtu.be/")) {
+                        const vidId = embedUrl.split("youtu.be/")[1].split("?")[0];
+                        embedUrl = `https://www.youtube-nocookie.com/embed/${vidId}`;
+                    }
+                    container.innerHTML = `<iframe src="${escapeHtml(embedUrl)}" title="Demonstration Video" allowfullscreen loading="lazy"></iframe>`;
+                } else {
+                    videoBlock.style.display = "none";
+                }
+
+                // Outcomes (optional)
+                const outcomesBlock = document.getElementById("blockOutcomes");
+                if (p.outcomes && p.outcomes.trim()) {
+                    outcomesBlock.style.display = "block";
+                    document.getElementById("projOutcomes").textContent = p.outcomes;
+                } else {
+                    outcomesBlock.style.display = "none";
+                }
+
+                // Sidebar: Tech Stack
+                const techChips = document.getElementById("projTechChips");
+                let techList = [];
+                if (Array.isArray(p.technologies)) {
+                    techList = p.technologies;
+                } else if (typeof p.technologies === "string" && p.technologies.trim()) {
+                    techList = p.technologies.split(",").map(t => t.trim());
+                }
+                techChips.innerHTML = techList.map(t => `<span class="sidebar-chip">${escapeHtml(t)}</span>`).join("");
+
+                // Sidebar: Members
+                const membersUl = document.getElementById("projMembersList");
+                let membersList = [];
+                if (Array.isArray(p.teamMembers)) {
+                    membersList = p.teamMembers;
+                } else if (typeof p.teamMembers === "string" && p.teamMembers.trim()) {
+                    membersList = p.teamMembers.split(",").map(m => m.trim());
+                }
+                membersUl.innerHTML = membersList.map(m => {
+                    const initials = m.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+                    return `
+                        <li class="sidebar-member-row">
+                            <span class="member-avatar-placeholder">${escapeHtml(initials)}</span>
+                            <span>${escapeHtml(m)}</span>
+                        </li>
+                    `;
+                }).join("");
+            }
+
+            // Lightbox Modal functions
+            const lightbox = document.getElementById("lightboxModal");
+            const lightboxImg = document.getElementById("lightboxImg");
+            const closeBtn = document.getElementById("lightboxCloseBtn");
+
+            window.openLightbox = function(url) {
+                if (!lightbox || !lightboxImg) return;
+                lightboxImg.src = url;
+                lightbox.classList.add("active");
+                document.body.style.overflow = "hidden";
+            };
+
+            function closeLightbox() {
+                if (!lightbox) return;
+                lightbox.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+
+            if (closeBtn) closeBtn.addEventListener("click", closeLightbox);
+            if (lightbox) {
+                lightbox.addEventListener("click", function(e) {
+                    if (e.target === lightbox) closeLightbox();
+                });
+            }
+            window.addEventListener("keydown", function(e) {
+                if (e.key === "Escape") closeLightbox();
+            });
+
+            function escapeHtml(str) {
+                if (!str) return "";
+                return String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            window.addEventListener("DOMContentLoaded", loadProjectDetails);
+        })();
+    </script>
+</body>
+
+</html>

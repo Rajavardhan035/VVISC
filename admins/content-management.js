@@ -55,6 +55,7 @@ async function loadCardStats() {
         if (el) el.textContent = `${photos.length} Photos`;
     } catch (e) {}
 
+
     // 5. Projects Count
     try {
         const projects = await CMS.getCollection("projects");

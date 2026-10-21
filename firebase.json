@@ -32,6 +32,7 @@
       { "source": "/about", "destination": "/about.html" },
       { "source": "/departments", "destination": "/departments.html" },
       { "source": "/projects", "destination": "/projects.html" },
+      { "source": "/project-details", "destination": "/project-details.html" },
       { "source": "/events", "destination": "/events.html" },
       { "source": "/gallery", "destination": "/gallery.html" },
       { "source": "/council", "destination": "/council.html" },

@@ -45,7 +45,8 @@ service firebase.storage {
 
     match /projects/{allPaths=**} {
       allow read: if true;
-      allow write: if isSignedIn() && isValidImage();
+      allow create, update: if isSignedIn() && isValidImage();
+      allow delete: if isSignedIn();
     }
 
     match /achievements/{allPaths=**} {
