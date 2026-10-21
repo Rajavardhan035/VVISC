@@ -645,16 +645,329 @@
             opacity: 0.8;
         }
 
-        /* Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            .project-card, .btn-glow-explore, .card-cover-img {
-                transition: none !important;
-                animation: none !important;
-                transform: none !important;
-            }
-            .project-card {
-                opacity: 1 !important;
-            }
+        /* =====================================================================
+           Light Mode Premium Engineering Theme Overrides
+           Strictly scoped to body.light-mode and html[data-theme="light"]
+           Preserves dark mode 100% while delivering a bright, crisp aesthetic
+           ===================================================================== */
+        body.light-mode,
+        html[data-theme="light"] {
+            --bg-color: #FAF9F6;
+            --container-bg: #FFFFFF;
+            --heading-color: #102820;
+            --text-color: #56665F;
+            --border-color: #E6E1D6;
+        }
+
+        body.light-mode .projects-hero-section,
+        html[data-theme="light"] .projects-hero-section {
+            background: linear-gradient(180deg, #FFFFFF 0%, #FAF9F6 100%);
+            border-bottom: 1px solid #E6E1D6;
+        }
+
+        body.light-mode #techCanvas,
+        html[data-theme="light"] #techCanvas {
+            opacity: 0.32;
+        }
+
+        body.light-mode .hero-glow-orb,
+        html[data-theme="light"] .hero-glow-orb {
+            background: radial-gradient(circle, rgba(200, 155, 53, 0.07) 0%, rgba(250, 249, 246, 0) 70%);
+            filter: blur(90px);
+            opacity: 0.8;
+        }
+
+        body.light-mode .hero-badge-pill,
+        html[data-theme="light"] .hero-badge-pill {
+            background: rgba(200, 155, 53, 0.08);
+            border: 1px solid rgba(200, 155, 53, 0.35);
+            color: #9E751D;
+            box-shadow: 0 2px 10px rgba(200, 155, 53, 0.08);
+        }
+
+        body.light-mode .hero-badge-pill .pulse-dot,
+        html[data-theme="light"] .hero-badge-pill .pulse-dot {
+            background: #0D825E;
+            box-shadow: 0 0 8px rgba(13, 130, 94, 0.5);
+        }
+
+        body.light-mode .projects-hero-title,
+        html[data-theme="light"] .projects-hero-title {
+            color: #102820;
+        }
+
+        body.light-mode .projects-hero-title .gold-span,
+        html[data-theme="light"] .projects-hero-title .gold-span {
+            background: linear-gradient(135deg, #C89B35 0%, #A67926 50%, #8C6718 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .projects-hero-sub,
+        html[data-theme="light"] .projects-hero-sub {
+            color: #56665F;
+            opacity: 1;
+        }
+
+        /* Hero Action Buttons in Light Mode */
+        body.light-mode .btn-glow-explore,
+        html[data-theme="light"] .btn-glow-explore {
+            background: #C89B35;
+            color: #102820;
+            border: 1px solid #B58824;
+            box-shadow: 0 4px 18px rgba(200, 155, 53, 0.28);
+            font-weight: 600;
+        }
+
+        body.light-mode .btn-glow-explore:hover,
+        html[data-theme="light"] .btn-glow-explore:hover {
+            background: #B58824;
+            color: #FFFFFF;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 26px rgba(200, 155, 53, 0.4);
+        }
+
+        body.light-mode .btn-outline-submit,
+        html[data-theme="light"] .btn-outline-submit {
+            background: #FFFFFF;
+            color: #102820;
+            border: 1px solid #E6E1D6;
+            box-shadow: 0 2px 10px rgba(16, 40, 32, 0.04);
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        body.light-mode .btn-outline-submit:hover,
+        html[data-theme="light"] .btn-outline-submit:hover {
+            background: #FAF9F6;
+            border-color: #C89B35;
+            color: #C89B35;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 40, 32, 0.08);
+        }
+
+        /* Architectural Statistics Strip in Light Mode */
+        body.light-mode .projects-stats-strip,
+        html[data-theme="light"] .projects-stats-strip {
+            background: #FFFFFF;
+            border: 1px solid #E6E1D6;
+            box-shadow: 0 8px 30px rgba(16, 40, 32, 0.06);
+            backdrop-filter: blur(16px);
+        }
+
+        body.light-mode .stat-item:not(:last-child)::after,
+        html[data-theme="light"] .stat-item:not(:last-child)::after {
+            background: #E6E1D6;
+        }
+
+        body.light-mode .stat-number,
+        html[data-theme="light"] .stat-number {
+            color: #C89B35;
+        }
+
+        body.light-mode .stat-label,
+        html[data-theme="light"] .stat-label {
+            color: #102820;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+
+        /* Toolbar in Light Mode */
+        body.light-mode .projects-toolbar-section,
+        html[data-theme="light"] .projects-toolbar-section {
+            background: rgba(250, 249, 246, 0.96);
+            border-bottom: 1px solid #E6E1D6;
+            box-shadow: 0 4px 20px rgba(16, 40, 32, 0.02);
+        }
+
+        body.light-mode .search-icon-left,
+        html[data-theme="light"] .search-icon-left {
+            color: #C89B35;
+            opacity: 0.9;
+        }
+
+        body.light-mode .project-search-input,
+        html[data-theme="light"] .project-search-input {
+            background: #FFFFFF;
+            border: 1px solid #E6E1D6;
+            color: #102820;
+        }
+
+        body.light-mode .project-search-input::placeholder,
+        html[data-theme="light"] .project-search-input::placeholder {
+            color: #56665F;
+            opacity: 0.65;
+        }
+
+        body.light-mode .project-search-input:focus,
+        html[data-theme="light"] .project-search-input:focus {
+            border-color: #C89B35;
+            box-shadow: 0 0 0 3px rgba(200, 155, 53, 0.15);
+        }
+
+        body.light-mode .sort-select-wrapper select,
+        html[data-theme="light"] .sort-select-wrapper select {
+            background-color: #FFFFFF;
+            border: 1px solid #E6E1D6;
+            color: #102820;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23C89B35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+
+        body.light-mode .sort-select-wrapper select:focus,
+        html[data-theme="light"] .sort-select-wrapper select:focus {
+            border-color: #C89B35;
+            box-shadow: 0 0 0 3px rgba(200, 155, 53, 0.15);
+        }
+
+        body.light-mode .category-pill-btn,
+        html[data-theme="light"] .category-pill-btn {
+            background: #FFFFFF;
+            border: 1px solid #E6E1D6;
+            color: #56665F;
+        }
+
+        body.light-mode .category-pill-btn:hover,
+        html[data-theme="light"] .category-pill-btn:hover {
+            border-color: #C89B35;
+            color: #102820;
+            background: rgba(200, 155, 53, 0.08);
+        }
+
+        body.light-mode .category-pill-btn.active,
+        html[data-theme="light"] .category-pill-btn.active {
+            background: #102820;
+            border-color: #102820;
+            color: #FAF9F6;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(16, 40, 32, 0.18);
+        }
+
+        /* Showcase Grid & Cards in Light Mode */
+        body.light-mode .projects-showcase-section,
+        html[data-theme="light"] .projects-showcase-section {
+            background: #FAF9F6;
+        }
+
+        body.light-mode .project-card,
+        html[data-theme="light"] .project-card {
+            background: #FFFFFF;
+            border: 1px solid #E6E1D6;
+            box-shadow: 0 4px 20px rgba(16, 40, 32, 0.05);
+        }
+
+        body.light-mode .project-card:hover,
+        html[data-theme="light"] .project-card:hover {
+            border-color: #C89B35;
+            box-shadow: 0 16px 36px rgba(16, 40, 32, 0.1);
+        }
+
+        body.light-mode .card-cover-wrapper,
+        html[data-theme="light"] .card-cover-wrapper {
+            background: #F4F2EC;
+        }
+
+        body.light-mode .card-gradient-overlay,
+        html[data-theme="light"] .card-gradient-overlay {
+            background: linear-gradient(180deg, rgba(16, 40, 32, 0.02) 0%, rgba(16, 40, 32, 0.45) 100%);
+        }
+
+        body.light-mode .card-category-badge,
+        html[data-theme="light"] .card-category-badge {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid #E6E1D6;
+            color: #102820;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 40, 32, 0.08);
+        }
+
+        body.light-mode .card-featured-star,
+        html[data-theme="light"] .card-featured-star {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid #C89B35;
+            color: #C89B35;
+            box-shadow: 0 2px 8px rgba(16, 40, 32, 0.08);
+        }
+
+        body.light-mode .card-meta-line,
+        html[data-theme="light"] .card-meta-line {
+            color: #56665F;
+            opacity: 0.85;
+        }
+
+        body.light-mode .card-title,
+        html[data-theme="light"] .card-title {
+            color: #102820;
+        }
+
+        body.light-mode .card-desc,
+        html[data-theme="light"] .card-desc {
+            color: #56665F;
+            opacity: 0.95;
+        }
+
+        body.light-mode .tech-chip,
+        html[data-theme="light"] .tech-chip {
+            background: #F4F2EC;
+            border: 1px solid #E6E1D6;
+            color: #102820;
+        }
+
+        body.light-mode .card-footer,
+        html[data-theme="light"] .card-footer {
+            border-top: 1px solid #E6E1D6;
+        }
+
+        body.light-mode .card-author,
+        html[data-theme="light"] .card-author {
+            color: #56665F;
+            opacity: 0.9;
+        }
+
+        body.light-mode .card-author-icon,
+        html[data-theme="light"] .card-author-icon {
+            color: #C89B35;
+        }
+
+        body.light-mode .btn-view-project,
+        html[data-theme="light"] .btn-view-project {
+            color: #C89B35;
+        }
+
+        body.light-mode .btn-view-project:hover,
+        html[data-theme="light"] .btn-view-project:hover {
+            color: #8C6718;
+        }
+
+        body.light-mode .skeleton-card,
+        html[data-theme="light"] .skeleton-card {
+            background: #FFFFFF;
+            border: 1px solid #E6E1D6;
+        }
+
+        body.light-mode .skeleton-shimmer,
+        html[data-theme="light"] .skeleton-shimmer {
+            background: linear-gradient(90deg, transparent 0%, rgba(200, 155, 53, 0.08) 50%, transparent 100%);
+        }
+
+        body.light-mode .btn-load-more,
+        html[data-theme="light"] .btn-load-more {
+            background: #FFFFFF;
+            border: 1px solid #E6E1D6;
+            color: #102820;
+            box-shadow: 0 2px 10px rgba(16, 40, 32, 0.04);
+        }
+
+        body.light-mode .btn-load-more:hover,
+        html[data-theme="light"] .btn-load-more:hover {
+            background: #C89B35;
+            color: #102820;
+            border-color: #B58824;
+        }
+
+        body.light-mode .empty-projects-state,
+        html[data-theme="light"] .empty-projects-state {
+            background: #FFFFFF;
+            border-color: #E6E1D6;
         }
     </style>
 </head>
@@ -965,9 +1278,9 @@
 
                 function draw() {
                     ctx.clearRect(0, 0, width, height);
-                    const isDark = !document.body.classList.contains("light-mode");
-                    const nodeColor = isDark ? "rgba(197, 168, 128, 0.45)" : "rgba(11, 43, 38, 0.35)";
-                    const lineColor = isDark ? "rgba(197, 168, 128, 0.08)" : "rgba(11, 43, 38, 0.08)";
+                    const isDark = !document.body.classList.contains("light-mode") && document.documentElement.getAttribute("data-theme") !== "light";
+                    const nodeColor = isDark ? "rgba(197, 168, 128, 0.45)" : "rgba(200, 155, 53, 0.28)";
+                    const lineColor = isDark ? "rgba(197, 168, 128, 0.08)" : "rgba(86, 102, 95, 0.06)";
 
                     // Connections
                     for (let i = 0; i < particles.length; i++) {
