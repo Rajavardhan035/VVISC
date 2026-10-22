@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+        (function(){
+            var t = localStorage.getItem("vviscTheme") || "dark";
+            var a = localStorage.getItem("vviscAccent") || "copper";
+            document.documentElement.setAttribute("data-theme", t);
+            document.documentElement.setAttribute("data-accent", a);
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management | VVISC Admin Console</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+
+    <style>
+        /* Status Badges */
+        .proj-badge-pub {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .proj-badge-draft {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .proj-badge-archived {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Modern Data Table */
+        .proj-table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius, 14px);
+            margin-top: 18px;
+        }
+
+        .proj-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .proj-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-family: var(--font-mono, monospace);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-dim, #94a3b8);
+            border-bottom: 1px solid var(--border-soft, rgba(247, 242, 233, 0.12));
+            background: transparent;
+        }
+
+        .proj-table td {
+            padding: 14px 16px;
+            background: var(--panel, rgba(28, 25, 19, 0.88));
+            border-top: 1px solid var(--border-soft, rgba(247, 242, 233, 0.12));
+            border-bottom: 1px solid var(--border-soft, rgba(247, 242, 233, 0.12));
+            color: var(--text, #FFFFFF);
+            font-size: 0.88rem;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+        }
+
+        .proj-table tr td:first-child {
+            border-left: 1px solid var(--border-soft, rgba(247, 242, 233, 0.12));
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .proj-table tr td:last-child {
+            border-right: 1px solid var(--border-soft, rgba(247, 242, 233, 0.12));
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .proj-table tr:hover td {
+            background: var(--panel-solid, #1B1712);
+            border-color: rgba(199, 107, 60, 0.35);
+        }
+
+        .thumb-preview-box {
+            width: 64px;
+            height: 48px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #000;
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            display: block;
+        }
+
+        /* Filter Controls Strip */
+        .toolbar-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            background: var(--panel, rgba(28, 25, 19, 0.88));
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            border-radius: var(--radius, 14px);
+            padding: 16px 20px;
+            margin-top: 24px;
+        }
+
+        .search-box-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .search-box-wrap input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            background: var(--bg-2, #141109);
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            border-radius: 8px;
+            color: var(--text, #FFFFFF);
+            font-size: 0.88rem;
+        }
+
+        .search-box-wrap svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim, #94a3b8);
+            pointer-events: none;
+        }
+
+        .filter-selects-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 14px;
+            background: var(--bg-2, #141109);
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            border-radius: 8px;
+            color: var(--text, #FFFFFF);
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: var(--accent, #C76B3C);
+        }
+
+        /* ===============================================================
+           Expandable On-Page Project Form Modal / Drawer
+           =============================================================== */
+        .project-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-modal-backdrop.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .project-modal-drawer {
+            background: var(--bg-color, #0f0d09);
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.22));
+            border-radius: 18px;
+            width: 100%;
+            max-width: 960px;
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: translateY(20px) scale(0.98);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .project-modal-backdrop.active .project-modal-drawer {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--panel-solid, #1B1712);
+            border-bottom: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-sticky-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text, #FFFFFF);
+            margin: 0;
+            font-family: var(--font-display, sans-serif);
+        }
+
+        .modal-sticky-header p {
+            font-size: 0.82rem;
+            color: var(--text-dim, #94a3b8);
+            margin: 2px 0 0;
+        }
+
+        .btn-close-modal {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-soft, rgba(247, 242, 233, 0.15));
+            color: var(--text, #FFFFFF);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-close-modal:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.4);
+            transform: scale(1.05);
+        }
+
+        .modal-form-content {
+            padding: 28px;
+        }
+
+        .upload-section-card {
+            background: var(--panel, rgba(28, 25, 19, 0.88));
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            border-radius: var(--radius, 14px);
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-soft, rgba(247, 242, 233, 0.12));
+        }
+
+        .section-header-icon {
+            font-size: 1.3rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: rgba(199, 107, 60, 0.12);
+            border: 1px solid rgba(199, 107, 60, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--copper-light, #F09D6B);
+        }
+
+        .section-header-text h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text, #FFFFFF);
+            margin: 0;
+            font-family: var(--font-display, sans-serif);
+        }
+
+        .section-header-text p {
+            font-size: 0.8rem;
+            color: var(--text-dim, #94a3b8);
+            margin: 2px 0 0;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .modal-form-content {
+                padding: 16px;
+            }
+            .upload-section-card {
+                padding: 16px;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.84rem;
+            font-weight: 600;
+            margin-bottom: 7px;
+            color: var(--text, #FFFFFF);
+        }
+
+        .form-label .label-tip {
+            font-size: 0.74rem;
+            font-weight: 400;
+            color: var(--text-faint, #94a3b8);
+            font-family: var(--font-mono, monospace);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 11px 15px;
+            background: var(--bg-2, #141109);
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            border-radius: var(--radius-sm, 8px);
+            color: var(--text, #FFFFFF);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.25s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent, #C76B3C);
+            box-shadow: 0 0 0 3px var(--accent-glow, rgba(199, 107, 60, 0.35));
+            background: var(--panel-solid, #1B1712);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.6;
+        }
+
+        /* Image Dropzone */
+        .dropzone-box {
+            border: 2px dashed var(--border, rgba(247, 242, 233, 0.25));
+            border-radius: var(--radius-sm, 10px);
+            padding: 24px 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(20, 17, 9, 0.4);
+            position: relative;
+        }
+
+        .dropzone-box:hover, .dropzone-box.dragover {
+            border-color: var(--accent, #C76B3C);
+            background: rgba(199, 107, 60, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .dropzone-icon {
+            font-size: 2.2rem;
+            margin-bottom: 6px;
+            color: var(--accent-light, #F09D6B);
+        }
+
+        .dropzone-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text, #FFFFFF);
+            margin-bottom: 3px;
+        }
+
+        .dropzone-sub {
+            font-size: 0.76rem;
+            color: var(--text-faint, #94a3b8);
+        }
+
+        /* Cover Image Live Preview */
+        .cover-preview-card {
+            margin-top: 14px;
+            border-radius: var(--radius-sm, 10px);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+            background: #000;
+            max-height: 260px;
+            display: none;
+        }
+
+        .cover-preview-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .cover-preview-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-remove-preview {
+            background: rgba(239, 68, 68, 0.9);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Gallery Thumbnails Strip */
+        .gallery-grid-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .gallery-thumbnail-card {
+            position: relative;
+            height: 94px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .gallery-thumbnail-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .gallery-thumbnail-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .btn-remove-thumb {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(239, 68, 68, 0.95);
+            color: #fff;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 0;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            line-height: 1;
+            z-index: 2;
+        }
+
+        .btn-remove-thumb:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .gallery-thumb-tag {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            font-size: 0.65rem;
+            font-family: var(--font-mono, monospace);
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Dynamic Feature Bullets Builder */
+        .feature-item-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .feature-item-row .form-input {
+            margin-bottom: 0;
+        }
+
+        .btn-remove-row {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-add-bullet {
+            background: var(--bg-2, #141109);
+            border: 1px dashed var(--border);
+            color: var(--accent-light, #F09D6B);
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .btn-add-bullet:hover {
+            border-color: var(--accent);
+            background: rgba(199, 107, 60, 0.08);
+        }
+
+        /* Interactive Tag Chips */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tech-chip {
+            background: rgba(199, 107, 60, 0.15);
+            border: 1px solid var(--accent, #C76B3C);
+            color: var(--accent-light, #F09D6B);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono, monospace);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Sticky Action Dock */
+        .modal-sticky-dock {
+            position: sticky;
+            bottom: 0;
+            z-index: 20;
+            background: var(--panel-solid, #1B1712);
+            border-top: 1px solid var(--border, rgba(247, 242, 233, 0.18));
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+
+        .dock-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .dock-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-dock-cancel {
+            background: transparent;
+            border: 1px solid var(--border, rgba(247, 242, 233, 0.2));
+            color: var(--text-dim, #94a3b8);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-dock-cancel:hover {
+            color: var(--text, #FFFFFF);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-dock-draft {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #f59e0b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-dock-draft:hover {
+            background: rgba(245, 158, 11, 0.25);
+        }
+
+        .btn-dock-submit {
+            background: linear-gradient(135deg, var(--accent, #C76B3C) 0%, #D4AF37 100%);
+            border: none;
+            color: #FFFFFF;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 18px var(--accent-glow, rgba(199, 107, 60, 0.35));
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-dock-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px var(--accent-glow, rgba(199, 107, 60, 0.5));
+        }
+
+        .btn-dock-submit:disabled, .btn-dock-draft:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span class="nav-ico" data-icon="menu" style="width:20px;height:20px;"></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard">
+
+    <!-- Unified Sidebar Navigation -->
+    <aside id="adminSidebar" class="sidebar">
+        <div class="sidebar-top">
+            <img src="../assets/logo.png" alt="VVISC logo" class="sidebar-logo">
+            <div class="sidebar-title">
+                <span>VVISC</span>
+                <small>Admin Console</small>
+            </div>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" id="dashboardMenu"><span class="nav-ico" data-icon="dashboard"></span> Dashboard</a>
+            <a href="content-management.html" id="contentMenu"><span class="nav-ico" data-icon="layout"></span> Content Management</a>
+            <a href="project-management.html" id="projectsMenu" class="active"><span class="nav-ico" data-icon="folderKanban"></span> Project Management</a>
+            <a href="events-management.html"><span class="nav-ico" data-icon="calendar"></span> Events &amp; Workshops</a>
+            <a href="registrations-management.html"><span class="nav-ico" data-icon="check-circle"></span> Registrations Desk</a>
+            <a href="testimonials.html" id="testimonialsMenu"><span class="nav-ico" data-icon="star"></span> Testimonials</a>
+            <a href="admins.html" id="adminsMenu"><span class="nav-ico" data-icon="users"></span> Admin Management</a>
+            <a href="settings.html" id="settingsMenu"><span class="nav-ico" data-icon="settings"></span> Settings</a>
+        </nav>
+
+        <div class="theme-toggle-row">
+            <span class="theme-ico ico-sun" data-icon="sun"></span>
+            <label class="theme-switch">
+                <input type="checkbox" class="theme-switch-input">
+                <span class="switch-track"></span>
+            </label>
+            <span class="theme-ico ico-moon" data-icon="moon"></span>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Top Header & Breadcrumbs -->
+        <header class="topbar">
+            <div>
+                <div style="font-size:0.82rem; font-family:var(--font-mono); color:var(--text-faint); margin-bottom:6px;">
+                    <a href="dashboard.html" style="color:inherit; text-decoration:none;">Dashboard</a>
+                    <span style="opacity:0.6;"> / </span>
+                    <span style="color:var(--text);">Project Management</span>
+                </div>
+                <h1 style="margin:0;">📁 Project Management</h1>
+                <p style="margin-top:4px;">Manage, curate, and publish student innovations, research prototypes, and technical architectures.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button type="button" id="btnOpenAddForm" class="primary-btn" style="padding:10px 20px; font-size:0.88rem; display:inline-flex; align-items:center; gap:6px;">
+                    <span>+ Add New Project</span>
+                </button>
+                <a href="../projects.html" target="_blank" class="secondary-btn" style="padding:9px 16px; font-size:0.85rem; text-decoration:none;">View Public Showcase &nearr;</a>
+            </div>
+        </header>
+
+        <!-- Status Alert Notification -->
+        <div id="statusAlert" style="display:none; padding:14px 18px; border-radius:10px; margin-top:20px; font-size:0.9rem; align-items:center; gap:10px;"></div>
+
+        <!-- Section A: Overview Dashboard Summary Cards -->
+        <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:18px; margin-top:24px;">
+            <div class="card" style="padding:22px; border-radius:14px;">
+                <div style="font-size:0.78rem; font-family:var(--font-mono); color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em;">Total Projects</div>
+                <div style="font-size:2.2rem; font-weight:700; color:var(--text); margin-top:6px;" id="statTotalProjects">0</div>
+                <div style="font-size:0.75rem; color:var(--text-faint); margin-top:4px;">In Innovation Directory</div>
+            </div>
+            <div class="card" style="padding:22px; border-radius:14px;">
+                <div style="font-size:0.78rem; font-family:var(--font-mono); color:#10b981; text-transform:uppercase; letter-spacing:0.05em;">Published Live</div>
+                <div style="font-size:2.2rem; font-weight:700; color:#10b981; margin-top:6px;" id="statPublishedProjects">0</div>
+                <div style="font-size:0.75rem; color:var(--text-faint); margin-top:4px;">Visible on Public Website</div>
+            </div>
+            <div class="card" style="padding:22px; border-radius:14px;">
+                <div style="font-size:0.78rem; font-family:var(--font-mono); color:#f59e0b; text-transform:uppercase; letter-spacing:0.05em;">In Draft</div>
+                <div style="font-size:2.2rem; font-weight:700; color:#f59e0b; margin-top:6px;" id="statDraftProjects">0</div>
+                <div style="font-size:0.75rem; color:var(--text-faint); margin-top:4px;">Pending Admin Review</div>
+            </div>
+            <div class="card" style="padding:22px; border-radius:14px;">
+                <div style="font-size:0.78rem; font-family:var(--font-mono); color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em;">Archived</div>
+                <div style="font-size:2.2rem; font-weight:700; color:#94a3b8; margin-top:6px;" id="statArchivedProjects">0</div>
+                <div style="font-size:0.75rem; color:var(--text-faint); margin-top:4px;">Historical Research Archive</div>
+            </div>
+        </div>
+
+        <!-- Section B: Project List & Management Toolbar -->
+        <div class="toolbar-strip">
+            <div class="search-box-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="adminSearchInput" placeholder="Search by title, description, tech stack, team...">
+            </div>
+
+            <div class="filter-selects-group">
+                <select id="adminCategoryFilter" class="filter-select">
+                    <option value="all">All Disciplines</option>
+                    <option value="AI & Machine Learning">AI &amp; Machine Learning</option>
+                    <option value="Robotics">Robotics &amp; Autonomous</option>
+                    <option value="Web Development">Web &amp; Cloud</option>
+                    <option value="IoT">IoT &amp; Embedded</option>
+                    <option value="Cybersecurity">Cybersecurity</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Mobile Development">Mobile Apps</option>
+                </select>
+
+                <select id="adminStatusFilter" class="filter-select">
+                    <option value="all">All Statuses</option>
+                    <option value="published">Published Only</option>
+                    <option value="draft">Drafts Only</option>
+                    <option value="archived">Archived Only</option>
+                </select>
+
+                <button type="button" id="btnSeedProjects" class="secondary-btn" style="padding:9px 14px; font-size:0.82rem;" title="Seed standard sample innovations if database is empty">🌱 Seed Samples</button>
+            </div>
+        </div>
+
+        <!-- Table Listing Container -->
+        <div class="proj-table-wrap">
+            <table class="proj-table" id="projectsTable">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Cover</th>
+                        <th>Project &amp; Discipline</th>
+                        <th>Technologies</th>
+                        <th>Student Engineers</th>
+                        <th>Visibility</th>
+                        <th>Last Modified</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projectsTableBody">
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:var(--text-dim);">
+                            <div style="font-size:1.4rem; margin-bottom:8px;">⏳</div>
+                            <div>Connecting to Cloud Firestore database...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- ===============================================================
+     Section C & D: Unified Expandable Project Form (Add & Edit)
+     =============================================================== -->
+<div class="project-modal-backdrop" id="projectFormModal">
+    <div class="project-modal-drawer" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+
+        <!-- Modal Top Sticky Bar -->
+        <div class="modal-sticky-header">
+            <div>
+                <h2 id="formModalTitle">🚀 Add New Innovation Project</h2>
+                <p id="formModalSub">Provide technical architecture, prototypes, schematics, and repository URLs.</p>
+            </div>
+            <button type="button" class="btn-close-modal" id="btnModalClose" aria-label="Close form">&times;</button>
+        </div>
+
+        <!-- Scrollable Form Body -->
+        <form id="projectEditorForm">
+            <input type="hidden" id="editDocId" value="">
+
+            <div class="modal-form-content">
+
+                <!-- 1. Core Identification & Domain -->
+                <div class="upload-section-card">
+                    <div class="section-header">
+                        <div class="section-header-icon">🏷️</div>
+                        <div class="section-header-text">
+                            <h3>1. Core Identification &amp; Domain</h3>
+                            <p>Primary project title, engineering discipline, and public summary.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="projTitle">
+                                <span>Project Title *</span>
+                                <span class="label-tip">Max 90 chars</span>
+                            </label>
+                            <input type="text" id="projTitle" class="form-input" required placeholder="e.g. KrishiNet: Edge AI Crop Health Diagnostics">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="projCategory">
+                                <span>Innovation Domain *</span>
+                                <span class="label-tip">Primary discipline</span>
+                            </label>
+                            <select id="projCategory" class="form-select" required>
+                                <option value="AI & Machine Learning">AI &amp; Machine Learning</option>
+                                <option value="Robotics">Robotics &amp; Autonomous Systems</option>
+                                <option value="Web Development">Web Development &amp; Cloud</option>
+                                <option value="IoT">IoT &amp; Embedded Systems</option>
+                                <option value="Cybersecurity">Cybersecurity &amp; Cryptography</option>
+                                <option value="Data Science">Data Science &amp; Analytics</option>
+                                <option value="Mobile Development">Mobile Applications (Android/iOS)</option>
+                                <option value="Other">Other Custom Domain</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="customCategoryGroup" style="display:none; margin-top:14px;">
+                        <label class="form-label" for="projCustomCategory">
+                            <span>Specify Custom Category Name *</span>
+                        </label>
+                        <input type="text" id="projCustomCategory" class="form-input" placeholder="e.g. Quantum Computing, Biomedical Engineering, CleanTech...">
+                    </div>
+
+                    <div class="form-group" style="margin-top:14px;">
+                        <label class="form-label" for="projShortDesc">
+                            <span>Short Summary / Tagline *</span>
+                            <span class="label-tip">Displayed on public cards (1-2 sentences)</span>
+                        </label>
+                        <input type="text" id="projShortDesc" class="form-input" required placeholder="Autonomous edge computer vision system deployed on low-cost drones for real-time crop disease diagnosis...">
+                    </div>
+
+                    <div class="form-grid-2" style="margin-top:14px; padding-top:16px; border-top:1px dashed var(--border-soft);">
+                        <div class="form-group">
+                            <label class="form-label" for="projStatus">
+                                <span>Publication Visibility</span>
+                            </label>
+                            <select id="projStatus" class="form-select">
+                                <option value="published">🚀 Published (Live on Public Website)</option>
+                                <option value="draft">📝 Draft (Private / Admin Review Only)</option>
+                                <option value="archived">📦 Archived (Historical Research Archive)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="display:flex; align-items:center; gap:12px; padding-top:28px;">
+                            <input type="checkbox" id="projFeatured" style="width:22px; height:22px; accent-color:var(--accent); cursor:pointer;">
+                            <div>
+                                <label for="projFeatured" style="font-weight:600; color:var(--text); cursor:pointer;">⭐ Spotlight as Featured Project</label>
+                                <div style="font-size:0.76rem; color:var(--text-faint);">Prioritizes this innovation at the top of the Showcase and Home Page</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Visual Media & Showcase Assets -->
+                <div class="upload-section-card">
+                    <div class="section-header">
+                        <div class="section-header-icon">🖼️</div>
+                        <div class="section-header-text">
+                            <h3>2. Visual Media &amp; Showcase Images</h3>
+                            <p>Upload high-resolution cover photos and prototype gallery screenshots.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cover Image -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>Primary Cover Image *</span>
+                            <span class="label-tip">Hero cover &amp; card banner (16:9 recommended)</span>
+                        </label>
+
+                        <div class="dropzone-box" id="coverDropzone">
+                            <div class="dropzone-icon">📷</div>
+                            <div class="dropzone-title">Click to browse or drag &amp; drop cover photo</div>
+                            <div class="dropzone-sub">Supports WEBP, PNG, JPG up to 10MB • Auto-optimized for blazing fast loading</div>
+                            <input type="file" id="coverFileInput" accept="image/*" style="display:none;">
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:10px; margin-top:12px;">
+                            <span style="font-size:0.8rem; color:var(--text-faint); font-family:var(--font-mono);">OR DIRECT URL:</span>
+                            <input type="url" id="coverUrlInput" class="form-input" placeholder="https://images.unsplash.com/... or cloud URL" style="flex:1; padding:8px 12px; font-size:0.85rem;">
+                            <button type="button" id="btnApplyCoverUrl" class="secondary-btn" style="padding:8px 14px; font-size:0.82rem;">Apply URL</button>
+                        </div>
+
+                        <!-- Live Cover Preview -->
+                        <div class="cover-preview-card" id="coverPreviewContainer">
+                            <img id="coverPreviewImg" src="" alt="Cover Preview">
+                            <div class="cover-preview-overlay">
+                                <span style="color:#fff; font-size:0.82rem; font-family:var(--font-mono);">Active Cover Photo</span>
+                                <button type="button" class="btn-remove-preview" id="btnRemoveCover">✕ Remove Image</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Gallery Screenshots -->
+                    <div class="form-group" style="margin-top:24px; padding-top:20px; border-top:1px dashed var(--border-soft);">
+                        <label class="form-label">
+                            <span>Prototype Gallery &amp; Schematics (Optional)</span>
+                            <span class="label-tip">Hardware photos, system diagrams, or UI flow screenshots</span>
+                        </label>
+
+                        <div class="dropzone-box" id="galleryDropzone" style="padding:18px;">
+                            <div style="font-size:1.8rem; margin-bottom:4px;">📸</div>
+                            <div class="dropzone-title" style="font-size:0.88rem;">+ Add Gallery Screenshots</div>
+                            <div class="dropzone-sub">Select multiple images to upload into the lightbox gallery</div>
+                            <input type="file" id="galleryFileInput" accept="image/*" multiple style="display:none;">
+                        </div>
+
+                        <!-- Thumbnails Strip -->
+                        <div class="gallery-grid-strip" id="galleryPreviewsStrip"></div>
+                    </div>
+                </div>
+
+                <!-- 3. Engineering Deep-Dive & Architecture -->
+                <div class="upload-section-card">
+                    <div class="section-header">
+                        <div class="section-header-icon">📑</div>
+                        <div class="section-header-text">
+                            <h3>3. Engineering Deep-Dive &amp; Architecture</h3>
+                            <p>Detailed documentation explaining the problem, engineering solution, and benchmarks.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="projFullDesc">
+                            <span>Project Overview &amp; Narrative</span>
+                            <span class="label-tip">Comprehensive overview of what was built</span>
+                        </label>
+                        <textarea id="projFullDesc" class="form-textarea" rows="4" placeholder="Deep-dive narrative describing the project scope, user workflows, and operational architecture..."></textarea>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="projProblem">
+                                <span>Problem Statement</span>
+                                <span class="label-tip">Real-world challenge</span>
+                            </label>
+                            <textarea id="projProblem" class="form-textarea" rows="3" placeholder="What core engineering or societal challenge does this project solve?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="projSolution">
+                                <span>Proposed Solution &amp; Architecture</span>
+                                <span class="label-tip">System design &amp; approach</span>
+                            </label>
+                            <textarea id="projSolution" class="form-textarea" rows="3" placeholder="Explain the technical solution, algorithms, hardware modules, or architecture used..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Features Builder -->
+                    <div class="form-group" style="margin-top:14px;">
+                        <label class="form-label">
+                            <span>Key Technical Features</span>
+                            <span class="label-tip">Interactive bullet points shown on the details page</span>
+                        </label>
+
+                        <div id="featuresListContainer"></div>
+
+                        <button type="button" id="btnAddFeatureRow" class="btn-add-bullet">+ Add Another Feature</button>
+                    </div>
+
+                    <div class="form-group" style="margin-top:16px;">
+                        <label class="form-label" for="projOutcomes">
+                            <span>Project Outcomes, Benchmarks &amp; Awards</span>
+                            <span class="label-tip">Metrics, testing results, or hackathon honors</span>
+                        </label>
+                        <input type="text" id="projOutcomes" class="form-input" placeholder="e.g. Validated across 12 field trials with 96.4% precision. Won 1st Place at National Smart Agri Hackathon 2025.">
+                    </div>
+                </div>
+
+                <!-- 4. Tech Stack & Contributors -->
+                <div class="upload-section-card">
+                    <div class="section-header">
+                        <div class="section-header-icon">⚙️</div>
+                        <div class="section-header-text">
+                            <h3>4. Technology Stack &amp; Contributors</h3>
+                            <p>Tag languages, frameworks, hardware parts, and student engineers.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="projTechInput">
+                            <span>Technologies &amp; Frameworks</span>
+                            <span class="label-tip">Comma-separated (e.g. PyTorch, ROS 2, ESP32, Docker, Python)</span>
+                        </label>
+                        <input type="text" id="projTechInput" class="form-input" placeholder="PyTorch, OpenCV, TensorRT, Raspberry Pi 4, Flutter, Python">
+                        <div class="chips-container" id="techChipsPreview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="projTeamInput">
+                            <span>Student Engineers &amp; Mentors</span>
+                            <span class="label-tip">Comma-separated names with optional roles</span>
+                        </label>
+                        <input type="text" id="projTeamInput" class="form-input" placeholder="Sai Vardhan (Lead AI), Harika R. (Hardware Lead), Kiran Kumar (Agronomy Researcher)">
+                    </div>
+                </div>
+
+                <!-- 5. Repositories & External Deployments -->
+                <div class="upload-section-card">
+                    <div class="section-header">
+                        <div class="section-header-icon">🔗</div>
+                        <div class="section-header-text">
+                            <h3>5. Repositories, Live Demos &amp; Media Links</h3>
+                            <p>External links where visitors can test the prototype, view code, or watch demos.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="projGithub">
+                                <span>GitHub Repository URL</span>
+                                <span class="label-tip">Open-source code</span>
+                            </label>
+                            <input type="url" id="projGithub" class="form-input" placeholder="https://github.com/vvisc-iucee/project-name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="projDemo">
+                                <span>Live Application / Demo URL</span>
+                                <span class="label-tip">Deployed web app or prototype</span>
+                            </label>
+                            <input type="url" id="projDemo" class="form-input" placeholder="https://demo-cropnet.web.app">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2" style="margin-top:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="projDocs">
+                                <span>Technical Documentation / Paper URL</span>
+                                <span class="label-tip">Whitepaper, PDF, or Wiki</span>
+                            </label>
+                            <input type="url" id="projDocs" class="form-input" placeholder="https://arxiv.org/... or Notion docs">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="projVideo">
+                                <span>Video Demonstration URL</span>
+                                <span class="label-tip">YouTube, Vimeo, or Drive</span>
+                            </label>
+                            <input type="url" id="projVideo" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sticky Bottom Action Dock in Modal -->
+            <div class="modal-sticky-dock">
+                <div class="dock-left">
+                    <button type="button" class="btn-dock-cancel" id="btnCancelForm">Cancel &amp; Close</button>
+                    <span id="formStatusIndicator" style="font-size:0.84rem; color:var(--text-faint); font-family:var(--font-mono);">Ready</span>
+                </div>
+                <div class="dock-right">
+                    <button type="button" id="btnSaveDraft" class="btn-dock-draft">Save as Draft</button>
+                    <button type="submit" id="btnSubmitProject" class="btn-dock-submit">
+                        <span id="btnSubmitProjectText">Publish Project</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- Firebase Compat Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+<script src="../firebase-config.js"></script>
+<script src="cms-utils.js"></script>
+<script src="../session.js"></script>
+<script src="permissions.js"></script>
+<script src="ui.js"></script>
+<script src="logout.js"></script>
+<script src="project-management.js"></script>
+
+</body>
+</html>

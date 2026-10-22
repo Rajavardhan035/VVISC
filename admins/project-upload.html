@@ -5,12 +5,15 @@
     <meta charset="UTF-8">
     <script>
         (function(){
-            var t = localStorage.getItem("vviscTheme") || "dark";
-            var a = localStorage.getItem("vviscAccent") || "copper";
-            document.documentElement.setAttribute("data-theme", t);
-            document.documentElement.setAttribute("data-accent", a);
+            var query = window.location.search || "";
+            if (query) {
+                window.location.replace("project-management.html" + query);
+            } else {
+                window.location.replace("project-management.html?action=add");
+            }
         })();
     </script>
+    <meta http-equiv="refresh" content="0; url=project-management.html?action=add">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Innovation Project | VVISC Admin Console</title>
 
