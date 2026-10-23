@@ -463,9 +463,66 @@ const CMS = {
                 missionTitle: "Our Mission",
                 missionText: "Empower students through skill-building workshops, industry mentorship, collaborative hackathons, and interdisciplinary research initiatives.",
                 timeline: [
-                    { year: "2024", title: "Chapter Inception", description: "VVISC established under the IUCEE umbrella at VVIT.", active: true, order: 1 },
-                    { year: "2025", title: "National Recognition", description: "Hosted national-level hackathons and regional technical symposiums.", active: true, order: 2 },
-                    { year: "2026", title: "Global Expansion", description: "Expanded research labs and collaborative student development initiatives.", active: true, order: 3 }
+                    {
+                        year: "2024",
+                        icon: "👥",
+                        title: "Chapter Founded",
+                        description: "VVISC IUCEE Student Chapter was officially established under IUCEE at VVIT to create an inclusive, innovation-driven student engineering ecosystem.",
+                        linkedEventId: "vvisc-founded-2024",
+                        statValue: "120+",
+                        statLabel: "Founding Engineers",
+                        imageUrl: "assets/logo.png",
+                        order: 1,
+                        active: true
+                    },
+                    {
+                        year: "2024",
+                        icon: "⚡",
+                        title: "Applied AI & ML Bootcamps",
+                        description: "3-day intensive hands-on immersion in computer vision, deep learning pipelines, and production model deployment.",
+                        linkedEventId: "ai-ml-bootcamp-2024",
+                        statValue: "300+",
+                        statLabel: "Students Certified",
+                        imageUrl: "assets/Ai-bootcamp.png",
+                        order: 2,
+                        active: true
+                    },
+                    {
+                        year: "2025",
+                        icon: "🏆",
+                        title: "Annual Innovation Hackathon",
+                        description: "48-hour multidisciplinary student hackathon tackling pressing challenges in agriculture, robotics, and energy across 12 engineering colleges.",
+                        linkedEventId: "annual-hackathon-2025",
+                        statValue: "450+",
+                        statLabel: "Participants (12 Colleges)",
+                        imageUrl: "assets/hackathon.png",
+                        order: 3,
+                        active: true
+                    },
+                    {
+                        year: "2026",
+                        icon: "🚀",
+                        title: "Autonomous R&D & Edge AI Labs",
+                        description: "Expanded student research divisions and project incubators centered on Retrieval-Augmented Generation, Agentic Workflows, and Edge AI systems.",
+                        linkedEventId: "rag-hackathon-2026",
+                        statValue: "15+",
+                        statLabel: "Active Prototypes",
+                        imageUrl: "assets/Ai-summit.png",
+                        order: 4,
+                        active: true
+                    },
+                    {
+                        year: "Future",
+                        icon: "🌐",
+                        title: "Global Innovation Ecosystem",
+                        description: "Expanding collaborative student exchange, global research publications, and nationwide technical impact under the IUCEE umbrella.",
+                        linkedEventId: "",
+                        statValue: "Global",
+                        statLabel: "IUCEE Network",
+                        imageUrl: "",
+                        order: 5,
+                        active: true
+                    }
                 ]
             });
 

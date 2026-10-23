@@ -17738,14 +17738,21 @@ html[data-theme="dark"] .council-toolbar-meta {
    Department Showcase Cards Grid
    ========================================================================== */
 .council-dept-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 36px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    min-height: 180px;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .council-dept-card {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
     background: var(--card-bg, #FFFFFF);
     border: 1px solid var(--border-color, #E6E1D6);
     border-radius: 20px;
@@ -17772,6 +17779,13 @@ body.dark-mode .council-dept-card:hover,
 html[data-theme="dark"] .council-dept-card:hover {
     border-color: #D4AF37;
     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.12);
+}
+
+.council-no-results-box {
+    max-width: 1200px;
+    margin: 20px auto;
+    width: 100%;
+    animation: drawerFadeIn 0.3s ease-out;
 }
 
 /* Department Top Header */
