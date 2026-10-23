@@ -535,7 +535,7 @@ async function loadAboutPageContent() {
                     const isFuture = (item.year || "").toLowerCase().includes("future");
                     const cardClass = isFuture ? "timeline-card future-card" : "timeline-card";
                     const hasLinkedEvent = !!item.linkedEventId;
-                    const stepClass = hasLinkedEvent ? "timeline-step reveal-about visible has-linked-event" : "timeline-step reveal-about visible";
+                    const stepClass = hasLinkedEvent ? "timeline-step reveal-about active visible has-linked-event" : "timeline-step reveal-about active visible";
                     const cardClickAttr = hasLinkedEvent ? `onclick="window.openEventDetailModal && window.openEventDetailModal('${escapeAttr(item.linkedEventId)}')"` : "";
 
                     // Verified Stats Badge (Rendered ONLY if verified stat value exists)
@@ -580,6 +580,9 @@ async function loadAboutPageContent() {
                 });
                 journeyWrapper.innerHTML = html;
             }
+        }
+        if (typeof window.initJourneyTimeline === "function") {
+            window.initJourneyTimeline();
         }
     } catch (e) {
         console.warn("loadAboutPageContent error:", e);
@@ -1188,9 +1191,17 @@ async function loadEventsPageContent() {
 
         // 2. Fetch Unified Events Collection
         let allEvents = await getPublicCollection("events");
-        if (!allEvents || allEvents.length === 0) {
-            allEvents = [...VERIFIED_DEFAULT_EVENTS_PUBLIC];
+        if (!Array.isArray(allEvents)) {
+            allEvents = [];
         }
+
+        // Always guarantee verified historical completed events exist in allEvents
+        VERIFIED_DEFAULT_EVENTS_PUBLIC.forEach(verifiedEvt => {
+            const exists = allEvents.some(e => e.id === verifiedEvt.id || (e.title && verifiedEvt.title && e.title.trim().toLowerCase() === verifiedEvt.title.trim().toLowerCase()));
+            if (!exists) {
+                allEvents.push({ ...verifiedEvt });
+            }
+        });
 
         // Merge legacy pastEvents if present (preventing duplicate titles/IDs)
         try {

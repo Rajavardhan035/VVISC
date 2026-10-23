@@ -211,6 +211,10 @@
                             Explore Events
                         </a>
 
+                        <a href="#past-events" class="details-btn">
+                            Past Events Archive
+                        </a>
+
                     </div>
 
                 </div>
@@ -570,132 +574,64 @@
 
                 <div class="timeline-line"></div>
 
-                <!-- Event -->
-
-                <div class="timeline-card reveal-up">
-
-                    <div class="timeline-dot"></div>
-
-                    <span class="timeline-year">
-
-                        AUG 2026
-
-                    </span>
-
-                    <h3>
-
-                        AI Bootcamp
-
-                    </h3>
-
-                    <p>
-
-                        300+ students learned
-                        Machine Learning and
-                        Deep Learning.
-
-                    </p>
-
-                </div>
-
-                <div class="timeline-card reveal-up delay-100">
-
-                    <div class="timeline-dot"></div>
-
-                    <span class="timeline-year">
-
-                        SEP 2026
-
-                    </span>
-
-                    <h3>
-
-                        Web Development Workshop
-
-                    </h3>
-
-                    <p>
-
-                        Built responsive websites
-                        using HTML, CSS and JavaScript.
-
-                    </p>
-
-                </div>
-
-                <div class="timeline-card reveal-up delay-200">
-
+                <!-- Event 1: Chapter Founded -->
+                <div class="timeline-card reveal-up visible" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('vvisc-founded-2024')">
                     <div class="timeline-dot active"></div>
-
-                    <span class="timeline-year">
-
-                        OCT 2026
-
+                    <span class="timeline-year">JUL 2024</span>
+                    <h3>Chapter Founded</h3>
+                    <span style="display:inline-block; font-size:0.75rem; font-weight:700; color:var(--accent-color); margin-bottom:6px;">👥 120+ Engineers</span>
+                    <p>Official charter establishment and student executive committee inauguration of VVISC.</p>
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:600; color:var(--accent-color); margin-top:8px;">
+                        Details &rarr;
                     </span>
-
-                    <h3>
-
-                        Annual Hackathon
-
-                    </h3>
-
-                    <p>
-
-                        48-hour coding challenge
-                        with ₹50,000 prize pool.
-
-                    </p>
-
                 </div>
 
-                <div class="timeline-card reveal-up delay-300">
-
-                    <div class="timeline-dot"></div>
-
-                    <span class="timeline-year">
-
-                        NOV 2026
-
+                <!-- Event 2: Applied AI Bootcamp -->
+                <div class="timeline-card reveal-up visible delay-100" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('ai-ml-bootcamp-2024')">
+                    <div class="timeline-dot active"></div>
+                    <span class="timeline-year">AUG 2024</span>
+                    <h3>Applied AI Bootcamp</h3>
+                    <span style="display:inline-block; font-size:0.75rem; font-weight:700; color:var(--accent-color); margin-bottom:6px;">👥 300+ Certified</span>
+                    <p>3-day intensive boot camp covering computer vision, PyTorch, and deep learning architectures.</p>
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:600; color:var(--accent-color); margin-top:8px;">
+                        Details &rarr;
                     </span>
-
-                    <h3>
-
-                        Core Team Hiring
-
-                    </h3>
-
-                    <p>
-
-                        Recruiting passionate
-                        students into VVISC.
-
-                    </p>
-
                 </div>
 
-                <div class="timeline-card reveal-up delay-400">
-
-                    <div class="timeline-dot"></div>
-
-                    <span class="timeline-year">
-
-                        DEC 2026
-
+                <!-- Event 3: Web Dev Workshop -->
+                <div class="timeline-card reveal-up visible delay-200" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('web-dev-workshop-2024')">
+                    <div class="timeline-dot active"></div>
+                    <span class="timeline-year">SEP 2024</span>
+                    <h3>Web Dev Workshop</h3>
+                    <span style="display:inline-block; font-size:0.75rem; font-weight:700; color:var(--accent-color); margin-bottom:6px;">👥 180+ Attendees</span>
+                    <p>Progressive web development with modern JavaScript ES6+, cloud backends, and Firebase.</p>
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:600; color:var(--accent-color); margin-top:8px;">
+                        Details &rarr;
                     </span>
+                </div>
 
-                    <h3>
+                <!-- Event 4: Annual Hackathon 2025 -->
+                <div class="timeline-card reveal-up visible delay-300" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('annual-hackathon-2025')">
+                    <div class="timeline-dot active"></div>
+                    <span class="timeline-year">FEB 2025</span>
+                    <h3>Annual Hackathon</h3>
+                    <span style="display:inline-block; font-size:0.75rem; font-weight:700; color:var(--accent-color); margin-bottom:6px;">👥 450+ Participants</span>
+                    <p>48-hour multidisciplinary student hackathon solving regional challenges with working prototypes.</p>
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:600; color:var(--accent-color); margin-top:8px;">
+                        Details &rarr;
+                    </span>
+                </div>
 
-                        Tech Symposium
-
-                    </h3>
-
-                    <p>
-
-                        Meet researchers,
-                        startups and industry experts.
-
-                    </p>
-
+                <!-- Event 5: RAG Hackathon 2026 -->
+                <div class="timeline-card reveal-up visible delay-400" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('rag-hackathon-2026')">
+                    <div class="timeline-dot"></div>
+                    <span class="timeline-year">JUL 2026</span>
+                    <h3>RAG Hackathon</h3>
+                    <span style="display:inline-block; font-size:0.75rem; font-weight:700; color:var(--accent-color); margin-bottom:6px;">🏆 ₹50,000 Prize Pool</span>
+                    <p>Creating new ideas and building it different. 36 hours of rapid prototyping and Edge AI.</p>
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:600; color:var(--accent-color); margin-top:8px;">
+                        Details &rarr;
+                    </span>
                 </div>
 
             </div>
@@ -708,11 +644,11 @@
                     PAST EVENTS SHOWCASE
     ===================================================== -->
 
-    <section class="past-events">
+    <section class="past-events" id="past-events">
 
         <div class="container">
 
-            <div class="section-title reveal-up">
+            <div class="section-title reveal-up visible">
 
                 <span class="section-tag">
 
@@ -747,7 +683,7 @@
                         </svg>
                         <input type="text" id="pastSearchInput" placeholder="Search past hackathons, workshops, topics..." aria-label="Search past events">
                     </div>
-                    <div class="past-results-count" id="pastResultsCount">Loading verified archive...</div>
+                    <div class="past-results-count" id="pastResultsCount">Showing 4 verified past events</div>
                 </div>
 
                 <div class="past-toolbar-filters">
@@ -755,6 +691,8 @@
                         <span class="filter-group-label">Year:</span>
                         <div class="filter-pill-row" id="pastYearFilters">
                             <button type="button" class="archive-pill-btn active" data-year="all">All Years</button>
+                            <button type="button" class="archive-pill-btn" data-year="2025">2025</button>
+                            <button type="button" class="archive-pill-btn" data-year="2024">2024</button>
                         </div>
                     </div>
 
@@ -772,7 +710,136 @@
             </div>
 
             <div class="past-event-grid" id="pastEventGrid">
-                <!-- Dynamically rendered by CMS -->
+                <!-- Verified Event 1: Annual Hackathon 2025 -->
+                <div class="past-event-card-rich reveal-up visible">
+                    <div class="past-card-media" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('annual-hackathon-2025')">
+                        <img src="assets/hackathon.png" alt="VVISC Annual Innovation Hackathon 2025" onerror="this.onerror=null; this.src='assets/hackathon.png';">
+                        <div class="past-card-media-overlay"></div>
+                        <div class="past-card-badge-top">
+                            <span class="past-chip-category">HACKATHON</span>
+                            <span class="past-chip-year">2025</span>
+                        </div>
+                    </div>
+                    <div class="past-card-body">
+                        <div class="past-card-date-venue">
+                            <span>📅 Feb 15–17, 2025</span>
+                            <span>📍 VVIT Innovation Complex</span>
+                        </div>
+                        <h3 class="past-card-title">VVISC Annual Innovation Hackathon 2025</h3>
+                        <p class="past-card-desc">48-hour multidisciplinary student hackathon focused on Smart Agriculture, Autonomous Systems, and IoT Microgrids. 90 student teams engineered working prototypes.</p>
+                        <div class="past-metrics-chips">
+                            <span class="past-metric-pill">👥 450+ Participants</span>
+                            <span class="past-metric-pill">🏫 12 Colleges</span>
+                            <span class="past-metric-pill">🏆 1st Prize ₹50,000</span>
+                        </div>
+                        <div class="past-card-footer">
+                            <button type="button" class="past-btn-detail" onclick="window.openEventDetailModal && window.openEventDetailModal('annual-hackathon-2025')">
+                                View Story &amp; Details &rarr;
+                            </button>
+                            <button type="button" class="past-btn-gallery" onclick="window.openEventDetailModal && window.openEventDetailModal('annual-hackathon-2025')">
+                                Photos (3)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verified Event 2: Applied AI Bootcamp 2024 -->
+                <div class="past-event-card-rich reveal-up visible">
+                    <div class="past-card-media" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('ai-ml-bootcamp-2024')">
+                        <img src="assets/Ai-bootcamp.png" alt="Applied AI & Machine Learning Bootcamp 2024" onerror="this.onerror=null; this.src='assets/hackathon.png';">
+                        <div class="past-card-media-overlay"></div>
+                        <div class="past-card-badge-top">
+                            <span class="past-chip-category">WORKSHOP</span>
+                            <span class="past-chip-year">2024</span>
+                        </div>
+                    </div>
+                    <div class="past-card-body">
+                        <div class="past-card-date-venue">
+                            <span>📅 Aug 24–26, 2024</span>
+                            <span>📍 Advanced Computing Lab</span>
+                        </div>
+                        <h3 class="past-card-title">Applied AI &amp; Machine Learning Bootcamp</h3>
+                        <p class="past-card-desc">3-day intensive boot camp covering computer vision, PyTorch, and deep learning architectures. Students trained convolutional networks and deployed edge inference prototypes.</p>
+                        <div class="past-metrics-chips">
+                            <span class="past-metric-pill">👥 300+ Certified</span>
+                            <span class="past-metric-pill">🏫 4 Colleges</span>
+                            <span class="past-metric-pill">🏆 45 Models Deployed</span>
+                        </div>
+                        <div class="past-card-footer">
+                            <button type="button" class="past-btn-detail" onclick="window.openEventDetailModal && window.openEventDetailModal('ai-ml-bootcamp-2024')">
+                                View Story &amp; Details &rarr;
+                            </button>
+                            <button type="button" class="past-btn-gallery" onclick="window.openEventDetailModal && window.openEventDetailModal('ai-ml-bootcamp-2024')">
+                                Photos (2)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verified Event 3: Full-Stack Web Architecture -->
+                <div class="past-event-card-rich reveal-up visible">
+                    <div class="past-card-media" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('web-dev-workshop-2024')">
+                        <img src="assets/5.png" alt="Modern Full-Stack Web Architecture" onerror="this.onerror=null; this.src='assets/hackathon.png';">
+                        <div class="past-card-media-overlay"></div>
+                        <div class="past-card-badge-top">
+                            <span class="past-chip-category">WORKSHOP</span>
+                            <span class="past-chip-year">2024</span>
+                        </div>
+                    </div>
+                    <div class="past-card-body">
+                        <div class="past-card-date-venue">
+                            <span>📅 Sep 20–22, 2024</span>
+                            <span>📍 Central Computer Center</span>
+                        </div>
+                        <h3 class="past-card-title">Modern Full-Stack Web Architecture</h3>
+                        <p class="past-card-desc">Hands-on training building progressive web applications with modern JavaScript ES6+, cloud backends, and Firebase Firestore and Authentication.</p>
+                        <div class="past-metrics-chips">
+                            <span class="past-metric-pill">👥 180+ Attendees</span>
+                            <span class="past-metric-pill">🏫 2 Colleges</span>
+                            <span class="past-metric-pill">🏆 8 Live Projects</span>
+                        </div>
+                        <div class="past-card-footer">
+                            <button type="button" class="past-btn-detail" onclick="window.openEventDetailModal && window.openEventDetailModal('web-dev-workshop-2024')">
+                                View Story &amp; Details &rarr;
+                            </button>
+                            <button type="button" class="past-btn-gallery" onclick="window.openEventDetailModal && window.openEventDetailModal('web-dev-workshop-2024')">
+                                Photos (2)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verified Event 4: Chapter Founding -->
+                <div class="past-event-card-rich reveal-up visible">
+                    <div class="past-card-media" style="cursor:pointer;" onclick="window.openEventDetailModal && window.openEventDetailModal('vvisc-founded-2024')">
+                        <img src="assets/logo.png" alt="VVISC IUCEE Student Chapter Founding" onerror="this.onerror=null; this.src='assets/hackathon.png';" style="object-fit:contain; background:#FAF9F6; padding:15px;">
+                        <div class="past-card-media-overlay"></div>
+                        <div class="past-card-badge-top">
+                            <span class="past-chip-category">MILESTONE</span>
+                            <span class="past-chip-year">2024</span>
+                        </div>
+                    </div>
+                    <div class="past-card-body">
+                        <div class="past-card-date-venue">
+                            <span>📅 Jul 12, 2024</span>
+                            <span>📍 VVIT Main Auditorium</span>
+                        </div>
+                        <h3 class="past-card-title">VVISC IUCEE Student Chapter Founding</h3>
+                        <p class="past-card-desc">Official charter establishment and student executive committee inauguration of VVISC to nurture hands-on technical skills and global engineering collaborations.</p>
+                        <div class="past-metrics-chips">
+                            <span class="past-metric-pill">👥 120+ Engineers</span>
+                            <span class="past-metric-pill">🏆 IUCEE Affiliation</span>
+                        </div>
+                        <div class="past-card-footer">
+                            <button type="button" class="past-btn-detail" onclick="window.openEventDetailModal && window.openEventDetailModal('vvisc-founded-2024')">
+                                View Story &amp; Details &rarr;
+                            </button>
+                            <a href="gallery.html" class="past-btn-gallery">
+                                Gallery &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -1081,6 +1148,7 @@
                             <li><a href="index.html">Home</a></li>
                             <li><a href="about.html">About Us</a></li>
                             <li><a href="departments.html">Departments</a></li>
+                            <li><a href="projects.html">Projects</a></li>
                             <li><a href="council.html">Council &amp; Team</a></li>
                         </ul>
                         <ul class="vvisc-footer-link-group">

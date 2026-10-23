@@ -1415,142 +1415,91 @@ document.addEventListener("DOMContentLoaded", () => {
             HORIZONTAL JOURNEY TIMELINE
     ==========================================================*/
 
-    const timelineSteps = document.querySelectorAll(".timeline-step");
-    const timelineProgress = document.querySelector(".timeline-progress");
-    const journeySection = document.querySelector(".journey-section");
+    function initJourneyTimeline() {
+        const timelineSteps = document.querySelectorAll(".timeline-step");
+        const timelineProgress = document.querySelector(".timeline-progress");
+        const journeySection = document.querySelector(".journey-section");
 
-    if (journeySection && timelineProgress) {
-
-        /*------------------------------
-            Reveal Cards
-        ------------------------------*/
-
-        const timelineObserver = new IntersectionObserver((entries) => {
-
-            entries.forEach((entry) => {
-
-                if (entry.isIntersecting) {
-
-                    entry.target.classList.add("active");
-
-                    timelineObserver.unobserve(entry.target);
-
-                }
-
-            });
-
-        }, {
-
-            threshold: 0.25
-
-        });
-
-        timelineSteps.forEach(step => timelineObserver.observe(step));
-
-
-
-        /*------------------------------
-            Progress Line
-        ------------------------------*/
-
-        function updateTimelineProgress() {
-
-            const rect = journeySection.getBoundingClientRect();
-
-            const windowHeight = window.innerHeight;
-
-            const start = windowHeight * 0.75;
-
-            const end = rect.height + windowHeight * 0.25;
-
-            let progress = ((start - rect.top) / end);
-
-            progress = Math.max(0, Math.min(progress, 1));
-
-            timelineProgress.style.width = `${progress * 100}%`;
-
-        }
-
-        window.addEventListener("scroll", updateTimelineProgress);
-
-        updateTimelineProgress();
-
-
-
-        /*------------------------------
-            Hover Animation
-        ------------------------------*/
-
-        timelineSteps.forEach(step => {
+        // Immediately ensure all steps and reveal items are active and visible
+        timelineSteps.forEach((step, index) => {
+            step.classList.add("active");
+            step.classList.add("visible");
+            step.style.opacity = "1";
+            step.style.transform = "none";
+            step.style.transitionDelay = `${index * 120}ms`;
 
             const card = step.querySelector(".timeline-card");
             const icon = step.querySelector(".timeline-icon");
             const dot = step.querySelector(".timeline-dot");
 
-            step.addEventListener("mouseenter", () => {
+            if (card && !step._hoverAttached) {
+                step._hoverAttached = true;
+                step.addEventListener("mouseenter", () => {
+                    card.style.transform = "translateY(-10px)";
+                    if (icon) icon.style.transform = "translateY(-6px) scale(1.08)";
+                    if (dot) {
+                        dot.style.transform = "scale(1.25)";
+                        dot.style.boxShadow = "0 0 25px rgba(200, 155, 53, 0.65)";
+                    }
+                });
 
-                card.style.transform = "translateY(-12px)";
-                icon.style.transform = "translateY(-8px) scale(1.08)";
-                dot.style.transform = "scale(1.25)";
-
-                dot.style.boxShadow =
-                    "0 0 25px rgba(199,107,60,.65)";
-
-            });
-
-            step.addEventListener("mouseleave", () => {
-
-                card.style.transform = "";
-                icon.style.transform = "";
-                dot.style.transform = "";
-
-                dot.style.boxShadow =
-                    "0 0 18px rgba(199,107,60,.35)";
-
-            });
-
+                step.addEventListener("mouseleave", () => {
+                    card.style.transform = "";
+                    if (icon) icon.style.transform = "";
+                    if (dot) {
+                        dot.style.transform = "";
+                        dot.style.boxShadow = "";
+                    }
+                });
+            }
         });
 
+        const revealAboutElements = document.querySelectorAll(".journey-section .reveal-about, .journey-heading");
+        revealAboutElements.forEach(el => {
+            el.classList.add("active");
+            el.classList.add("visible");
+            el.style.opacity = "1";
+            el.style.transform = "none";
+        });
 
-
-            /*------------------------------
-                Stagger Entrance
-            ------------------------------*/
-
-            timelineSteps.forEach((step, index) => {
-
-                step.style.transitionDelay = `${index * 180}ms`;
-
-            });
-
+        if (journeySection && timelineProgress) {
+            function updateTimelineProgress() {
+                const rect = journeySection.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                const start = windowHeight * 0.85;
+                const end = rect.height + windowHeight * 0.35;
+                let progress = ((start - rect.top) / end);
+                progress = Math.max(0, Math.min(progress, 1));
+                timelineProgress.style.width = `${progress * 100}%`;
+            }
+            window.removeEventListener("scroll", updateTimelineProgress);
+            window.addEventListener("scroll", updateTimelineProgress, { passive: true });
+            updateTimelineProgress();
         }
-        document.querySelectorAll(".timeline-card").forEach(card=>{
 
-        card.addEventListener("mousemove",(e)=>{
+        document.querySelectorAll(".timeline-card").forEach(card => {
+            if (card._mouseAttached) return;
+            card._mouseAttached = true;
+            card.addEventListener("mousemove", (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const isLight = document.body.classList.contains("light-mode") || document.documentElement.getAttribute("data-theme") === "light";
+                if (isLight) {
+                    card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,1), rgba(255,255,255,0.92) 50%, #ffffff)`;
+                } else {
+                    card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(20, 52, 42, 0.95), rgba(12, 36, 28, 0.9) 50%, rgba(8, 24, 18, 0.95))`;
+                }
+            });
 
-            const rect=card.getBoundingClientRect();
-
-            const x=e.clientX-rect.left;
-
-            const y=e.clientY-rect.top;
-
-            card.style.background=`
-            radial-gradient(
-            circle at ${x}px ${y}px,
-            rgba(255,255,255,.96),
-            rgba(255,255,255,.78) 45%,
-            rgba(255,255,255,.70)
-            )`;
-
+            card.addEventListener("mouseleave", () => {
+                card.style.background = "";
+            });
         });
+    }
 
-        card.addEventListener("mouseleave",()=>{
-
-            card.style.background="rgba(255,255,255,.72)";
-
-        });
-
-    });
+    window.initJourneyTimeline = initJourneyTimeline;
+    initJourneyTimeline();
 
 });
 /*=================================================
