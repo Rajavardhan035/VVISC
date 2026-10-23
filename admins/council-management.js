@@ -862,7 +862,7 @@ function renderCouncilGrid() {
                 <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
                     <img src="${getAdminImgSrc(m.profileImage)}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color);" onerror="this.onerror=null; this.src='../assets/nodp.png';">
                     <div>
-                        <h3 style="font-size:1.05rem; margin-bottom:2px;">${escapeHtml(m.name)}</h3>
+                        <h3 class="member-card-name" style="font-size:1.05rem; margin-bottom:2px; font-weight:700;">${escapeHtml(m.name)}</h3>
                         <p style="font-size:0.8rem; color:var(--accent-color); font-weight:600;">${escapeHtml(m.role)}</p>
                     </div>
                 </div>
@@ -1727,7 +1727,7 @@ function renderDeptsGrid() {
                     `}
                     <div style="flex:1; min-width:0;">
                         <span style="font-size:0.7rem; font-weight:700; color:#C89B35; text-transform:uppercase; letter-spacing:0.06em;">★ Coordinator</span>
-                        <h4 style="margin:2px 0 0; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(coordinator.name)}</h4>
+                        <h4 class="dept-leader-name" style="margin:2px 0 0; font-size:0.95rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(coordinator.name)}</h4>
                         <p style="margin:0; font-size:0.75rem; opacity:0.75; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(coordinator.role || "Coordinator")}</p>
                     </div>
                 </div>
@@ -1738,7 +1738,7 @@ function renderDeptsGrid() {
                     <div style="width:38px; height:38px; border-radius:50%; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; font-size:0.85rem; color:var(--text-secondary);">--</div>
                     <div>
                         <span style="font-size:0.7rem; font-weight:700; opacity:0.6; text-transform:uppercase;">Coordinator</span>
-                        <h4 style="margin:2px 0 0; font-size:0.9rem; font-weight:500; font-style:italic; opacity:0.75;">Position not assigned</h4>
+                        <h4 class="dept-leader-name" style="margin:2px 0 0; font-size:0.9rem; font-weight:500; font-style:italic; opacity:0.75;">Position not assigned</h4>
                     </div>
                 </div>
             `;
@@ -1759,7 +1759,7 @@ function renderDeptsGrid() {
                     `}
                     <div style="flex:1; min-width:0;">
                         <span style="font-size:0.7rem; font-weight:700; opacity:0.8; text-transform:uppercase; letter-spacing:0.06em;">Associate Coordinator</span>
-                        <h4 style="margin:2px 0 0; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(associate.name)}</h4>
+                        <h4 class="dept-leader-name" style="margin:2px 0 0; font-size:0.95rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(associate.name)}</h4>
                         <p style="margin:0; font-size:0.75rem; opacity:0.75; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(associate.role || "Associate Coordinator")}</p>
                     </div>
                 </div>

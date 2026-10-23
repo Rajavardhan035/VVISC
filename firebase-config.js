@@ -13,3 +13,11 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Ensure global accessibility across all browsers, modules and devices
+window.firebase = firebase;
+window.auth = auth;
+window.db = db;
+if (typeof firebase.storage === "function") {
+  window.storage = firebase.storage();
+}
+

@@ -977,7 +977,7 @@
 
             const DEFAULT_SEED_PROJECTS = {
                 "seed-ai-agri": {
-                    title: "KrishiNet: Edge AI Crop Health Diagnostics",
+                    title: "Title: Satellite Image Classification for Drought Detection Using Quantum Feature Extraction.",
                     category: "AI & Machine Learning",
                     shortDescription: "Autonomous edge computer vision system deployed on low-cost drones for real-time crop disease diagnosis, pesticide recommendation, and yield projection.",
                     description: "KrishiNet bridges agricultural agronomy and edge artificial intelligence. Built for smallholder farmers across rural India, the platform analyzes multispectral leaf imagery captured by handheld devices or autonomous UAVs, instantly classifying 40+ fungal and bacterial leaf pathologies offline with 96.4% precision.",
@@ -1035,16 +1035,34 @@
 
                 try {
                     let projectData = null;
+                    const firestoreDb = window.db || (typeof db !== "undefined" ? db : (window.firebase && firebase.firestore ? firebase.firestore() : null));
 
-                    if (window.db) {
-                        const docRef = db.collection("projects").doc(projectId);
-                        const docSnap = await docRef.get();
-                        if (docSnap.exists) {
-                            projectData = { id: docSnap.id, ...docSnap.data() };
+                    if (firestoreDb) {
+                        try {
+                            const docRef = firestoreDb.collection("projects").doc(projectId);
+                            const docSnap = await docRef.get();
+                            if (docSnap.exists) {
+                                projectData = { id: docSnap.id, ...docSnap.data() };
+                            }
+                        } catch (qErr) {
+                            console.warn("Firestore project details query notice:", qErr);
                         }
                     }
 
-                    // Check default seeds if not found in live Firestore
+                    // Fallback to local storage cache if available
+                    if (!projectData) {
+                        try {
+                            const cached = localStorage.getItem("vvisc_col_projects");
+                            if (cached) {
+                                const parsed = JSON.parse(cached);
+                                if (Array.isArray(parsed)) {
+                                    projectData = parsed.find(p => p.id === projectId);
+                                }
+                            }
+                        } catch (cErr) {}
+                    }
+
+                    // Check default seeds if not found in live Firestore or cache
                     if (!projectData && DEFAULT_SEED_PROJECTS[projectId]) {
                         projectData = { id: projectId, ...DEFAULT_SEED_PROJECTS[projectId] };
                     }
@@ -1062,6 +1080,19 @@
                     }
 
                     renderProjectData(projectData);
+
+                    // Real-time synchronization for this project document
+                    if (firestoreDb && !window._projectDocRealtimeAttached) {
+                        window._projectDocRealtimeAttached = true;
+                        firestoreDb.collection("projects").doc(projectId).onSnapshot(snap => {
+                            if (snap.exists) {
+                                const updated = { id: snap.id, ...snap.data() };
+                                renderProjectData(updated);
+                            }
+                        }, err => {
+                            console.warn("Real-time project subscription notice:", err);
+                        });
+                    }
                 } catch (err) {
                     console.error("Error loading project details:", err);
                     showNotFound();

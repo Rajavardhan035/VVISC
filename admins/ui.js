@@ -36,6 +36,19 @@ document.addEventListener("DOMContentLoaded", () => {
 // applied on every admin page)
 // ==========================================
 
+function applyThemeClasses(mode) {
+    document.documentElement.setAttribute("data-theme", mode);
+    if (document.body) {
+        if (mode === "light") {
+            document.body.classList.add("light-mode");
+            document.body.classList.remove("dark-mode");
+        } else {
+            document.body.classList.add("dark-mode");
+            document.body.classList.remove("light-mode");
+        }
+    }
+}
+
 function applySavedPreferences() {
     if (localStorage.getItem("vviscReduceMotion") === "true") {
         document.body.classList.add("reduce-motion");
@@ -47,14 +60,16 @@ function applySavedPreferences() {
         });
     }
 
-    const theme = localStorage.getItem("vviscTheme") || "dark";
+    // Default to light mode for all admin pages
+    const theme = localStorage.getItem("vviscTheme") || "light";
     const accent = localStorage.getItem("vviscAccent") || "copper";
 
-    document.documentElement.setAttribute("data-theme", theme);
+    applyThemeClasses(theme);
     document.documentElement.setAttribute("data-accent", accent);
 
+    // Left = Sun = Light Mode (unchecked), Right = Moon = Dark Mode (checked)
     document.querySelectorAll(".theme-switch-input").forEach(el => {
-        el.checked = theme === "light";
+        el.checked = (theme === "dark");
     });
 
     document.querySelectorAll(".accent-swatch").forEach(el => {
@@ -63,7 +78,7 @@ function applySavedPreferences() {
 
     document.querySelectorAll(".theme-switch-input").forEach(el => {
         el.addEventListener("change", (e) => {
-            setTheme(e.target.checked ? "light" : "dark");
+            setTheme(e.target.checked ? "dark" : "light");
         });
     });
 
@@ -81,11 +96,11 @@ function applySavedPreferences() {
 // ==========================================
 
 function setTheme(mode) {
-    document.documentElement.setAttribute("data-theme", mode);
+    applyThemeClasses(mode);
     localStorage.setItem("vviscTheme", mode);
 
     document.querySelectorAll(".theme-switch-input").forEach(el => {
-        el.checked = mode === "light";
+        el.checked = (mode === "dark");
     });
 }
 

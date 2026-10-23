@@ -1398,7 +1398,7 @@
             const DEFAULT_SEED_PROJECTS = [
                 {
                     id: "seed-ai-agri",
-                    title: "KrishiNet: Edge AI Crop Health Diagnostics",
+                    title: "Title: Satellite Image Classification for Drought Detection Using Quantum Feature Extraction.",
                     category: "AI & Machine Learning",
                     shortDescription: "Autonomous edge computer vision system deployed on low-cost drones for real-time crop disease diagnosis, pesticide recommendation, and yield projection.",
                     technologies: ["PyTorch", "OpenCV", "TensorRT", "Raspberry Pi 4", "Flutter"],
@@ -1473,26 +1473,77 @@
             async function fetchProjects() {
                 try {
                     let list = [];
-                    if (window.db) {
-                        // Fetch only published projects for public viewers
-                        const snap = await db.collection("projects")
-                            .where("status", "==", "published")
-                            .get();
-                        
-                        snap.forEach(doc => {
-                            list.push({ id: doc.id, ...doc.data() });
-                        });
+                    const firestoreDb = window.db || (typeof db !== "undefined" ? db : (window.firebase && firebase.firestore ? firebase.firestore() : null));
+
+                    if (firestoreDb) {
+                        try {
+                            const snap = await firestoreDb.collection("projects").get();
+                            if (!snap.empty) {
+                                snap.forEach(doc => {
+                                    const data = doc.data();
+                                    if (data.status === "published" || !data.status || data.active !== false) {
+                                        list.push({ id: doc.id, ...data });
+                                    }
+                                });
+                            }
+                        } catch (qErr) {
+                            console.warn("Firestore projects query notice:", qErr);
+                        }
                     }
 
-                    // Fallback to initial curated seed items if database collection is empty
+                    // Fallback to local storage cache if available
+                    if (list.length === 0) {
+                        try {
+                            const cached = localStorage.getItem("vvisc_col_projects");
+                            if (cached) {
+                                const parsed = JSON.parse(cached);
+                                if (Array.isArray(parsed) && parsed.length > 0) {
+                                    list = parsed.filter(p => p.status === "published" || !p.status || p.active !== false);
+                                }
+                            }
+                        } catch (cErr) {}
+                    }
+
+                    // Fallback to initial seed items if collection is empty
                     if (list.length === 0) {
                         list = DEFAULT_SEED_PROJECTS;
                     }
 
                     allProjects = list;
+                    try {
+                        localStorage.setItem("vvisc_col_projects", JSON.stringify(list));
+                    } catch (e) {}
+
                     updateStats();
                     buildDynamicCategoryPills();
                     renderProjects();
+
+                    // Real-time synchronization across all devices and tabs
+                    if (firestoreDb && !window._projectsRealtimeAttached) {
+                        window._projectsRealtimeAttached = true;
+                        firestoreDb.collection("projects").onSnapshot(snapshot => {
+                            if (!snapshot.empty) {
+                                const liveList = [];
+                                snapshot.forEach(doc => {
+                                    const data = doc.data();
+                                    if (data.status === "published" || !data.status || data.active !== false) {
+                                        liveList.push({ id: doc.id, ...data });
+                                    }
+                                });
+                                if (liveList.length > 0) {
+                                    allProjects = liveList;
+                                    try {
+                                        localStorage.setItem("vvisc_col_projects", JSON.stringify(liveList));
+                                    } catch (e) {}
+                                    updateStats();
+                                    buildDynamicCategoryPills();
+                                    renderProjects();
+                                }
+                            }
+                        }, err => {
+                            console.info("Projects live listener notice:", err);
+                        });
+                    }
                 } catch (err) {
                     console.warn("Notice loading projects from Firestore:", err);
                     allProjects = DEFAULT_SEED_PROJECTS;

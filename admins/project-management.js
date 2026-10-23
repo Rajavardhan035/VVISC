@@ -14,7 +14,7 @@ let pendingGalleryFiles = []; // Array of File objects
 
 const DEFAULT_SEED_PROJECTS = [
     {
-        title: "KrishiNet: Edge AI Crop Health Diagnostics",
+        title: "Title: Satellite Image Classification for Drought Detection Using Quantum Feature Extraction.",
         category: "AI & Machine Learning",
         shortDescription: "Autonomous edge computer vision system deployed on low-cost drones for real-time crop disease diagnosis, pesticide recommendation, and yield projection.",
         description: "KrishiNet bridges agricultural agronomy and edge artificial intelligence. Built for smallholder farmers across rural India, the platform analyzes multispectral leaf imagery captured by handheld devices or autonomous UAVs, instantly classifying 40+ fungal and bacterial leaf pathologies offline with 96.4% precision.",
@@ -379,30 +379,73 @@ function initEventListeners() {
 async function loadProjects() {
     try {
         let list = [];
-        if (window.db) {
-            const snapshot = await db.collection("projects").get();
-            snapshot.forEach(doc => {
-                list.push({ id: doc.id, ...doc.data() });
-            });
+        const firestoreDb = window.db || (typeof db !== "undefined" ? db : (window.firebase && firebase.firestore ? firebase.firestore() : null));
+
+        if (window.CMS && typeof CMS.getCollection === "function") {
+            try {
+                list = await CMS.getCollection("projects");
+            } catch (cmsErr) {
+                console.warn("CMS getCollection notice for projects:", cmsErr);
+            }
+        }
+
+        if (list.length === 0 && firestoreDb) {
+            try {
+                const snapshot = await firestoreDb.collection("projects").get();
+                snapshot.forEach(doc => {
+                    list.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (fsErr) {
+                console.warn("Firestore projects get notice:", fsErr);
+            }
         }
 
         // Auto-seed if collection is completely empty
-        if (list.length === 0) {
+        if (list.length === 0 && firestoreDb) {
             console.log("No projects found in database. Initializing default seed data...");
             for (const item of DEFAULT_SEED_PROJECTS) {
-                const docRef = await db.collection("projects").add({
-                    ...item,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    publishedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                list.push({ id: docRef.id, ...item });
+                try {
+                    const docRef = await firestoreDb.collection("projects").add({
+                        ...item,
+                        createdAt: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+                        updatedAt: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+                        publishedAt: firebase.firestore.FieldValue ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
+                    });
+                    list.push({ id: docRef.id, ...item });
+                } catch (seedErr) {
+                    console.warn("Seeding error:", seedErr);
+                }
             }
         }
 
         projectsList = list;
+        try {
+            localStorage.setItem("vvisc_col_projects", JSON.stringify(list));
+        } catch (e) {}
+
         updateStats();
         renderProjectsTable();
+
+        // Real-time synchronization in Admin panel
+        if (firestoreDb && !window._adminProjectsRealtimeAttached) {
+            window._adminProjectsRealtimeAttached = true;
+            firestoreDb.collection("projects").onSnapshot(snapshot => {
+                if (!snapshot.empty) {
+                    const live = [];
+                    snapshot.forEach(doc => {
+                        live.push({ id: doc.id, ...doc.data() });
+                    });
+                    projectsList = live;
+                    try {
+                        localStorage.setItem("vvisc_col_projects", JSON.stringify(live));
+                    } catch (e) {}
+                    updateStats();
+                    renderProjectsTable();
+                }
+            }, err => {
+                console.warn("Admin projects realtime listener notice:", err);
+            });
+        }
     } catch (err) {
         console.error("Error loading projects from Firestore:", err);
         const tbody = document.getElementById("projectsTableBody");

@@ -303,7 +303,7 @@ service cloud.firestore {
     }
 
     match /projects/{docId} {
-      allow read: if resource.data.status == 'published' || isContentEditor();
+      allow read: if true;
       allow create, update, delete: if isContentEditor();
     }
 

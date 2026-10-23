@@ -2572,40 +2572,88 @@ function renderCouncilDOM(members, depts) {
         });
     }
 
-    // 3. Render Executive Student Leaders
-    const roleGrid = document.querySelector(".role-grid");
-    const executiveList = activeMembers.filter(m => {
-        const role = (m.role || "").toLowerCase();
-        const dept = (m.department || "").toLowerCase();
-        return dept.includes("executive") || role.includes("president") || role.includes("secretary") || role.includes("treasurer");
-    });
-    const studentLeaders = executiveList.length > 0 ? executiveList : activeMembers.filter(m => m.memberType === "Student Leader");
+    // 3. Render Executive Student Leaders (Strict 4-card single row on desktop)
+    const roleGrid = document.querySelector(".executive-grid") || document.querySelector(".role-grid");
+    if (roleGrid) {
+        function getExecRank(m) {
+            const role = (m.role || "").toLowerCase().trim();
+            const name = (m.name || "").toLowerCase().trim();
+            
+            // 1. President (must not be vice president)
+            if ((role === "president" || role.includes("president")) && !role.includes("vice") && !role.includes("vp")) {
+                return 1;
+            }
+            if (name.includes("soniya")) {
+                return 1;
+            }
+            // 2. Vice President
+            if (role.includes("vice president") || role.includes("vice-president") || role.includes("vp") || name.includes("yeshitha")) {
+                return 2;
+            }
+            // 3. Secretary
+            if ((role.includes("secretary") && !role.includes("joint")) || name.includes("abid")) {
+                return 3;
+            }
+            // 4. Treasurer
+            if (role.includes("treasurer") || name.includes("lalith")) {
+                return 4;
+            }
+            return 999;
+        }
 
-    if (roleGrid && studentLeaders.length > 0) {
-        roleGrid.innerHTML = "";
-        studentLeaders.forEach(m => {
-            const card = document.createElement("div");
-            card.className = "role-card";
-            const initials = getMemberInitials(m.name);
-            const hasImg = m.profileImage && m.profileImage !== "assets/nodp.png";
-            card.innerHTML = `
-                <div class="role-avatar">
-                    ${hasImg ? `
-                        <img src="${escapeHtml(getPublicImgSrc(m.profileImage))}" alt="${escapeHtml(m.name)}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'council-initials-avatar\\'>${initials}</div>';">
-                    ` : `
-                        <div class="council-initials-avatar">${initials}</div>
-                    `}
-                </div>
-                <span class="role-badge">${escapeHtml(m.role || "Council Member")}</span>
-                <h3>${escapeHtml(m.name)}</h3>
-                <p>${escapeHtml(m.description || "")}</p>
-                <div class="role-buttons">
-                    ${m.linkedin ? `<a href="${escapeHtml(m.linkedin)}" target="_blank" rel="noopener">LinkedIn</a>` : ""}
-                    ${m.github ? `<a href="${escapeHtml(m.github)}" target="_blank" rel="noopener">GitHub</a>` : ""}
-                </div>
-            `;
-            roleGrid.appendChild(card);
-        });
+        // Filter and sort by rank (1: President, 2: Vice President, 3: Secretary, 4: Treasurer)
+        let studentLeaders = activeMembers
+            .filter(m => getExecRank(m) <= 4)
+            .sort((a, b) => getExecRank(a) - getExecRank(b));
+
+        // Fallback / hydration if any role is missing
+        if (studentLeaders.length < 4 && typeof DEFAULT_COUNCIL_MEMBERS !== "undefined") {
+            const defaults = DEFAULT_COUNCIL_MEMBERS
+                .filter(m => getExecRank(m) <= 4)
+                .sort((a, b) => getExecRank(a) - getExecRank(b));
+            
+            const filled = [];
+            for (let rank = 1; rank <= 4; rank++) {
+                const existing = studentLeaders.find(m => getExecRank(m) === rank);
+                if (existing) {
+                    filled.push(existing);
+                } else {
+                    const def = defaults.find(m => getExecRank(m) === rank);
+                    if (def) filled.push(def);
+                }
+            }
+            studentLeaders = filled;
+        }
+
+        if (studentLeaders.length > 0) {
+            roleGrid.innerHTML = "";
+            studentLeaders.forEach((m, idx) => {
+                const card = document.createElement("div");
+                card.className = "role-card executive-card";
+                card.setAttribute("data-exec-index", idx);
+                card.style.animationDelay = `${0.05 + idx * 0.1}s`;
+                
+                const initials = getMemberInitials(m.name);
+                const hasImg = m.profileImage && m.profileImage !== "assets/nodp.png";
+                card.innerHTML = `
+                    <div class="role-avatar">
+                        ${hasImg ? `
+                            <img src="${escapeHtml(getPublicImgSrc(m.profileImage))}" alt="${escapeHtml(m.name)}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'council-initials-avatar\\'>${initials}</div>';">
+                        ` : `
+                            <div class="council-initials-avatar">${initials}</div>
+                        `}
+                    </div>
+                    <span class="role-badge">${escapeHtml(m.role || "Council Member")}</span>
+                    <h3>${escapeHtml(m.name)}</h3>
+                    <p>${escapeHtml(m.description || "")}</p>
+                    <div class="role-buttons">
+                        ${m.linkedin ? `<a href="${escapeHtml(m.linkedin)}" target="_blank" rel="noopener">LinkedIn</a>` : `<a href="#" target="_blank" rel="noopener">LinkedIn</a>`}
+                        ${m.github ? `<a href="${escapeHtml(m.github)}" target="_blank" rel="noopener">GitHub</a>` : `<a href="#" target="_blank" rel="noopener">GitHub</a>`}
+                    </div>
+                `;
+                roleGrid.appendChild(card);
+            });
+        }
     }
 
     // 4. Render Department Team Directory
@@ -2736,8 +2784,62 @@ function renderMemberIdCardHtml(member, dept, index = 0) {
         `;
     }
 
+    // Determine Official Role Tag Upon The Card (Coordinator, Associate Coordinator, Member, etc.)
+    const mId = member.id || "";
+    const mName = rawName.toLowerCase().trim();
+    const lRole = (member.leadershipRole || "").toLowerCase().trim();
+    const roleLower = (member.role || "").toLowerCase().trim();
+
+    const isCoord = (dept && dept._coordinator && (dept._coordinator.id === mId || (dept._coordinator.name && dept._coordinator.name.toLowerCase().trim() === mName)))
+        || (dept && dept.coordinatorId && dept.coordinatorId === mId)
+        || (dept && dept.coordinatorName && dept.coordinatorName.toLowerCase().trim() === mName)
+        || lRole === "coordinator"
+        || ((roleLower.includes("coordinator") || roleLower.includes("co-ordinator")) && !roleLower.includes("associate") && !roleLower.includes("ass"));
+
+    const isAssoc = !isCoord && ((dept && dept._associate && (dept._associate.id === mId || (dept._associate.name && dept._associate.name.toLowerCase().trim() === mName)))
+        || (dept && dept.associateCoordinatorId && dept.associateCoordinatorId === mId)
+        || (dept && dept.associateCoordinatorName && dept.associateCoordinatorName.toLowerCase().trim() === mName)
+        || lRole === "associate_coordinator"
+        || roleLower.includes("associate")
+        || roleLower.includes("ass co")
+        || roleLower.includes("ass. co"));
+
+    let tagText = "Team Member";
+    let tagClass = "role-member";
+
+    if (isCoord) {
+        tagText = "★ Coordinator";
+        tagClass = "role-coordinator";
+    } else if (isAssoc) {
+        tagText = "Associate Coord";
+        tagClass = "role-associate";
+    } else if (roleLower.includes("president") && !roleLower.includes("vice")) {
+        tagText = "★ President";
+        tagClass = "role-coordinator";
+    } else if (roleLower.includes("vice president") || roleLower.includes("vp")) {
+        tagText = "Vice President";
+        tagClass = "role-associate";
+    } else if (roleLower.includes("secretary")) {
+        tagText = "★ Secretary";
+        tagClass = "role-coordinator";
+    } else if (roleLower.includes("treasurer")) {
+        tagText = "★ Treasurer";
+        tagClass = "role-coordinator";
+    } else if (roleLower.includes("lead")) {
+        tagText = "Team Lead";
+        tagClass = "role-coordinator";
+    } else {
+        tagText = "Team Member";
+        tagClass = "role-member";
+    }
+
     return `
         <div class="vvisc-id-card" data-member-name="${escapeAttr(rawName)}" data-member-role="${escapeAttr(member.role || '')}" data-member-roll="${escapeAttr(rollNo)}" data-member-branch="${escapeAttr(branch)}">
+            <!-- Official Role Tag Upon The Card -->
+            <div class="id-card-top-tag ${tagClass}" title="${escapeAttr(tagText)}">
+                <span>${escapeHtml(tagText)}</span>
+            </div>
+
             <!-- Subtle Decorative Grid and Curve Backgrounds -->
             <div class="id-card-bg-grid" aria-hidden="true"></div>
             <div class="id-card-bg-wave" aria-hidden="true"></div>
@@ -2899,81 +3001,69 @@ function renderDepartmentDirectory(depts, activeMembers) {
             card.setAttribute("data-dept-id", dept.id || slug);
             card.setAttribute("data-dept-slug", slug);
 
-            // Coordinator Slot HTML
+            // Coordinator Box HTML
             let coordinatorHtml = "";
             if (coordinator) {
                 const initials = getMemberInitials(coordinator.name);
                 const hasImg = coordinator.profileImage && coordinator.profileImage !== "assets/nodp.png";
                 coordinatorHtml = `
-                    <div class="council-leader-slot coordinator">
-                        <div class="council-leader-avatar-wrap">
+                    <div class="council-leader-box coordinator-box">
+                        <div class="council-leader-avatar">
                             ${hasImg ? `
                                 <img src="${escapeHtml(getPublicImgSrc(coordinator.profileImage))}" alt="${escapeHtml(coordinator.name)}" class="council-leader-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'council-initials-avatar\\\'>${initials}</div>';">
                             ` : `
                                 <div class="council-initials-avatar">${initials}</div>
                             `}
                         </div>
-                        <div class="council-leader-info">
-                            <span class="council-leader-role-badge">★ Coordinator</span>
+                        <div class="council-leader-meta">
                             <h4 class="council-leader-name" title="${escapeHtml(coordinator.name)}">${escapeHtml(coordinator.name)}</h4>
-                            <p class="council-leader-designation">${escapeHtml(coordinator.role || `${dept.name} Co-ordinator`)}</p>
-                            <div class="council-leader-links">
-                                ${coordinator.linkedin && coordinator.linkedin !== "#" ? `<a href="${escapeHtml(coordinator.linkedin)}" target="_blank" rel="noopener" class="council-leader-link" title="LinkedIn" aria-label="LinkedIn">in</a>` : ""}
-                                ${coordinator.github && coordinator.github !== "#" ? `<a href="${escapeHtml(coordinator.github)}" target="_blank" rel="noopener" class="council-leader-link" title="GitHub" aria-label="GitHub">gh</a>` : ""}
-                            </div>
+                            <span class="council-leader-badge coord-badge">Coordinator</span>
                         </div>
                     </div>
                 `;
             } else {
                 coordinatorHtml = `
-                    <div class="council-leader-slot coordinator vacant">
-                        <div class="council-leader-avatar-wrap">
+                    <div class="council-leader-box coordinator-box vacant">
+                        <div class="council-leader-avatar">
                             <div class="council-initials-avatar">--</div>
                         </div>
-                        <div class="council-leader-info">
-                            <span class="council-leader-role-badge">Coordinator</span>
-                            <h4 class="council-leader-name">Position Vacant</h4>
-                            <p class="council-leader-designation">Appointment in progress</p>
+                        <div class="council-leader-meta">
+                            <h4 class="council-leader-name">Vacant</h4>
+                            <span class="council-leader-badge">Vacant</span>
                         </div>
                     </div>
                 `;
             }
 
-            // Associate Coordinator Slot HTML
+            // Associate Coordinator Box HTML
             let associateHtml = "";
             if (associate) {
                 const initials = getMemberInitials(associate.name);
                 const hasImg = associate.profileImage && associate.profileImage !== "assets/nodp.png";
                 associateHtml = `
-                    <div class="council-leader-slot associate">
-                        <div class="council-leader-avatar-wrap">
+                    <div class="council-leader-box associate-box">
+                        <div class="council-leader-avatar">
                             ${hasImg ? `
                                 <img src="${escapeHtml(getPublicImgSrc(associate.profileImage))}" alt="${escapeHtml(associate.name)}" class="council-leader-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'council-initials-avatar\\\'>${initials}</div>';">
                             ` : `
                                 <div class="council-initials-avatar">${initials}</div>
                             `}
                         </div>
-                        <div class="council-leader-info">
-                            <span class="council-leader-role-badge">Associate</span>
+                        <div class="council-leader-meta">
                             <h4 class="council-leader-name" title="${escapeHtml(associate.name)}">${escapeHtml(associate.name)}</h4>
-                            <p class="council-leader-designation">${escapeHtml(associate.role || "Associate Co-ordinator")}</p>
-                            <div class="council-leader-links">
-                                ${associate.linkedin && associate.linkedin !== "#" ? `<a href="${escapeHtml(associate.linkedin)}" target="_blank" rel="noopener" class="council-leader-link" title="LinkedIn" aria-label="LinkedIn">in</a>` : ""}
-                                ${associate.github && associate.github !== "#" ? `<a href="${escapeHtml(associate.github)}" target="_blank" rel="noopener" class="council-leader-link" title="GitHub" aria-label="GitHub">gh</a>` : ""}
-                            </div>
+                            <span class="council-leader-badge assoc-badge">Associate</span>
                         </div>
                     </div>
                 `;
             } else {
                 associateHtml = `
-                    <div class="council-leader-slot associate vacant">
-                        <div class="council-leader-avatar-wrap">
+                    <div class="council-leader-box associate-box vacant">
+                        <div class="council-leader-avatar">
                             <div class="council-initials-avatar">--</div>
                         </div>
-                        <div class="council-leader-info">
-                            <span class="council-leader-role-badge">Associate</span>
-                            <h4 class="council-leader-name">Position Vacant</h4>
-                            <p class="council-leader-designation">Appointment in progress</p>
+                        <div class="council-leader-meta">
+                            <h4 class="council-leader-name">Vacant</h4>
+                            <span class="council-leader-badge">Vacant</span>
                         </div>
                     </div>
                 `;
@@ -2981,43 +3071,24 @@ function renderDepartmentDirectory(depts, activeMembers) {
 
             card.innerHTML = `
                 <div class="council-dept-header">
-                    <div class="council-dept-header-top">
-                        <div class="council-dept-icon-box">${dept.icon || "🏛️"}</div>
-                        <span class="dept-count-badge">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            <span class="dept-member-counter">${countText}</span>
-                        </span>
-                    </div>
-                    <span class="council-dept-tag">${escapeHtml(dept.tag || "Department")}</span>
-                    <h3>${escapeHtml(dept.name)}</h3>
-                    <p class="council-dept-desc">${escapeHtml(dept.description || dept.shortDescription || "")}</p>
+                    <span class="council-dept-icon">${dept.icon || "🏛️"}</span>
+                    <h3 class="council-dept-title">${escapeHtml(dept.name)}</h3>
                 </div>
 
-                <div class="council-leadership-section">
-                    <div class="council-leadership-heading">Department Leadership</div>
-                    <div class="council-dept-leadership-grid">
-                        ${coordinatorHtml}
-                        ${associateHtml}
-                    </div>
+                <div class="council-dept-leaders-grid">
+                    ${coordinatorHtml}
+                    ${associateHtml}
                 </div>
 
                 <div class="council-dept-footer">
-                    <button type="button" class="council-view-team-btn" onclick="openCouncilTeamModal('${escapeAttr(slug)}')">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button type="button" class="council-view-members-btn council-view-team-btn" onclick="openCouncilTeamModal('${escapeAttr(slug)}')">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        <span>View Full Team (${memberCount} Member${memberCount === 1 ? '' : 's'})</span>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
+                        <span>View Members &rarr;</span>
                     </button>
                 </div>
             `;
@@ -3403,13 +3474,11 @@ function applyCouncilFilters() {
             return s === cardSlug || s === cardId;
         });
 
-        const deptName = (card.querySelector("h3")?.textContent || "").toLowerCase();
-        const deptTag = (card.querySelector(".council-dept-tag")?.textContent || "").toLowerCase();
-        const deptDesc = (card.querySelector(".council-dept-desc")?.textContent || "").toLowerCase();
-        const coordName = (card.querySelector(".council-leader-slot.coordinator .council-leader-name")?.textContent || "").toLowerCase();
-        const coordRole = (card.querySelector(".council-leader-slot.coordinator .council-leader-designation")?.textContent || "").toLowerCase();
-        const assocName = (card.querySelector(".council-leader-slot.associate .council-leader-name")?.textContent || "").toLowerCase();
-        const assocRole = (card.querySelector(".council-leader-slot.associate .council-leader-designation")?.textContent || "").toLowerCase();
+        const deptName = (card.querySelector("h3, .council-dept-title")?.textContent || "").toLowerCase();
+        const coordName = (card.querySelector(".coordinator-box .council-leader-name, .council-leader-slot.coordinator .council-leader-name")?.textContent || "").toLowerCase();
+        const coordRole = (card.querySelector(".coordinator-box .council-leader-badge, .council-leader-slot.coordinator .council-leader-designation")?.textContent || "").toLowerCase();
+        const assocName = (card.querySelector(".associate-box .council-leader-name, .council-leader-slot.associate .council-leader-name")?.textContent || "").toLowerCase();
+        const assocRole = (card.querySelector(".associate-box .council-leader-badge, .council-leader-slot.associate .council-leader-designation")?.textContent || "").toLowerCase();
 
         // Check if any team member in dept matches
         let matchingMembersCount = 0;
@@ -3423,7 +3492,7 @@ function applyCouncilFilters() {
             });
         }
 
-        const deptMatches = !q || deptName.includes(q) || deptTag.includes(q) || deptDesc.includes(q) ||
+        const deptMatches = !q || deptName.includes(q) ||
             coordName.includes(q) || coordRole.includes(q) ||
             assocName.includes(q) || assocRole.includes(q);
 
@@ -3433,16 +3502,15 @@ function applyCouncilFilters() {
             card.style.display = "";
             visibleCardsCount++;
 
-            // Update View Team button label when member inside matches
-            const viewBtn = card.querySelector(".council-view-team-btn");
+            // Update View Members button label when member inside matches
+            const viewBtn = card.querySelector(".council-view-members-btn, .council-view-team-btn");
             if (viewBtn) {
-                const totalCount = dept && Array.isArray(dept._teamMembers) ? dept._teamMembers.length : 1;
                 const span = viewBtn.querySelector("span");
                 if (span) {
                     if (q && matchingMembersCount > 0 && !deptMatches) {
-                        span.textContent = `View Team (${matchingMembersCount} Match)`;
+                        span.textContent = `View Members (${matchingMembersCount} Match) →`;
                     } else {
-                        span.textContent = `View Team (${totalCount} Member${totalCount === 1 ? '' : 's'})`;
+                        span.textContent = `View Members →`;
                     }
                 }
                 viewBtn.onclick = () => openCouncilTeamModal(cardSlug, q);
