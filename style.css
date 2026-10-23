@@ -17495,3 +17495,924 @@ html[data-theme="light"] .past-metric-pill {
         align-items: flex-start;
     }
 }
+
+
+/* ==========================================================================
+   VVISC IUCEE - Department Team Directory & Leadership Showcase
+   ========================================================================== */
+
+.council-directory-section {
+    padding: 80px 0 100px;
+    position: relative;
+    background: var(--bg-color, #FAF9F6);
+    color: var(--text-color, #102820);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .council-directory-section,
+html[data-theme="dark"] .council-directory-section {
+    background: #051F1A;
+    color: #EAE5DA;
+}
+
+/* Directory Toolbar (Search, Filter Pills, Expand/Collapse) */
+.council-directory-toolbar {
+    margin: 40px auto 44px;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    background: var(--card-bg, #FFFFFF);
+    border: 1px solid var(--border-color, #E6E1D6);
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .council-directory-toolbar,
+html[data-theme="dark"] .council-directory-toolbar {
+    background: #0B2922;
+    border-color: rgba(212, 175, 55, 0.22);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.council-toolbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.council-search-box {
+    position: relative;
+    flex: 1;
+    min-width: 280px;
+}
+
+.council-search-box svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary, #56665F);
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+body.dark-mode .council-search-box svg,
+html[data-theme="dark"] .council-search-box svg {
+    color: #A3B8B0;
+}
+
+.council-search-input {
+    width: 100%;
+    padding: 12px 40px 12px 42px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #E6E1D6);
+    background: var(--input-bg, #FAF9F6);
+    color: inherit;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+body.dark-mode .council-search-input,
+html[data-theme="dark"] .council-search-input {
+    background: #07221C;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #FAF9F6;
+}
+
+.council-search-input:focus {
+    border-color: #C89B35;
+    box-shadow: 0 0 0 3px rgba(200, 155, 53, 0.18);
+    background: #FFFFFF;
+}
+
+body.dark-mode .council-search-input:focus,
+html[data-theme="dark"] .council-search-input:focus {
+    background: #092B23;
+    border-color: #D4AF37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+.council-search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--text-secondary, #56665F);
+    padding: 4px;
+    display: none;
+    line-height: 1;
+}
+
+.council-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.council-ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #E6E1D6);
+    background: var(--card-bg, #FFFFFF);
+    color: var(--text-color, #102820);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+body.dark-mode .council-ctrl-btn,
+html[data-theme="dark"] .council-ctrl-btn {
+    background: #07221C;
+    border-color: rgba(212, 175, 55, 0.25);
+    color: #EAE5DA;
+}
+
+.council-ctrl-btn:hover {
+    border-color: #C89B35;
+    color: #C89B35;
+    background: rgba(200, 155, 53, 0.08);
+}
+
+body.dark-mode .council-ctrl-btn:hover,
+html[data-theme="dark"] .council-ctrl-btn:hover {
+    border-color: #D4AF37;
+    color: #D4AF37;
+    background: rgba(212, 175, 55, 0.15);
+}
+
+/* Department Filter Pills */
+.council-dept-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.council-dept-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 20px;
+    border: 1px solid var(--border-color, #E6E1D6);
+    background: var(--input-bg, #FAF9F6);
+    color: var(--text-secondary, #56665F);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+body.dark-mode .council-dept-pill,
+html[data-theme="dark"] .council-dept-pill {
+    background: #07221C;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #A3B8B0;
+}
+
+.council-dept-pill:hover {
+    border-color: #C89B35;
+    color: #102820;
+}
+
+body.dark-mode .council-dept-pill:hover,
+html[data-theme="dark"] .council-dept-pill:hover {
+    border-color: #D4AF37;
+    color: #FAF9F6;
+}
+
+.council-dept-pill.active {
+    background: #C89B35;
+    border-color: #C89B35;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(200, 155, 53, 0.3);
+}
+
+body.dark-mode .council-dept-pill.active,
+html[data-theme="dark"] .council-dept-pill.active {
+    background: #D4AF37;
+    border-color: #D4AF37;
+    color: #051F1A;
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+}
+
+.council-toolbar-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #56665F);
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed var(--border-color, #E6E1D6);
+    padding-top: 10px;
+}
+
+body.dark-mode .council-toolbar-meta,
+html[data-theme="dark"] .council-toolbar-meta {
+    color: #8EABA0;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   Department Showcase Cards Grid
+   ========================================================================== */
+.council-dept-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.council-dept-card {
+    background: var(--card-bg, #FFFFFF);
+    border: 1px solid var(--border-color, #E6E1D6);
+    border-radius: 20px;
+    padding: 32px 32px 28px;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .council-dept-card,
+html[data-theme="dark"] .council-dept-card {
+    background: #0B2922;
+    border-color: rgba(212, 175, 55, 0.22);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.council-dept-card:hover {
+    border-color: #C89B35;
+    box-shadow: 0 14px 40px rgba(200, 155, 53, 0.12);
+}
+
+body.dark-mode .council-dept-card:hover,
+html[data-theme="dark"] .council-dept-card:hover {
+    border-color: #D4AF37;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.12);
+}
+
+/* Department Top Header */
+.council-dept-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border-color, #E6E1D6);
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .council-dept-header,
+html[data-theme="dark"] .council-dept-header {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.council-dept-title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 280px;
+}
+
+.council-dept-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: rgba(200, 155, 53, 0.1);
+    border: 1px solid rgba(200, 155, 53, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.9rem;
+    flex-shrink: 0;
+}
+
+body.dark-mode .council-dept-icon-box,
+html[data-theme="dark"] .council-dept-icon-box {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.council-dept-title-group h3 {
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 700;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    color: var(--text-color, #102820);
+    letter-spacing: -0.01em;
+}
+
+body.dark-mode .council-dept-title-group h3,
+html[data-theme="dark"] .council-dept-title-group h3 {
+    color: #FAF9F6;
+}
+
+.council-dept-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #C89B35;
+    margin-bottom: 4px;
+}
+
+body.dark-mode .council-dept-tag,
+html[data-theme="dark"] .council-dept-tag {
+    color: #D4AF37;
+}
+
+.council-dept-desc {
+    margin: 6px 0 0;
+    font-size: 0.92rem;
+    color: var(--text-secondary, #56665F);
+    line-height: 1.5;
+    max-width: 680px;
+}
+
+body.dark-mode .council-dept-desc,
+html[data-theme="dark"] .council-dept-desc {
+    color: #A3B8B0;
+}
+
+.council-dept-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dept-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(200, 155, 53, 0.12);
+    border: 1px solid rgba(200, 155, 53, 0.3);
+    color: #9E741B;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+body.dark-mode .dept-count-badge,
+html[data-theme="dark"] .dept-count-badge {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.35);
+    color: #D4AF37;
+}
+
+/* ==========================================================================
+   Leadership Section (Coordinator & Associate Coordinator)
+   ========================================================================== */
+.council-leadership-section {
+    margin-bottom: 24px;
+}
+
+.council-leadership-heading {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-secondary, #56665F);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+body.dark-mode .council-leadership-heading,
+html[data-theme="dark"] .council-leadership-heading {
+    color: #8EABA0;
+}
+
+.council-leadership-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color, #E6E1D6);
+}
+
+body.dark-mode .council-leadership-heading::after,
+html[data-theme="dark"] .council-leadership-heading::after {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.council-leadership-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 18px;
+}
+
+/* Leader Slot Card */
+.council-leader-slot {
+    background: var(--bg-color, #FAF9F6);
+    border: 1.5px solid var(--border-color, #E6E1D6);
+    border-radius: 14px;
+    padding: 20px 22px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: all 0.25s ease;
+}
+
+body.dark-mode .council-leader-slot,
+html[data-theme="dark"] .council-leader-slot {
+    background: #07221C;
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+.council-leader-slot:hover {
+    border-color: #C89B35;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 155, 53, 0.12);
+}
+
+body.dark-mode .council-leader-slot:hover,
+html[data-theme="dark"] .council-leader-slot:hover {
+    border-color: #D4AF37;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.council-leader-avatar-wrap {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+}
+
+.council-leader-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #C89B35;
+    background: #FFFFFF;
+}
+
+body.dark-mode .council-leader-img,
+html[data-theme="dark"] .council-leader-img {
+    border-color: #D4AF37;
+    background: #051F1A;
+}
+
+/* Initials Avatar Fallback */
+.council-initials-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #102820 0%, #1A3E33 50%, #C89B35 100%);
+    color: #FAF9F6;
+    border: 2px solid #C89B35;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    user-select: none;
+}
+
+body.dark-mode .council-initials-avatar,
+html[data-theme="dark"] .council-initials-avatar {
+    background: linear-gradient(135deg, #051F1A 0%, #0B2922 60%, #D4AF37 100%);
+    color: #FFFFFF;
+    border-color: #D4AF37;
+}
+
+.council-leader-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.council-leader-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.council-leader-slot.coordinator .council-leader-role-badge {
+    background: rgba(200, 155, 53, 0.15);
+    color: #9E741B;
+    border: 1px solid rgba(200, 155, 53, 0.35);
+}
+
+body.dark-mode .council-leader-slot.coordinator .council-leader-role-badge,
+html[data-theme="dark"] .council-leader-slot.coordinator .council-leader-role-badge {
+    background: rgba(212, 175, 55, 0.2);
+    color: #D4AF37;
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.council-leader-slot.associate .council-leader-role-badge {
+    background: rgba(16, 40, 32, 0.1);
+    color: #102820;
+    border: 1px solid rgba(16, 40, 32, 0.2);
+}
+
+body.dark-mode .council-leader-slot.associate .council-leader-role-badge,
+html[data-theme="dark"] .council-leader-slot.associate .council-leader-role-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #A3B8B0;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.council-leader-name {
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin: 2px 0 3px;
+    color: var(--text-color, #102820);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark-mode .council-leader-name,
+html[data-theme="dark"] .council-leader-name {
+    color: #FAF9F6;
+}
+
+.council-leader-designation {
+    font-size: 0.82rem;
+    color: var(--text-secondary, #56665F);
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark-mode .council-leader-designation,
+html[data-theme="dark"] .council-leader-designation {
+    color: #8EABA0;
+}
+
+.council-leader-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.council-leader-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(200, 155, 53, 0.1);
+    color: #9E741B;
+    border: 1px solid rgba(200, 155, 53, 0.25);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+body.dark-mode .council-leader-link,
+html[data-theme="dark"] .council-leader-link {
+    background: rgba(255, 255, 255, 0.06);
+    color: #D4AF37;
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.council-leader-link:hover {
+    background: #C89B35;
+    color: #FFFFFF;
+    border-color: #C89B35;
+    transform: translateY(-1px);
+}
+
+body.dark-mode .council-leader-link:hover,
+html[data-theme="dark"] .council-leader-link:hover {
+    background: #D4AF37;
+    color: #051F1A;
+    border-color: #D4AF37;
+}
+
+/* Vacant Leadership Slot */
+.council-leader-slot.vacant {
+    border-style: dashed;
+    border-color: var(--border-color, #E6E1D6);
+    opacity: 0.75;
+    background: transparent;
+}
+
+body.dark-mode .council-leader-slot.vacant,
+html[data-theme="dark"] .council-leader-slot.vacant {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.council-leader-slot.vacant .council-initials-avatar {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1.5px dashed var(--border-color, #E6E1D6);
+    color: var(--text-secondary, #56665F);
+    box-shadow: none;
+}
+
+body.dark-mode .council-leader-slot.vacant .council-initials-avatar,
+html[data-theme="dark"] .council-leader-slot.vacant .council-initials-avatar {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #8EABA0;
+}
+
+.council-leader-slot.vacant .council-leader-name {
+    font-weight: 500;
+    font-style: italic;
+    color: var(--text-secondary, #56665F);
+    font-size: 0.95rem;
+}
+
+body.dark-mode .council-leader-slot.vacant .council-leader-name,
+html[data-theme="dark"] .council-leader-slot.vacant .council-leader-name {
+    color: #8EABA0;
+}
+
+/* ==========================================================================
+   Full Team Section (Expandable Accordion / Drawer)
+   ========================================================================== */
+.council-team-drawer {
+    border-top: 1px solid var(--border-color, #E6E1D6);
+    padding-top: 18px;
+    margin-top: 10px;
+}
+
+body.dark-mode .council-team-drawer,
+html[data-theme="dark"] .council-team-drawer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.council-team-toggle-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: var(--input-bg, #FAF9F6);
+    border: 1px solid var(--border-color, #E6E1D6);
+    color: var(--text-color, #102820);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+body.dark-mode .council-team-toggle-btn,
+html[data-theme="dark"] .council-team-toggle-btn {
+    background: #07221C;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #EAE5DA;
+}
+
+.council-team-toggle-btn:hover {
+    background: rgba(200, 155, 53, 0.08);
+    border-color: #C89B35;
+    color: #C89B35;
+}
+
+body.dark-mode .council-team-toggle-btn:hover,
+html[data-theme="dark"] .council-team-toggle-btn:hover {
+    background: rgba(212, 175, 55, 0.12);
+    border-color: #D4AF37;
+    color: #D4AF37;
+}
+
+.council-team-toggle-btn .toggle-chevron {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.council-team-toggle-btn[aria-expanded="true"] .toggle-chevron {
+    transform: rotate(180deg);
+}
+
+/* Expandable Panel */
+.council-team-panel {
+    display: none;
+    padding-top: 20px;
+    animation: drawerFadeIn 0.3s ease-out;
+}
+
+.council-team-panel.open {
+    display: block;
+}
+
+@keyframes drawerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.council-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.council-member-card {
+    background: var(--bg-color, #FAF9F6);
+    border: 1px solid var(--border-color, #E6E1D6);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s ease;
+}
+
+body.dark-mode .council-member-card,
+html[data-theme="dark"] .council-member-card {
+    background: #07221C;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.council-member-card:hover {
+    border-color: #C89B35;
+    background: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+body.dark-mode .council-member-card:hover,
+html[data-theme="dark"] .council-member-card:hover {
+    border-color: #D4AF37;
+    background: #092B23;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.council-member-avatar-wrap {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.council-member-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--border-color, #E6E1D6);
+}
+
+body.dark-mode .council-member-img,
+html[data-theme="dark"] .council-member-img {
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.council-member-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.council-member-name {
+    font-size: 0.96rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+    color: var(--text-color, #102820);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark-mode .council-member-name,
+html[data-theme="dark"] .council-member-name {
+    color: #FAF9F6;
+}
+
+.council-member-role {
+    font-size: 0.78rem;
+    color: var(--text-secondary, #56665F);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark-mode .council-member-role,
+html[data-theme="dark"] .council-member-role {
+    color: #8EABA0;
+}
+
+.council-member-links {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.council-member-link-sm {
+    color: var(--text-secondary, #56665F);
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.council-member-link-sm:hover {
+    color: #C89B35;
+}
+
+body.dark-mode .council-member-link-sm:hover,
+html[data-theme="dark"] .council-member-link-sm:hover {
+    color: #D4AF37;
+}
+
+.council-empty-team {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-secondary, #56665F);
+    font-size: 0.88rem;
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+}
+
+body.dark-mode .council-empty-team,
+html[data-theme="dark"] .council-empty-team {
+    background: rgba(255, 255, 255, 0.02);
+    color: #8EABA0;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .council-dept-card,
+    .council-leader-slot,
+    .council-member-card,
+    .council-team-toggle-btn .toggle-chevron,
+    .council-team-panel {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* Mobile & Tablet Responsive Adjustments */
+@media (max-width: 768px) {
+    .council-directory-section {
+        padding: 50px 0 70px;
+    }
+
+    .council-directory-toolbar {
+        padding: 16px;
+        margin: 24px auto 32px;
+    }
+
+    .council-dept-card {
+        padding: 22px 18px 20px;
+        border-radius: 16px;
+    }
+
+    .council-dept-title-group h3 {
+        font-size: 1.3rem;
+    }
+
+    .council-leadership-row {
+        grid-template-columns: 1fr;
+    }
+
+    .council-leader-slot {
+        padding: 16px;
+    }
+
+    .council-team-grid {
+        grid-template-columns: 1fr;
+    }
+}
