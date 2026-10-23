@@ -566,7 +566,7 @@
 
             </div>
 
-            <div class="timeline-wrapper">
+            <div class="timeline-wrapper" id="eventsJourneyTimeline">
 
                 <div class="timeline-line"></div>
 
@@ -735,6 +735,40 @@
 
                 </p>
 
+            </div>
+
+            <!-- Past Events Filter & Search Toolbar -->
+            <div class="past-events-toolbar">
+                <div class="past-toolbar-top">
+                    <div class="past-search-box">
+                        <svg class="past-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="pastSearchInput" placeholder="Search past hackathons, workshops, topics..." aria-label="Search past events">
+                    </div>
+                    <div class="past-results-count" id="pastResultsCount">Loading verified archive...</div>
+                </div>
+
+                <div class="past-toolbar-filters">
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span class="filter-group-label">Year:</span>
+                        <div class="filter-pill-row" id="pastYearFilters">
+                            <button type="button" class="archive-pill-btn active" data-year="all">All Years</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-left:auto;">
+                        <span class="filter-group-label">Category:</span>
+                        <div class="filter-pill-row" id="pastCategoryFilters">
+                            <button type="button" class="archive-pill-btn active" data-cat="all">All</button>
+                            <button type="button" class="archive-pill-btn" data-cat="hackathon">Hackathons</button>
+                            <button type="button" class="archive-pill-btn" data-cat="workshop">Workshops</button>
+                            <button type="button" class="archive-pill-btn" data-cat="seminar">Seminars</button>
+                            <button type="button" class="archive-pill-btn" data-cat="competition">Competitions</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="past-event-grid" id="pastEventGrid">
@@ -1202,6 +1236,77 @@
                     Complete Registration &rarr;
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Unified Event Detail Modal -->
+    <div class="modal-overlay event-detail-modal-overlay" id="eventDetailModal" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle" style="display:none; position:fixed; inset:0; background:rgba(4, 20, 16, 0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); z-index:99999; align-items:center; justify-content:center; padding:20px; opacity:0; transition:opacity 0.3s ease;">
+        <div class="modal-card event-detail-card" style="background:var(--card-bg, #ffffff); border:1px solid rgba(200, 155, 53, 0.35); border-radius:22px; max-width:760px; width:100%; max-height:92vh; overflow-y:auto; padding:0; position:relative; box-shadow:0 30px 70px rgba(0,0,0,0.35); color:var(--text-color);">
+            
+            <!-- Modal Header / Cover Image Banner -->
+            <div style="position:relative; width:100%; height:240px; background:#0b2b26; border-radius:22px 22px 0 0; overflow:hidden;">
+                <img id="detailModalCover" src="assets/hackathon.png" alt="Event Cover" style="width:100%; height:100%; object-fit:cover; display:block;">
+                <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(3, 20, 17, 0.92) 0%, rgba(3, 20, 17, 0.4) 60%, rgba(0,0,0,0.2) 100%);"></div>
+                <button type="button" class="modal-close-btn" id="closeDetailModal" aria-label="Close event details" style="position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.55); color:#fff; border:1px solid rgba(255,255,255,0.3); font-size:1.4rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;">&times;</button>
+                <div style="position:absolute; bottom:16px; left:24px; right:24px;">
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+                        <span id="detailModalCategory" style="background:#C89B35; color:#102820; font-size:0.75rem; font-weight:800; padding:3px 10px; border-radius:30px; letter-spacing:0.5px; text-transform:uppercase;">HACKATHON</span>
+                        <span id="detailModalStatus" style="background:rgba(255,255,255,0.2); color:#fff; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:30px; border:1px solid rgba(255,255,255,0.35); text-transform:uppercase;">COMPLETED ARCHIVE</span>
+                        <span id="detailModalYear" style="color:rgba(255,255,255,0.85); font-size:0.8rem; font-weight:600;">2025</span>
+                    </div>
+                    <h2 id="detailModalTitle" style="font-size:1.6rem; margin:0; color:#ffffff; font-family:var(--font-heading, 'Cormorant Garamond', serif); line-height:1.2;">Event Title</h2>
+                </div>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div style="padding:24px 28px;">
+                <!-- Meta strip: Date, Venue, Team -->
+                <div style="display:flex; flex-wrap:wrap; gap:16px; padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid var(--border-color, #e6e1d6); font-size:0.88rem; color:var(--text-secondary, #56665f);">
+                    <div id="detailModalDateWrap" style="display:flex; align-items:center; gap:6px;">
+                        <span>📅</span> <strong id="detailModalDate" style="color:var(--text-color);">Oct 15–17, 2025</strong>
+                    </div>
+                    <div id="detailModalVenueWrap" style="display:flex; align-items:center; gap:6px;">
+                        <span>📍</span> <span id="detailModalVenue">VVIT Campus</span>
+                    </div>
+                    <div id="detailModalTeamWrap" style="display:flex; align-items:center; gap:6px;">
+                        <span>👥</span> <span id="detailModalTeam">Teams / Organizers</span>
+                    </div>
+                </div>
+
+                <!-- Verified Impact Metrics Grid (Dynamically rendered, hidden if empty) -->
+                <div id="detailModalMetricsGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:20px;">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Description / Narrative -->
+                <div style="margin-bottom:24px;">
+                    <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px; color:var(--accent-color, #C89B35); text-transform:uppercase; letter-spacing:0.5px;">About This Event &amp; Impact</h3>
+                    <p id="detailModalDescription" style="font-size:0.95rem; line-height:1.75; color:var(--text-color); margin:0; white-space:pre-line;"></p>
+                </div>
+
+                <!-- Awards & Highlights (If any) -->
+                <div id="detailModalHighlightsBox" style="display:none; background:rgba(200, 155, 53, 0.08); border-left:4px solid #C89B35; padding:14px 18px; border-radius:0 12px 12px 0; margin-bottom:24px;">
+                    <strong style="color:#C89B35; font-size:0.9rem; display:block; margin-bottom:4px;">🏆 Awards &amp; Key Highlights</strong>
+                    <p id="detailModalHighlightsText" style="margin:0; font-size:0.88rem; line-height:1.6;"></p>
+                </div>
+
+                <!-- Photo Gallery (If images exist) -->
+                <div id="detailModalGallerySection" style="display:none; margin-bottom:20px;">
+                    <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:12px; color:var(--text-color);">Event Gallery Photos</h3>
+                    <div id="detailModalGalleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:10px;">
+                        <!-- Gallery thumbnails -->
+                    </div>
+                </div>
+
+                <!-- Action Footer -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px; border-top:1px solid var(--border-color, #e6e1d6); flex-wrap:wrap; gap:10px;">
+                    <div id="detailModalLinks">
+                        <a href="gallery.html" class="past-btn-gallery" style="font-size:0.85rem; padding:8px 16px;">Explore Full Gallery &rarr;</a>
+                    </div>
+                    <button type="button" class="secondary-btn" id="closeDetailModalBtn" style="padding:8px 20px; font-weight:600; cursor:pointer; border-radius:8px;">Close</button>
+                </div>
+
+            </div>
         </div>
     </div>
 

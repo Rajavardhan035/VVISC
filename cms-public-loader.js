@@ -523,9 +523,9 @@ async function loadAboutPageContent() {
         }
         if (journeyP && a.journeySubtitle) journeyP.textContent = a.journeySubtitle;
 
-        // 5. Journey Timeline in .journey-wrapper
+        // 5. Journey Timeline in .journey-wrapper / #journeyTimelineContainer
         if (Array.isArray(a.timeline) && a.timeline.length > 0) {
-            const journeyWrapper = document.querySelector(".journey-wrapper");
+            const journeyWrapper = document.getElementById("journeyTimelineContainer") || document.querySelector(".journey-wrapper");
             if (journeyWrapper) {
                 const activeItems = a.timeline.filter(item => item.active !== false);
                 activeItems.sort((x, y) => (parseInt(x.order) || 999) - (parseInt(y.order) || 999));
@@ -534,14 +534,43 @@ async function loadAboutPageContent() {
                 activeItems.forEach((item, idx) => {
                     const isFuture = (item.year || "").toLowerCase().includes("future");
                     const cardClass = isFuture ? "timeline-card future-card" : "timeline-card";
+                    const hasLinkedEvent = !!item.linkedEventId;
+                    const stepClass = hasLinkedEvent ? "timeline-step reveal-about visible has-linked-event" : "timeline-step reveal-about visible";
+                    const cardClickAttr = hasLinkedEvent ? `onclick="window.openEventDetailModal && window.openEventDetailModal('${escapeAttr(item.linkedEventId)}')"` : "";
+
+                    // Verified Stats Badge (Rendered ONLY if verified stat value exists)
+                    let statBadgeHtml = "";
+                    if (item.statValue && item.statValue.toString().trim() !== "") {
+                        statBadgeHtml = `
+                            <div class="milestone-badge-wrap">
+                                <span class="milestone-stat-badge">
+                                    <span class="milestone-stat-val">${escapeHtml(item.statValue)}</span>
+                                    ${item.statLabel ? `<span class="milestone-stat-lbl">${escapeHtml(item.statLabel)}</span>` : ""}
+                                </span>
+                            </div>
+                        `;
+                    }
+
+                    // Action Button
+                    let actionBtnHtml = "";
+                    if (hasLinkedEvent) {
+                        actionBtnHtml = `
+                            <button type="button" class="milestone-action-btn" aria-label="View event story for ${escapeAttr(item.title || '')}" onclick="event.stopPropagation(); window.openEventDetailModal && window.openEventDetailModal('${escapeAttr(item.linkedEventId)}')">
+                                <span>Event Story</span> &rarr;
+                            </button>
+                        `;
+                    }
+
                     html += `
-                        <div class="timeline-step reveal-about">
-                            <div class="timeline-icon">${escapeHtml(item.icon || "🚀")}</div>
+                        <div class="${stepClass}">
+                            <div class="timeline-icon">${escapeHtml(item.icon || "🏆")}</div>
                             <div class="timeline-dot"></div>
-                            <div class="${cardClass}">
+                            <div class="${cardClass}" ${cardClickAttr}>
                                 <span class="timeline-year">${escapeHtml(item.year || "")}</span>
                                 <h3>${escapeHtml(item.title || "")}</h3>
+                                ${statBadgeHtml}
                                 <p>${escapeHtml(item.description || "")}</p>
+                                ${actionBtnHtml}
                             </div>
                         </div>
                     `;
@@ -732,51 +761,382 @@ async function loadDepartmentsPageContent() {
 // --------------------------------------------------
 // 3b. Events Page Loader (events.html)
 // --------------------------------------------------
-const DEFAULT_UPCOMING_EVENTS_PUBLIC = [
+const VERIFIED_DEFAULT_EVENTS_PUBLIC = [
     {
-        title: "VVISC Annual Hackathon",
-        category: "HACKATHON",
-        dateText: "Oct 15–17, 2026",
-        description: "48-hour coding competition focused on AI, IoT, Robotics and Web Technologies.",
-        venue: "VVIT Campus",
-        teamFormat: "2–4 Members",
-        seatsText: "78 / 150",
-        progressPct: 52,
-        posterImage: "assets/announcements/default.jpg",
-        registerUrl: "#",
+        id: "vvisc-founded-2024",
+        title: "VVISC IUCEE Student Chapter Founding",
+        category: "MILESTONE",
+        eventType: "Inauguration",
+        status: "completed",
+        dateText: "July 12, 2024",
+        startDate: "2024-07-12",
+        endDate: "2024-07-12",
+        year: "2024",
+        venue: "VVIT Main Auditorium",
+        shortDescription: "Official charter establishment and student executive committee inauguration of VVISC.",
+        description: "Official charter establishment and inauguration of the Vasireddy Venkatadri Institute of Technology IUCEE Student Chapter (VVISC). The chapter was founded to nurture hands-on technical skills, student entrepreneurship, and global engineering collaborations.",
+        posterImage: "assets/logo.png",
+        coverImageUrl: "assets/logo.png",
+        galleryImages: ["assets/1.png", "assets/2.png"],
+        participantsCount: "120+",
+        teamDetails: "Founding Executive Committee & Faculty Mentors",
+        awards: "Charter Accreditation & National IUCEE Affiliation",
+        highlights: "Inaugural address by college leadership; formal induction of 120 student members.",
+        isMilestone: true,
+        milestoneYear: "2024",
+        milestoneIcon: "👥",
+        milestoneTitle: "Chapter Founded",
         displayOrder: 1,
         active: true
     },
     {
-        title: "AI Bootcamp",
+        id: "ai-ml-bootcamp-2024",
+        title: "Applied AI & Machine Learning Bootcamp 2024",
         category: "WORKSHOP",
-        dateText: "Nov 5, 2026",
-        description: "Hands-on training on Machine Learning, Deep Learning and Generative AI.",
-        venue: "Seminar Hall",
-        teamFormat: "Individual",
-        seatsText: "45 / 80",
-        progressPct: 44,
+        eventType: "Workshop",
+        status: "completed",
+        dateText: "August 24–26, 2024",
+        startDate: "2024-08-24",
+        endDate: "2024-08-26",
+        year: "2024",
+        venue: "Advanced Computing Lab",
+        shortDescription: "3-day intensive boot camp covering computer vision, PyTorch, and deep learning architectures.",
+        description: "A 3-day deep dive into practical artificial intelligence. Students implemented computer vision pipelines, trained convolutional networks using PyTorch, and built end-to-end edge inference prototypes.",
         posterImage: "assets/Ai-bootcamp.png",
-        registerUrl: "#",
+        coverImageUrl: "assets/Ai-bootcamp.png",
+        galleryImages: ["assets/3.png", "assets/4.png"],
+        participantsCount: "300+",
+        collegesCount: "4",
+        teamDetails: "AI & Data Science Division",
+        highlights: "300+ students certified, 45 student deep-learning models deployed to HuggingFace.",
+        isMilestone: true,
+        milestoneYear: "2024",
+        milestoneIcon: "⚡",
+        milestoneTitle: "Applied AI Bootcamp",
         displayOrder: 2,
         active: true
     },
     {
-        title: "Industry Tech Summit",
+        id: "web-dev-workshop-2024",
+        title: "Modern Full-Stack Web Architecture",
+        category: "WORKSHOP",
+        eventType: "Workshop",
+        status: "completed",
+        dateText: "September 20–22, 2024",
+        startDate: "2024-09-20",
+        endDate: "2024-09-22",
+        year: "2024",
+        venue: "Central Computer Center",
+        shortDescription: "Hands-on training building progressive web applications with modern JavaScript ES6+, cloud backends, and Firebase.",
+        description: "A collaborative technical workshop focused on modern full-stack web architecture. Students learned responsive design systems, asynchronous state management, and real-time cloud data pipelines with Firebase Firestore and Authentication.",
+        posterImage: "assets/5.png",
+        coverImageUrl: "assets/5.png",
+        galleryImages: ["assets/6.png", "assets/7.png"],
+        participantsCount: "180+",
+        collegesCount: "2",
+        teamDetails: "Web & Cloud Computing Team",
+        highlights: "8 Production-grade web projects deployed live to custom subdomains.",
+        isMilestone: false,
+        displayOrder: 3,
+        active: true
+    },
+    {
+        id: "annual-hackathon-2025",
+        title: "VVISC Annual Innovation Hackathon 2025",
+        category: "HACKATHON",
+        eventType: "Hackathon",
+        status: "completed",
+        dateText: "February 15–17, 2025",
+        startDate: "2025-02-15",
+        endDate: "2025-02-17",
+        year: "2025",
+        venue: "VVIT Innovation Complex & Central Library",
+        shortDescription: "48-hour multidisciplinary student hackathon focused on Smart Agriculture, Autonomous Systems, and IoT Microgrids.",
+        description: "The flagship innovation competition of the VVISC student chapter. 90 multidisciplinary student teams competed over 48 continuous hours to engineer working hardware-software prototypes solving pressing regional challenges in agriculture, energy, and robotics.",
+        posterImage: "assets/hackathon.png",
+        coverImageUrl: "assets/hackathon.png",
+        galleryImages: ["assets/8.png", "assets/9.png", "assets/10.png"],
+        participantsCount: "450+",
+        collegesCount: "12",
+        teamDetails: "VVISC Core Committee & Jury Board",
+        awards: "1st Prize: KrishiNet AI & AeroSwarm Teams; ₹50,000 Total Grants",
+        highlights: "48 hours non-stop prototyping, 90 working prototypes, 12 jury evaluations from industry.",
+        isMilestone: true,
+        milestoneYear: "2025",
+        milestoneIcon: "🏆",
+        milestoneTitle: "Annual Hackathon 2025",
+        displayOrder: 4,
+        active: true
+    },
+    {
+        id: "rag-hackathon-2026",
+        title: "RAG HACKATHON 2026",
+        category: "HACKATHON",
+        eventType: "Hackathon",
+        status: "upcoming",
+        dateText: "30 July 2026",
+        startDate: "2026-07-30",
+        endDate: "2026-07-31",
+        year: "2026",
+        venue: "VVITU SEMINAR HALL",
+        shortDescription: "Creating new ideas and building it different. 36 hours of rapid prototyping, AI workflows, and hardware innovations.",
+        description: "VVISC's upcoming high-intensity hackathon centered on Retrieval-Augmented Generation, Agentic Workflows, and Edge AI. Top engineering talent gathers for 36 hours of collaborative innovation with industry mentors.",
+        posterImage: "assets/hackathon.png",
+        coverImageUrl: "assets/hackathon.png",
+        galleryImages: [],
+        teamFormat: "2 – 4 Members",
+        seatsText: "Registration Open",
+        progressPct: 65,
+        registerUrl: "#",
+        isMilestone: true,
+        milestoneYear: "2026",
+        milestoneIcon: "🚀",
+        milestoneTitle: "RAG Hackathon 2026",
+        displayOrder: 5,
+        active: true
+    },
+    {
+        id: "ai-bootcamp-2026",
+        title: "Autonomous Edge AI Bootcamp 2026",
+        category: "WORKSHOP",
+        eventType: "Workshop",
+        status: "upcoming",
+        dateText: "Nov 5, 2026",
+        startDate: "2026-11-05",
+        year: "2026",
+        venue: "Seminar Hall",
+        shortDescription: "Hands-on training on Machine Learning, Deep Learning, and Generative Edge AI.",
+        description: "Hands-on technical workshop exploring edge computing, quantized neural networks, and TinyML on embedded devices.",
+        posterImage: "assets/Ai-bootcamp.png",
+        coverImageUrl: "assets/Ai-bootcamp.png",
+        teamFormat: "Individual",
+        seatsText: "45 / 80",
+        progressPct: 44,
+        registerUrl: "#",
+        displayOrder: 6,
+        active: true
+    },
+    {
+        id: "tech-summit-2026",
+        title: "Industry Tech Summit 2026",
         category: "SEMINAR",
+        eventType: "Seminar",
+        status: "upcoming",
         dateText: "Dec 10, 2026",
-        description: "Meet industry experts, startup founders and researchers.",
+        startDate: "2026-12-10",
+        year: "2026",
         venue: "Auditorium",
+        shortDescription: "Meet industry leaders, tech researchers, and student innovators.",
+        description: "Annual university symposium connecting campus innovators with industry CTOs, startup founders, and global researchers.",
+        posterImage: "assets/Ai-summit.png",
+        coverImageUrl: "assets/Ai-summit.png",
         teamFormat: "Open For All",
         seatsText: "150 / 300",
         progressPct: 50,
-        posterImage: "assets/Ai-summit.png",
         registerUrl: "#",
-        displayOrder: 3,
+        displayOrder: 7,
         active: true
     }
 ];
 
+// Global Event Cache for Fast Modal Lookups
+window.allEventsCache = {};
+
+// --------------------------------------------------
+// Global Event Detail Modal Controller
+// --------------------------------------------------
+window.openEventDetailModal = async function(eventId) {
+    if (!eventId) return;
+
+    let ev = window.allEventsCache[eventId];
+
+    // If not in cache, fetch from Firestore
+    if (!ev && typeof db !== "undefined") {
+        try {
+            const doc = await db.collection("events").doc(eventId).get();
+            if (doc.exists) {
+                ev = { id: doc.id, ...doc.data() };
+                window.allEventsCache[eventId] = ev;
+            } else {
+                const pastDoc = await db.collection("pastEvents").doc(eventId).get();
+                if (pastDoc.exists) {
+                    ev = { id: pastDoc.id, ...pastDoc.data() };
+                    window.allEventsCache[eventId] = ev;
+                }
+            }
+        } catch (err) {
+            console.warn("Event fetch error:", err);
+        }
+    }
+
+    // Fallback to verified defaults list
+    if (!ev) {
+        ev = VERIFIED_DEFAULT_EVENTS_PUBLIC.find(e => e.id === eventId);
+    }
+
+    if (!ev) {
+        console.warn("Event not found for id:", eventId);
+        return;
+    }
+
+    const modal = document.getElementById("eventDetailModal");
+    if (!modal) {
+        console.warn("eventDetailModal element not found in DOM");
+        return;
+    }
+
+    // Populate Fields
+    const coverEl = document.getElementById("detailModalCover");
+    const titleEl = document.getElementById("detailModalTitle");
+    const catEl = document.getElementById("detailModalCategory");
+    const statusEl = document.getElementById("detailModalStatus");
+    const yearEl = document.getElementById("detailModalYear");
+    const dateEl = document.getElementById("detailModalDate");
+    const venueEl = document.getElementById("detailModalVenue");
+    const teamEl = document.getElementById("detailModalTeam");
+    const descEl = document.getElementById("detailModalDescription");
+    const metricsGrid = document.getElementById("detailModalMetricsGrid");
+    const highlightsBox = document.getElementById("detailModalHighlightsBox");
+    const highlightsText = document.getElementById("detailModalHighlightsText");
+    const gallerySection = document.getElementById("detailModalGallerySection");
+    const galleryGrid = document.getElementById("detailModalGalleryGrid");
+    const linksEl = document.getElementById("detailModalLinks");
+
+    if (coverEl) coverEl.src = getPublicImgSrc(ev.posterImage || ev.coverImageUrl || "assets/hackathon.png");
+    if (titleEl) titleEl.textContent = ev.title || "Event Details";
+    if (catEl) catEl.textContent = (ev.category || "EVENT").toUpperCase();
+    if (statusEl) {
+        statusEl.textContent = ev.status === "upcoming" ? "UPCOMING EVENT" : "COMPLETED ARCHIVE";
+        statusEl.style.background = ev.status === "upcoming" ? "rgba(16, 185, 129, 0.25)" : "rgba(255, 255, 255, 0.2)";
+        statusEl.style.borderColor = ev.status === "upcoming" ? "rgba(16, 185, 129, 0.6)" : "rgba(255, 255, 255, 0.35)";
+    }
+    if (yearEl) yearEl.textContent = ev.year || (ev.startDate ? ev.startDate.substring(0, 4) : "");
+    if (dateEl) dateEl.textContent = ev.dateText || ev.startDate || "Verified Chapter Event";
+    if (venueEl) venueEl.textContent = ev.venue || "VVIT Campus";
+    if (teamEl) teamEl.textContent = ev.teamDetails || ev.teamFormat || "VVISC Core Committee";
+    if (descEl) descEl.textContent = ev.description || ev.shortDescription || "Details about this chapter innovation program.";
+
+    // Render Verified Metrics (Hide missing values; never show 0 or undefined)
+    if (metricsGrid) {
+        let metricsHtml = "";
+        if (ev.participantsCount && ev.participantsCount.toString().trim() !== "") {
+            metricsHtml += `
+                <div class="event-modal-metric-box">
+                    <span class="event-modal-metric-val">${escapeHtml(ev.participantsCount)}</span>
+                    <span class="event-modal-metric-lbl">Participants</span>
+                </div>
+            `;
+        }
+        if (ev.collegesCount && ev.collegesCount.toString().trim() !== "") {
+            metricsHtml += `
+                <div class="event-modal-metric-box">
+                    <span class="event-modal-metric-val">${escapeHtml(ev.collegesCount)}</span>
+                    <span class="event-modal-metric-lbl">Colleges</span>
+                </div>
+            `;
+        }
+        if (ev.awards && ev.awards.toString().trim() !== "") {
+            metricsHtml += `
+                <div class="event-modal-metric-box">
+                    <span class="event-modal-metric-val">1st Prize</span>
+                    <span class="event-modal-metric-lbl">Award Won</span>
+                </div>
+            `;
+        }
+        if (ev.teamFormat && ev.teamFormat.toString().trim() !== "" && !ev.participantsCount) {
+            metricsHtml += `
+                <div class="event-modal-metric-box">
+                    <span class="event-modal-metric-val">${escapeHtml(ev.teamFormat)}</span>
+                    <span class="event-modal-metric-lbl">Format</span>
+                </div>
+            `;
+        }
+
+        if (metricsHtml) {
+            metricsGrid.innerHTML = metricsHtml;
+            metricsGrid.style.display = "grid";
+        } else {
+            metricsGrid.innerHTML = "";
+            metricsGrid.style.display = "none";
+        }
+    }
+
+    // Awards and Highlights Box
+    if (highlightsBox && highlightsText) {
+        const textParts = [ev.awards, ev.highlights].filter(Boolean);
+        if (textParts.length > 0) {
+            highlightsText.textContent = textParts.join(" • ");
+            highlightsBox.style.display = "block";
+        } else {
+            highlightsBox.style.display = "none";
+        }
+    }
+
+    // Gallery Photos
+    if (gallerySection && galleryGrid) {
+        const gallery = Array.isArray(ev.galleryImages) ? ev.galleryImages : [];
+        if (gallery.length > 0) {
+            galleryGrid.innerHTML = "";
+            gallery.forEach(imgUrl => {
+                const imgEl = document.createElement("img");
+                imgEl.src = getPublicImgSrc(imgUrl);
+                imgEl.alt = "Event photo";
+                imgEl.className = "event-gallery-thumb";
+                imgEl.onclick = () => window.open(getPublicImgSrc(imgUrl), "_blank");
+                galleryGrid.appendChild(imgEl);
+            });
+            gallerySection.style.display = "block";
+        } else {
+            gallerySection.style.display = "none";
+        }
+    }
+
+    // Links / Actions in Footer
+    if (linksEl) {
+        if (ev.status === "upcoming") {
+            const hasExt = ev.registerUrl && ev.registerUrl !== "#" && ev.registerUrl.startsWith("http");
+            linksEl.innerHTML = hasExt
+                ? `<a href="${escapeHtml(ev.registerUrl)}" target="_blank" class="event-btn btn-glow" style="padding:8px 18px; font-size:0.85rem;">Register Now &rarr;</a>`
+                : `<button type="button" class="event-btn btn-glow" style="padding:8px 18px; font-size:0.85rem; cursor:pointer;" onclick="closeEventDetailModal(); window.openEventRegisterModal('${escapeHtml(ev.id)}', '${escapeHtml(ev.title)}')">Register Now &rarr;</button>`;
+        } else {
+            linksEl.innerHTML = `<a href="gallery.html" class="past-btn-gallery" style="font-size:0.85rem; padding:8px 16px;">View In Gallery &rarr;</a>`;
+        }
+    }
+
+    // Open Modal
+    modal.style.display = "flex";
+    requestAnimationFrame(() => {
+        modal.style.opacity = "1";
+        modal.classList.add("open");
+    });
+
+    // Close Listeners
+    const closeBtn1 = document.getElementById("closeDetailModal");
+    const closeBtn2 = document.getElementById("closeDetailModalBtn");
+    
+    function closeEventDetailModal() {
+        modal.style.opacity = "0";
+        modal.classList.remove("open");
+        setTimeout(() => { modal.style.display = "none"; }, 250);
+        document.removeEventListener("keydown", onModalKeyDown);
+    }
+    window.closeEventDetailModal = closeEventDetailModal;
+
+    if (closeBtn1) closeBtn1.onclick = closeEventDetailModal;
+    if (closeBtn2) closeBtn2.onclick = closeEventDetailModal;
+    modal.onclick = (e) => {
+        if (e.target === modal) closeEventDetailModal();
+    };
+
+    function onModalKeyDown(e) {
+        if (e.key === "Escape") closeEventDetailModal();
+    }
+    document.addEventListener("keydown", onModalKeyDown);
+};
+
+// --------------------------------------------------
+// 3b. Events Page Loader (events.html)
+// --------------------------------------------------
 async function loadEventsPageContent() {
     try {
         // 1. Featured Hero Banner
@@ -826,19 +1186,66 @@ async function loadEventsPageContent() {
             if (countGrid) countGrid.setAttribute("data-countdown-target", targetIso);
         }
 
-        // 2. Upcoming Events Grid
-        let upcomingList = await getPublicCollection("events");
-        if (!upcomingList || upcomingList.length === 0) {
-            upcomingList = DEFAULT_UPCOMING_EVENTS_PUBLIC;
+        // 2. Fetch Unified Events Collection
+        let allEvents = await getPublicCollection("events");
+        if (!allEvents || allEvents.length === 0) {
+            allEvents = [...VERIFIED_DEFAULT_EVENTS_PUBLIC];
         }
 
-        const activeList = upcomingList.filter(e => e.active !== false);
-        activeList.sort((a, b) => (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999));
+        // Merge legacy pastEvents if present (preventing duplicate titles/IDs)
+        try {
+            const legacyPast = await getPublicCollection("pastEvents");
+            if (Array.isArray(legacyPast)) {
+                legacyPast.forEach(p => {
+                    const exists = allEvents.some(e => e.id === p.id || (e.title && p.title && e.title.trim().toLowerCase() === p.title.trim().toLowerCase()));
+                    if (!exists && p.active !== false) {
+                        allEvents.push({
+                            id: p.id,
+                            title: p.title,
+                            category: (p.tag || "HIGHLIGHT").toUpperCase(),
+                            status: "completed",
+                            dateText: p.dateText || "Previous Academic Year",
+                            year: p.year || "2024",
+                            venue: p.venue || "VVIT Campus",
+                            shortDescription: p.description || "",
+                            description: p.description || "",
+                            posterImage: p.posterImage || p.imageUrl || "assets/hackathon.png",
+                            coverImageUrl: p.posterImage || p.imageUrl || "assets/hackathon.png",
+                            participantsCount: p.stat1Value || null,
+                            collegesCount: p.stat2Value || null,
+                            galleryUrl: p.galleryUrl || "gallery.html",
+                            active: true
+                        });
+                    }
+                });
+            }
+        } catch (legacyErr) {
+            console.info("Legacy pastEvents merge note:", legacyErr);
+        }
 
-        const grid = document.querySelector(".premium-event-grid");
-        if (grid && activeList.length > 0) {
-            grid.innerHTML = "";
-            activeList.forEach(evt => {
+        // Cache all events for instant modal lookup
+        window.allEventsCache = {};
+        allEvents.forEach(evt => {
+            if (evt.id) window.allEventsCache[evt.id] = evt;
+        });
+
+        // 3. Separate Upcoming vs Completed Events
+        const upcomingList = allEvents.filter(e => e.active !== false && e.status !== "completed" && e.status !== "archived" && e.status !== "draft");
+        upcomingList.sort((a, b) => (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999));
+
+        const pastList = allEvents.filter(e => e.active !== false && (e.status === "completed" || e.status === "archived"));
+        pastList.sort((a, b) => {
+            const yA = parseInt(a.year) || 0;
+            const yB = parseInt(b.year) || 0;
+            if (yB !== yA) return yB - yA;
+            return (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999);
+        });
+
+        // 4. Render Upcoming Events Grid
+        const upcomingGrid = document.querySelector(".premium-event-grid");
+        if (upcomingGrid && upcomingList.length > 0) {
+            upcomingGrid.innerHTML = "";
+            upcomingList.forEach(evt => {
                 const card = document.createElement("div");
                 card.className = "premium-event-card reveal-up visible";
                 const catBadge = (evt.category || "HACKATHON").toUpperCase();
@@ -864,22 +1271,22 @@ async function loadEventsPageContent() {
                         </button>`;
 
                 card.innerHTML = `
-                    <div class="event-image${categoryClass}">
-                        <img src="${escapeHtml(getPublicImgSrc(evt.posterImage))}" alt="${escapeHtml(evt.title)}" onerror="this.onerror=null; this.src='assets/nodp.png';">
+                    <div class="event-image${categoryClass}" style="cursor:pointer;" onclick="window.openEventDetailModal('${escapeAttr(evt.id)}')">
+                        <img src="${escapeHtml(getPublicImgSrc(evt.posterImage || evt.coverImageUrl))}" alt="${escapeHtml(evt.title)}" onerror="this.onerror=null; this.src='assets/nodp.png';">
                         <span class="event-badge">${escapeHtml(catBadge)}</span>
                     </div>
                     <div class="event-content">
                         <div class="event-date">📅 ${escapeHtml(evt.dateText || "")}</div>
-                        <h3>${escapeHtml(evt.title)}</h3>
-                        <p>${escapeHtml(evt.description || "")}</p>
+                        <h3 style="cursor:pointer;" onclick="window.openEventDetailModal('${escapeAttr(evt.id)}')">${escapeHtml(evt.title)}</h3>
+                        <p>${escapeHtml(evt.shortDescription || evt.description || "")}</p>
                         <div class="event-info">
                             <span>📍 ${escapeHtml(evt.venue || "VVIT Campus")}</span>
                             <span>👥 ${escapeHtml(evt.teamFormat || "Teams")}</span>
                         </div>
                         <div class="seat-progress">
                             <div class="seat-header">
-                                <span>Seats Left</span>
-                                <span>${escapeHtml(evt.seatsText || "Open")}</span>
+                                <span>Seats / Status</span>
+                                <span>${escapeHtml(evt.seatsText || "Registration Open")}</span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width:${evt.progressPct || 50}%;"></div>
@@ -888,63 +1295,199 @@ async function loadEventsPageContent() {
                         ${btnHtml}
                     </div>
                 `;
-                grid.appendChild(card);
+                upcomingGrid.appendChild(card);
             });
 
-            setupCategoryFilters(grid);
+            setupCategoryFilters(upcomingGrid);
         }
 
-        // 3. Past Event Highlights Grid
-        let pastList = await getPublicCollection("pastEvents");
-        if (pastList && pastList.length > 0) {
-            const seenPast = new Set();
-            const activePast = [];
+        // 5. Render Historical Past Events Archive & Interactive Filter Toolbar
+        const pastGrid = document.getElementById("pastEventGrid");
+        const pastYearContainer = document.getElementById("pastYearFilters");
+        const pastCategoryContainer = document.getElementById("pastCategoryFilters");
+        const pastSearchInput = document.getElementById("pastSearchInput");
+        const pastCountEl = document.getElementById("pastResultsCount");
 
-            pastList.filter(p => p.active !== false).forEach(item => {
-                const key = (item.title || "").trim().toLowerCase();
-                if (key && !seenPast.has(key)) {
-                    seenPast.add(key);
-                    activePast.push(item);
-                } else if (!key && item.id && !seenPast.has(item.id)) {
-                    seenPast.add(item.id);
-                    activePast.push(item);
+        if (pastGrid && pastList.length > 0) {
+            // Build Dynamic Year Filter Pills from available past events
+            if (pastYearContainer) {
+                const uniqueYears = Array.from(new Set(pastList.map(e => e.year).filter(Boolean)));
+                uniqueYears.sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0));
+
+                let yearHtml = `<button type="button" class="archive-pill-btn active" data-year="all">All Years</button>`;
+                uniqueYears.forEach(y => {
+                    yearHtml += `<button type="button" class="archive-pill-btn" data-year="${escapeAttr(y)}">${escapeHtml(y)}</button>`;
+                });
+                pastYearContainer.innerHTML = yearHtml;
+            }
+
+            // Filter State
+            let currentYearFilter = "all";
+            let currentCatFilter = "all";
+            let currentSearchQuery = "";
+
+            function renderFilteredPastEvents() {
+                const q = currentSearchQuery.toLowerCase().trim();
+                const filtered = pastList.filter(item => {
+                    // Year match
+                    if (currentYearFilter !== "all" && item.year !== currentYearFilter) {
+                        return false;
+                    }
+                    // Category match
+                    if (currentCatFilter !== "all") {
+                        const itemCat = (item.category || "").toLowerCase();
+                        if (!itemCat.includes(currentCatFilter)) return false;
+                    }
+                    // Search query match
+                    if (q) {
+                        const haystack = [item.title, item.description, item.shortDescription, item.venue, item.highlights, item.year].filter(Boolean).join(" ").toLowerCase();
+                        if (!haystack.includes(q)) return false;
+                    }
+                    return true;
+                });
+
+                // Update count badge
+                if (pastCountEl) {
+                    pastCountEl.textContent = `Showing ${filtered.length} verified past event${filtered.length === 1 ? '' : 's'}`;
                 }
-            });
 
-            activePast.sort((a, b) => (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999));
-            const pastGrid = document.getElementById("pastEventGrid");
-            if (pastGrid && activePast.length > 0) {
+                if (filtered.length === 0) {
+                    pastGrid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: var(--container-bg); border-radius: 16px; border: 1px dashed var(--border-color); color: var(--text-secondary);">
+                            <p style="font-size: 1.1rem; margin-bottom: 8px;">No historical events found matching your filter.</p>
+                            <span style="font-size: 0.85rem;">Try choosing "All Years" or clearing the search query.</span>
+                        </div>
+                    `;
+                    return;
+                }
+
                 pastGrid.innerHTML = "";
-                activePast.forEach(item => {
+                filtered.forEach(item => {
                     const card = document.createElement("div");
-                    card.className = "past-event-card reveal-up visible";
-                    const tag = (item.tag || "HIGHLIGHT").toUpperCase();
-                    let tintClass = "";
-                    if (tag.includes("HACKATHON")) tintClass = " hackathon";
-                    else if (tag.includes("WORKSHOP")) tintClass = " workshop";
+                    card.className = "past-event-card-rich reveal-up visible";
+
+                    const catBadge = (item.category || "EVENT").toUpperCase();
+                    const yearText = item.year || (item.startDate ? item.startDate.substring(0, 4) : "ARCHIVE");
+
+                    // Verified Impact Badges: only show non-empty values
+                    let metricsHtml = "";
+                    if (item.participantsCount && item.participantsCount.toString().trim() !== "") {
+                        metricsHtml += `<span class="past-metric-pill">👥 ${escapeHtml(item.participantsCount)}</span>`;
+                    }
+                    if (item.collegesCount && item.collegesCount.toString().trim() !== "") {
+                        metricsHtml += `<span class="past-metric-pill">🏫 ${escapeHtml(item.collegesCount)} Colleges</span>`;
+                    }
+                    if (item.awards && item.awards.toString().trim() !== "") {
+                        metricsHtml += `<span class="past-metric-pill">🏆 ${escapeHtml(item.awards.split(';')[0])}</span>`;
+                    }
+
+                    const galleryAction = (item.galleryImages && item.galleryImages.length > 0)
+                        ? `<button type="button" class="past-btn-gallery" onclick="window.openEventDetailModal('${escapeAttr(item.id)}')">Photos (${item.galleryImages.length})</button>`
+                        : `<a href="gallery.html" class="past-btn-gallery">Gallery &rarr;</a>`;
 
                     card.innerHTML = `
-                        <div class="past-image${tintClass}">
-                            <span>${escapeHtml(tag)}</span>
-                        </div>
-                        <div class="past-content">
-                            <h3>${escapeHtml(item.title)}</h3>
-                            <p>${escapeHtml(item.description || "")}</p>
-                            <div class="past-stats">
-                                <div>
-                                    <h4>${escapeHtml(item.stat1Value || "")}</h4>
-                                    <span>${escapeHtml(item.stat1Label || "")}</span>
-                                </div>
-                                <div>
-                                    <h4>${escapeHtml(item.stat2Value || "")}</h4>
-                                    <span>${escapeHtml(item.stat2Label || "")}</span>
-                                </div>
+                        <div class="past-card-media" style="cursor:pointer;" onclick="window.openEventDetailModal('${escapeAttr(item.id)}')">
+                            <img src="${escapeHtml(getPublicImgSrc(item.posterImage || item.coverImageUrl || 'assets/hackathon.png'))}" alt="${escapeHtml(item.title)}" onerror="this.onerror=null; this.src='assets/hackathon.png';">
+                            <div class="past-card-media-overlay"></div>
+                            <div class="past-card-badge-top">
+                                <span class="past-chip-category">${escapeHtml(catBadge)}</span>
+                                <span class="past-chip-year">${escapeHtml(yearText)}</span>
                             </div>
-                            <a href="${escapeHtml(item.galleryUrl || "gallery.html")}" class="past-btn">View Gallery →</a>
+                        </div>
+                        <div class="past-card-body">
+                            <div class="past-card-date-venue">
+                                <span>📅 ${escapeHtml(item.dateText || "Archive")}</span>
+                                <span>📍 ${escapeHtml(item.venue || "VVIT Campus")}</span>
+                            </div>
+                            <h3 class="past-card-title" style="cursor:pointer;" onclick="window.openEventDetailModal('${escapeAttr(item.id)}')">${escapeHtml(item.title)}</h3>
+                            <p class="past-card-desc">${escapeHtml(item.shortDescription || item.description || "")}</p>
+                            ${metricsHtml ? `<div class="past-metrics-chips">${metricsHtml}</div>` : ""}
+                            <div class="past-card-footer">
+                                <button type="button" class="past-btn-detail" onclick="window.openEventDetailModal('${escapeAttr(item.id)}')">
+                                    <span>View Event Story</span> &rarr;
+                                </button>
+                                ${galleryAction}
+                            </div>
                         </div>
                     `;
                     pastGrid.appendChild(card);
                 });
+            }
+
+            // Initial render
+            renderFilteredPastEvents();
+
+            // Wire Year Filter Buttons
+            if (pastYearContainer) {
+                pastYearContainer.addEventListener("click", (e) => {
+                    const btn = e.target.closest(".archive-pill-btn");
+                    if (!btn) return;
+                    pastYearContainer.querySelectorAll(".archive-pill-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentYearFilter = btn.dataset.year || "all";
+                    renderFilteredPastEvents();
+                });
+            }
+
+            // Wire Category Filter Buttons
+            if (pastCategoryContainer) {
+                pastCategoryContainer.addEventListener("click", (e) => {
+                    const btn = e.target.closest(".archive-pill-btn");
+                    if (!btn) return;
+                    pastCategoryContainer.querySelectorAll(".archive-pill-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentCatFilter = btn.dataset.cat || "all";
+                    renderFilteredPastEvents();
+                });
+            }
+
+            // Wire Live Search Input
+            if (pastSearchInput) {
+                pastSearchInput.addEventListener("input", (e) => {
+                    currentSearchQuery = e.target.value;
+                    renderFilteredPastEvents();
+                });
+            }
+        }
+
+        // 6. Chronological Event Journey Timeline in events.html (if #eventsJourneyTimeline present)
+        const journeyTimelineEl = document.getElementById("eventsJourneyTimeline");
+        if (journeyTimelineEl) {
+            // Sort all real verified events chronologically
+            const journeyEvents = allEvents.filter(e => e.active !== false && (e.isMilestone || e.status === "completed" || e.year));
+            journeyEvents.sort((a, b) => {
+                const yA = parseInt(a.year) || 0;
+                const yB = parseInt(b.year) || 0;
+                if (yA !== yB) return yA - yB;
+                return (parseInt(a.displayOrder) || 0) - (parseInt(b.displayOrder) || 0);
+            });
+
+            if (journeyEvents.length > 0) {
+                let jHtml = `<div class="timeline-line"></div>`;
+                journeyEvents.forEach((ev, idx) => {
+                    const yearDisplay = ev.year ? ev.year.toUpperCase() : "2025";
+                    const isCompleted = ev.status === "completed";
+                    const dotClass = isCompleted ? "timeline-dot active" : "timeline-dot";
+
+                    let statBadge = "";
+                    if (ev.participantsCount) {
+                        statBadge = `<span style="display:inline-block; font-size:0.75rem; font-weight:700; color:var(--accent-color); margin-bottom:6px;">👥 ${escapeHtml(ev.participantsCount)}</span>`;
+                    }
+
+                    jHtml += `
+                        <div class="timeline-card reveal-up visible" style="cursor:pointer;" onclick="window.openEventDetailModal('${escapeAttr(ev.id)}')">
+                            <div class="${dotClass}"></div>
+                            <span class="timeline-year">${escapeHtml(yearDisplay)}</span>
+                            <h3>${escapeHtml(ev.title)}</h3>
+                            ${statBadge}
+                            <p>${escapeHtml(ev.shortDescription || ev.description || "")}</p>
+                            <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:600; color:var(--accent-color); margin-top:8px;">
+                                Details &rarr;
+                            </span>
+                        </div>
+                    `;
+                });
+                journeyTimelineEl.innerHTML = jHtml;
             }
         }
 
