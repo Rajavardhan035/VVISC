@@ -34,8 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const skipBtn = document.getElementById('skipIntroBtn');
     const preloader = document.querySelector('.preloader');
     const preloaderBar = document.querySelector('.preloader-bar-fill');
+    const isMobileHero = window.innerWidth <= 768;
 
-    if (canvas) {
+    if (canvas && !isMobileHero) {
         const totalFrames = 168;
         const basePath = 'logo-sequence/frame-';
         const extension = '.jpg';
@@ -300,8 +301,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderFrame(currentFrameIndex);
         });
 
-    } else if (preloader) {
-        preloader.classList.add('is-hidden');
+    } else {
+        if (preloader) preloader.classList.add('is-hidden');
+        document.body.style.overflow = '';
     }
 
     /* ============================================ 
