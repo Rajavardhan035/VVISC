@@ -3,3 +3,6 @@
 .context-bridge/
 .v3code/
 firebase-debug.log
+
+.vercel
+.env*
