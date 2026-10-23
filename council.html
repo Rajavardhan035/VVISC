@@ -1086,22 +1086,54 @@
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                        <input type="text" id="councilModalSearchInput" placeholder="Filter team by member name or role..." aria-label="Filter team members">
+                        <input type="text" id="councilModalSearchInput" placeholder="Filter team by member name, role, roll number, or branch..." aria-label="Filter team members">
                         <button type="button" id="councilModalSearchClear" class="council-modal-search-clear" aria-label="Clear filter">&times;</button>
                     </div>
                     <div class="council-modal-filter-meta" id="councilModalFilterMeta">Showing all members</div>
                 </div>
 
-                <!-- Modal Body: ID Cards Grid -->
+                <!-- Modal Body: Leadership & Team Sections -->
                 <div class="council-modal-body">
-                    <div class="council-id-cards-grid" id="councilModalCardsGrid">
-                        <!-- Populated dynamically with ID-card components -->
+                    <!-- 1. Department Leadership Section (Coordinator & Associate Coordinator Side-by-Side) -->
+                    <div class="council-modal-leadership-section" id="councilModalLeadershipSection">
+                        <div class="council-modal-section-header">
+                            <span class="council-modal-section-tag">LEADERSHIP</span>
+                            <h4 class="council-modal-section-title">Department Leadership</h4>
+                        </div>
+                        <div class="council-modal-leadership-grid" id="councilModalLeadershipGrid">
+                            <!-- Populated dynamically with Coordinator & Associate Coordinator cards -->
+                        </div>
                     </div>
-                    <div class="council-modal-empty" id="councilModalEmptyState" style="display: none;">
-                        <div class="council-empty-icon">🔍</div>
-                        <h3>No members match your search</h3>
-                        <p>Try searching with another name or role.</p>
-                        <button type="button" class="council-ctrl-btn" onclick="clearCouncilModalSearch()">Show All Members</button>
+
+                    <!-- 2. Meet The Team Section (Remaining Department Members as ID Cards) -->
+                    <div class="council-modal-team-section" id="councilModalTeamSection">
+                        <div class="council-modal-section-header" style="justify-content:space-between; margin-bottom:18px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span class="council-modal-section-tag" style="background:rgba(16,40,32,0.1); color:var(--text-color); border-color:var(--border-color);">MEMBERS</span>
+                                <h4 class="council-modal-section-title">Meet The Team</h4>
+                            </div>
+                            <span class="council-modal-team-count-text" id="councilModalTeamRosterCount" style="font-size:0.82rem; opacity:0.85; font-weight:700;">0 Team Members</span>
+                        </div>
+
+                        <!-- Side-by-Side CSS Grid of Member ID Cards -->
+                        <div class="council-id-cards-grid" id="councilModalCardsGrid">
+                            <!-- Populated dynamically with official Member ID Cards (Reference UI) -->
+                        </div>
+
+                        <!-- Notice shown when department currently only has leadership members -->
+                        <div class="council-modal-all-leadership-notice" id="councilModalAllLeadershipNotice" style="display: none; text-align:center; padding:36px 20px; background:rgba(0,0,0,0.02); border:1px dashed var(--border-color); border-radius:18px; margin-top:8px;">
+                            <div style="font-size:2.2rem; margin-bottom:8px;">👥</div>
+                            <h5 style="margin:0 0 6px; font-size:1.1rem; font-weight:700; color:var(--text-color);">Department Leadership Displayed Above</h5>
+                            <p style="margin:0; font-size:0.88rem; opacity:0.8; max-width:540px; margin:0 auto; line-height:1.5;">This department's active coordinators are displayed in the leadership section above. Additional team members added via the Admin Console will appear here.</p>
+                        </div>
+
+                        <!-- Empty State for Search Filter -->
+                        <div class="council-modal-empty" id="councilModalEmptyState" style="display: none;">
+                            <div class="council-empty-icon">🔍</div>
+                            <h3>No members match your search</h3>
+                            <p>Try searching with another name, role, roll number, or branch.</p>
+                            <button type="button" class="council-ctrl-btn" onclick="clearCouncilModalSearch()">Show All Members</button>
+                        </div>
                     </div>
                 </div>
             </div>

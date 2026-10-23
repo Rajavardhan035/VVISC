@@ -94,6 +94,74 @@ let dragStartX = 0;
 let dragStartY = 0;
 let currentGuideMode = "circle";
 
+
+// =========================================================
+// Firebase Storage & Photo Management Helpers
+// =========================================================
+async function uploadCouncilPhoto(file, onProgress) {
+    if (!file) return { url: null, path: null };
+
+    // 1. Try Firebase Storage directly with progress tracking
+    if (typeof firebase !== "undefined" && firebase.storage && typeof firebase.storage === "function") {
+        try {
+            const storageRef = firebase.storage().ref();
+            const cleanName = (file.name || "profile.jpg").replace(/[^a-zA-Z0-9.-]/g, "_");
+            const storagePath = `council/${Date.now()}_${cleanName}`;
+            const fileRef = storageRef.child(storagePath);
+            const uploadTask = fileRef.put(file, { contentType: file.type || "image/jpeg" });
+
+            const url = await new Promise((resolve, reject) => {
+                uploadTask.on("state_changed",
+                    (snapshot) => {
+                        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                        if (typeof onProgress === "function") onProgress(progress);
+                    },
+                    (error) => reject(error),
+                    async () => {
+                        try {
+                            const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                            resolve(downloadUrl);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }
+                );
+            });
+
+            if (typeof CMS !== "undefined" && CMS.recordMediaUpload) {
+                CMS.recordMediaUpload({
+                    url: url,
+                    fileName: file.name || "profile.jpg",
+                    folder: "council",
+                    size: file.size || 0,
+                    mimeType: file.type || "image/jpeg"
+                });
+            }
+
+            return { url, path: storagePath };
+        } catch (err) {
+            console.warn("Storage upload task notice, falling back to CMS.uploadImage:", err);
+        }
+    }
+
+    // 2. Fallback to CMS.uploadImage (auto-compression dataURL)
+    const fallbackUrl = await CMS.uploadImage(file, "council");
+    return { url: fallbackUrl, path: null };
+}
+
+async function deleteStoragePhoto(photoPath) {
+    if (!photoPath || typeof photoPath !== "string") return;
+    if (!photoPath.startsWith("council/") && !photoPath.startsWith("council-members/")) return;
+    if (typeof firebase !== "undefined" && firebase.storage && typeof firebase.storage === "function") {
+        try {
+            await firebase.storage().ref(photoPath).delete();
+            console.log("Deleted previous photo from Storage:", photoPath);
+        } catch (e) {
+            console.warn("Notice deleting old storage photo (may be already removed):", e.message || e);
+        }
+    }
+}
+
 const DEFAULT_COUNCIL_MEMBERS = [
     {
         name: "Dr. Naveen Ravela",
@@ -213,9 +281,14 @@ const DEFAULT_COUNCIL_MEMBERS = [
         active: true
     },
     {
-        name: "Rajavardhan P",
+        name: "Rajavardhan Perugu",
+        studentId: "23BQ5A6135",
+        branch: "AIM",
+        contactInfo: "8466994645",
+        phone: "8466994645",
         memberType: "Student Leader",
-        role: "Digital Infrastructure Co-ordinator",
+        role: "DI Coordinator",
+        leadershipRole: "coordinator",
         department: "Digital Infrastructure",
         description: "Manages digital infrastructure, including networks, servers, and IT systems.",
         profileImage: "assets/nodp.png",
@@ -430,6 +503,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const statusSelect = document.getElementById("councilStatusFilterSelect");
+    
+    const roleSelect = document.getElementById("councilRoleFilterSelect");
+    if (roleSelect) {
+        roleSelect.addEventListener("change", () => renderCouncilGrid());
+    }
+
+    // Delete Member Confirmation Modal Triggers
+    const cancelDeleteBtn = document.getElementById("cancelDeleteMemberBtn");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteMemberBtn");
+    const deleteModal = document.getElementById("deleteMemberModal");
+
+    if (cancelDeleteBtn) cancelDeleteBtn.onclick = closeDeleteMemberModal;
+    if (confirmDeleteBtn) confirmDeleteBtn.onclick = confirmDeleteMember;
+    if (deleteModal) {
+        deleteModal.onclick = (e) => {
+            if (e.target === deleteModal) closeDeleteMemberModal();
+        };
+    }
+
     if (statusSelect) {
         statusSelect.addEventListener("change", () => renderCouncilGrid());
     }
@@ -632,15 +724,36 @@ function renderCouncilGrid() {
     const deptFilter = deptSelect ? deptSelect.value : "all";
     const statusSelect = document.getElementById("councilStatusFilterSelect");
     const statusFilter = statusSelect ? statusSelect.value : "all";
+    const roleSelect = document.getElementById("councilRoleFilterSelect");
+    const roleFilter = roleSelect ? roleSelect.value : "all";
 
     const filtered = councilList.filter(m => {
         // Exclude dummy placeholder member if present
         if (m.name && m.name.toLowerCase().includes("member 2")) return false;
 
         // Status filter
-        const isActive = m.active !== false;
+        const isActive = (m.active !== false && m.isActive !== false);
         if (statusFilter === "active" && !isActive) return false;
         if (statusFilter === "inactive" && isActive) return false;
+
+        // Role filter
+        if (roleFilter !== "all") {
+            const lRole = (m.leadershipRole || "").toLowerCase();
+            const r = (m.role || "").toLowerCase();
+            const mType = (m.memberType || "").toLowerCase();
+            if (roleFilter === "coordinator") {
+                if (lRole !== "coordinator" && !(r.includes("co-ordinator") && !r.includes("associate")) && !r.includes("lead")) return false;
+            } else if (roleFilter === "associate_coordinator") {
+                if (lRole !== "associate_coordinator" && !r.includes("associate")) return false;
+            } else if (roleFilter === "executive") {
+                if (lRole !== "executive" && !(r.includes("president") || r.includes("secretary") || r.includes("treasurer") || mType.includes("executive"))) return false;
+            } else if (roleFilter === "faculty") {
+                if (mType !== "faculty coordinator" && mType !== "chief faculty" && !mType.includes("faculty") && !(m.department && m.department.toLowerCase().includes("faculty"))) return false;
+            } else if (roleFilter === "member") {
+                const isLead = lRole === "coordinator" || lRole === "associate_coordinator" || lRole === "executive" || r.includes("co-ordinator") || r.includes("president") || r.includes("secretary") || r.includes("treasurer") || mType.includes("faculty");
+                if (isLead) return false;
+            }
+        }
 
         // Year filter
         if (termFilter !== "all") {
@@ -666,10 +779,12 @@ function renderCouncilGrid() {
 
         // Search query
         if (query) {
-            const name = (m.name || "").toLowerCase();
+            const name = (m.name || m.fullName || "").toLowerCase();
             const role = (m.role || "").toLowerCase();
-            const dept = (m.department || "").toLowerCase();
-            if (!name.includes(query) && !role.includes(query) && !dept.includes(query)) return false;
+            const dept = (m.department || m.departmentName || "").toLowerCase();
+            const studentId = (m.studentId || m.rollNo || "").toLowerCase();
+            const branch = (m.branch || m.branchCode || "").toLowerCase();
+            if (!name.includes(query) && !role.includes(query) && !dept.includes(query) && !studentId.includes(query) && !branch.includes(query)) return false;
         }
 
         return true;
@@ -703,6 +818,8 @@ function renderCouncilGrid() {
                         <span style="font-size:0.75rem; font-weight:700; padding:3px 8px; border-radius:12px; background:rgba(199,107,60,0.15); color:var(--accent-color);">${escapeHtml(m.memberType || "Student Leader")}</span>
                         ${leadershipBadge}
                         <span style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:10px; opacity:0.85;">Term ${escapeHtml(m.councilYear || "2025-26")}</span>
+                        ${(m.studentId || m.rollNo) ? `<span style="font-size:0.75rem; background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:10px; opacity:0.9; font-family:monospace; color:var(--accent-color);">ID: ${escapeHtml(m.studentId || m.rollNo)}</span>` : ""}
+                        ${(m.branch || m.branchCode) ? `<span style="font-size:0.75rem; background:rgba(34,197,94,0.12); color:#22c55e; border:1px solid rgba(34,197,94,0.25); padding:2px 8px; border-radius:10px; font-weight:700;">${escapeHtml(m.branch || m.branchCode)}</span>` : ""}
                         <span style="font-size:0.75rem; opacity:0.7;">#${m.displayOrder || 1}</span>
                     </div>
                     <span style="padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; background:${activeStatus ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color:${activeStatus ? '#22c55e' : '#ef4444'};">
@@ -744,27 +861,41 @@ function openCouncilModal(member = null) {
     hidePreview();
     adjustedImageBlob = null;
     adjustedImageDataUrl = null;
+    const progressWrap = document.getElementById("memberUploadProgressWrap");
+    if (progressWrap) progressWrap.style.display = "none";
 
     if (member) {
         title.textContent = "Edit Council Member";
         currentMemberOriginalImage = member.profileImage || "";
 
         document.getElementById("memberDocId").value = member.id;
-        document.getElementById("memberName").value = member.name || "";
+        document.getElementById("memberName").value = member.name || member.fullName || "";
+        if (document.getElementById("memberStudentId")) {
+            document.getElementById("memberStudentId").value = member.studentId || member.rollNo || "";
+        }
+        if (document.getElementById("memberBranch")) {
+            document.getElementById("memberBranch").value = member.branch || member.branchCode || "";
+        }
         document.getElementById("memberType").value = member.memberType || "Student Leader";
         document.getElementById("memberRole").value = member.role || "";
-        document.getElementById("memberDept").value = member.department || "Research & Development";
+        document.getElementById("memberDept").value = member.department || member.departmentName || "Research & Development";
         if (document.getElementById("memberLeadershipRole")) {
             document.getElementById("memberLeadershipRole").value = member.leadershipRole || "member";
         }
-        document.getElementById("memberDesc").value = member.description || "";
-        document.getElementById("memberImageUrl").value = member.profileImage || "";
+        document.getElementById("memberDesc").value = member.description || member.bio || "";
+        document.getElementById("memberImageUrl").value = member.profileImage || member.photoURL || "";
+        if (document.getElementById("memberPhotoPath")) {
+            document.getElementById("memberPhotoPath").value = member.photoPath || "";
+        }
         document.getElementById("memberEmail").value = member.email || "";
-        document.getElementById("memberLinkedin").value = member.linkedin || "";
-        document.getElementById("memberGithub").value = member.github || "";
-        document.getElementById("memberOrder").value = member.displayOrder || 1;
+        if (document.getElementById("memberContact")) {
+            document.getElementById("memberContact").value = member.contactInfo || member.phone || "";
+        }
+        document.getElementById("memberLinkedin").value = member.linkedin || member.linkedinURL || "";
+        document.getElementById("memberGithub").value = member.github || member.githubURL || "";
+        document.getElementById("memberOrder").value = member.displayOrder || member.order || 1;
         document.getElementById("memberCouncilYear").value = member.councilYear || "2025-26";
-        document.getElementById("memberActive").checked = member.active !== false;
+        document.getElementById("memberActive").checked = (member.active !== false && member.isActive !== false);
 
         if (member.profileImage) {
             showPreview(getAdminImgSrc(member.profileImage));
@@ -1205,70 +1336,142 @@ async function saveCouncilMember() {
         return;
     }
 
+    const studentId = document.getElementById("memberStudentId") ? document.getElementById("memberStudentId").value.trim() : "";
+    const branch = document.getElementById("memberBranch") ? document.getElementById("memberBranch").value.trim().toUpperCase() : "";
+    const contactInfo = document.getElementById("memberContact") ? document.getElementById("memberContact").value.trim() : "";
+    const existingPhotoPath = document.getElementById("memberPhotoPath") ? document.getElementById("memberPhotoPath").value.trim() : "";
+
     const fileInput = document.getElementById("memberImageFile");
     const typedUrl = document.getElementById("memberImageUrl").value.trim();
+    const progressWrap = document.getElementById("memberUploadProgressWrap");
+    const progressBar = document.getElementById("memberUploadProgressBar");
+    const progressLabel = document.getElementById("memberUploadProgressLabel");
+
     let finalProfileImage = "";
+    let finalPhotoPath = existingPhotoPath;
+    let newlyUploaded = false;
 
-    // 1. If user adjusted and cropped the image, upload that high-res adjusted blob
-    if (adjustedImageBlob) {
-        try {
-            showToast("Uploading adjusted profile photo...");
-            const adjustedFile = new File([adjustedImageBlob], `council_profile_${Date.now()}.jpg`, { type: "image/jpeg" });
-            finalProfileImage = await CMS.uploadImage(adjustedFile, "council");
-        } catch (e) {
-            console.warn("Upload adjusted image notice, falling back to dataUrl:", e);
-            if (adjustedImageDataUrl) finalProfileImage = adjustedImageDataUrl;
-        }
-    } else if (fileInput && fileInput.files && fileInput.files[0]) {
-        // 2. User picked raw file without opening adjust studio
-        try {
-            showToast("Processing profile image...");
-            finalProfileImage = await CMS.uploadImage(fileInput.files[0], "council");
-        } catch (e) {
-            console.warn("Image upload notice:", e);
-        }
-    }
-
-    // 3. Else if user typed an explicit URL, use that
-    if (!finalProfileImage && typedUrl) {
-        finalProfileImage = typedUrl;
-    }
-
-    // 4. Else if editing an existing member, preserve THAT member's original image
-    if (!finalProfileImage && currentMemberOriginalImage) {
-        finalProfileImage = currentMemberOriginalImage;
-    }
-
-    // 5. Default fallback image
-    if (!finalProfileImage) {
-        finalProfileImage = "assets/nodp.png";
-    } else if (finalProfileImage.startsWith("data:image/")) {
-        finalProfileImage = await CMS.compressDataUrl(finalProfileImage, 460, 0.78);
-    }
-
-    const payload = {
-        name,
-        memberType: document.getElementById("memberType").value,
-        role: document.getElementById("memberRole").value.trim(),
-        department: document.getElementById("memberDept").value.trim(),
-        leadershipRole: document.getElementById("memberLeadershipRole") ? document.getElementById("memberLeadershipRole").value : "member",
-        description: document.getElementById("memberDesc").value.trim(),
-        profileImage: finalProfileImage,
-        email: document.getElementById("memberEmail").value.trim(),
-        linkedin: document.getElementById("memberLinkedin").value.trim(),
-        github: document.getElementById("memberGithub").value.trim(),
-        displayOrder: parseInt(document.getElementById("memberOrder").value) || 1,
-        councilYear: document.getElementById("memberCouncilYear").value.trim() || "2025-26",
-        active: document.getElementById("memberActive").checked
+    const setProgress = (pct) => {
+        if (progressWrap) progressWrap.style.display = "block";
+        if (progressBar) progressBar.style.width = pct + "%";
+        if (progressLabel) progressLabel.textContent = `Uploading photo... ${pct}%`;
     };
 
     try {
-        await CMS.saveDoc("councilMembers", docId, payload);
-        showToast(`\u2713 Council member "${name}" saved to Cloud! Visible across all devices.`);
+        // 1. If user adjusted and cropped the image, upload that high-res adjusted blob
+        if (adjustedImageBlob) {
+            setProgress(15);
+            showToast("Uploading adjusted profile photo to Storage...");
+            const cleanName = name.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
+            const adjustedFile = new File([adjustedImageBlob], `council_${cleanName}_${Date.now()}.jpg`, { type: "image/jpeg" });
+            const uploadRes = await uploadCouncilPhoto(adjustedFile, setProgress);
+            finalProfileImage = uploadRes.url;
+            finalPhotoPath = uploadRes.path || finalPhotoPath;
+            newlyUploaded = true;
+        } else if (fileInput && fileInput.files && fileInput.files[0]) {
+            // 2. User picked raw file without opening adjust studio
+            setProgress(15);
+            showToast("Uploading profile photo to Storage...");
+            const uploadRes = await uploadCouncilPhoto(fileInput.files[0], setProgress);
+            finalProfileImage = uploadRes.url;
+            finalPhotoPath = uploadRes.path || finalPhotoPath;
+            newlyUploaded = true;
+        }
+
+        // 3. Else if user typed an explicit URL, use that
+        if (!finalProfileImage && typedUrl) {
+            finalProfileImage = typedUrl;
+        }
+
+        // 4. Else if editing an existing member, preserve THAT member's original image
+        if (!finalProfileImage && currentMemberOriginalImage) {
+            finalProfileImage = currentMemberOriginalImage;
+        }
+
+        // 5. Default fallback image
+        if (!finalProfileImage) {
+            finalProfileImage = "assets/nodp.png";
+        } else if (finalProfileImage.startsWith("data:image/")) {
+            finalProfileImage = await CMS.compressDataUrl(finalProfileImage, 460, 0.78);
+        }
+
+        // If a new photo was uploaded and there was a previous storage photo, clean up old photo
+        if (newlyUploaded && existingPhotoPath && finalPhotoPath !== existingPhotoPath) {
+            deleteStoragePhoto(existingPhotoPath);
+        }
+
+        const role = document.getElementById("memberRole").value.trim();
+        const dept = document.getElementById("memberDept").value.trim();
+        const leadershipRole = document.getElementById("memberLeadershipRole") ? document.getElementById("memberLeadershipRole").value : "member";
+
+        // Prevent accidental duplicate active Coordinators in the same department
+        if (leadershipRole === "coordinator") {
+            const existingCoord = councilList.find(m => 
+                m.id !== docId && 
+                m.active !== false && 
+                (m.department || "").toLowerCase().trim() === dept.toLowerCase().trim() &&
+                ((m.leadershipRole || "").toLowerCase() === "coordinator" || ((m.role || "").toLowerCase().includes("coordinator") && !(m.role || "").toLowerCase().includes("associate")))
+            );
+            if (existingCoord) {
+                const proceed = confirm(`${existingCoord.name} is currently the active Coordinator of ${dept}. Do you want to replace them as Coordinator?`);
+                if (!proceed) return;
+                // Gracefully demote previous coordinator to member
+                await CMS.saveDoc("councilMembers", existingCoord.id, { leadershipRole: "member" });
+            }
+        }
+        const memberType = document.getElementById("memberType").value;
+        const description = document.getElementById("memberDesc").value.trim();
+        const email = document.getElementById("memberEmail").value.trim();
+        const linkedin = document.getElementById("memberLinkedin").value.trim();
+        const github = document.getElementById("memberGithub").value.trim();
+        const displayOrder = parseInt(document.getElementById("memberOrder").value) || 1;
+        const councilYear = document.getElementById("memberCouncilYear").value.trim() || "2025-26";
+        const isActive = document.getElementById("memberActive").checked;
+
+        // Construct dual-property payload for 100% backward & forward compatibility
+        const payload = {
+            name: name,
+            fullName: name,
+            studentId: studentId,
+            rollNo: studentId,
+            branch: branch,
+            branchCode: branch,
+            memberType: memberType,
+            role: role,
+            department: dept,
+            departmentName: dept,
+            leadershipRole: leadershipRole,
+            description: description,
+            bio: description,
+            profileImage: finalProfileImage,
+            photoURL: finalProfileImage,
+            photoPath: finalPhotoPath,
+            email: email,
+            contactInfo: contactInfo,
+            phone: contactInfo,
+            linkedin: linkedin,
+            linkedinURL: linkedin,
+            github: github,
+            githubURL: github,
+            displayOrder: displayOrder,
+            order: displayOrder,
+            councilYear: councilYear,
+            active: isActive,
+            isActive: isActive,
+            updatedAt: (typeof firebase !== "undefined" && firebase.firestore && firebase.firestore.FieldValue) 
+                ? firebase.firestore.FieldValue.serverTimestamp() 
+                : new Date().toISOString()
+        };
+
+        await CMS.saveDoc("councilMembers", docId || null, payload);
+        showToast(`✓ Council member "${name}" saved successfully to Cloud!`);
         closeModal();
         await loadCouncilMembers();
     } catch (err) {
+        console.error("saveCouncilMember error:", err);
         showToast("Error saving council member: " + err.message, "error");
+    } finally {
+        if (progressWrap) progressWrap.style.display = "none";
     }
 }
 
@@ -1287,15 +1490,40 @@ async function toggleMemberStatus(id, newStatus) {
     }
 }
 
-async function deleteMember(id) {
-    if (confirm("Are you sure you want to delete this council member? Historical records are preserved when using Disable instead.")) {
-        try {
-            await CMS.deleteDoc("councilMembers", id);
-            showToast("Council member deleted successfully.");
-            await loadCouncilMembers();
-        } catch (err) {
-            showToast("Failed to delete member.", "error");
+let pendingDeleteMemberId = null;
+
+function deleteMember(id) {
+    const member = councilList.find(m => m.id === id);
+    if (!member) return;
+    pendingDeleteMemberId = id;
+    const targetName = document.getElementById("deleteMemberTargetName");
+    if (targetName) targetName.textContent = member.name || member.fullName || "this member";
+    const modal = document.getElementById("deleteMemberModal");
+    if (modal) modal.style.display = "flex";
+}
+
+function closeDeleteMemberModal() {
+    const modal = document.getElementById("deleteMemberModal");
+    if (modal) modal.style.display = "none";
+    pendingDeleteMemberId = null;
+}
+
+async function confirmDeleteMember() {
+    if (!pendingDeleteMemberId) return;
+    const id = pendingDeleteMemberId;
+    const member = councilList.find(m => m.id === id);
+    closeDeleteMemberModal();
+
+    try {
+        if (member && member.photoPath) {
+            await deleteStoragePhoto(member.photoPath);
         }
+        await CMS.deleteDoc("councilMembers", id);
+        showToast("✓ Council member deleted successfully.", "success");
+        await loadCouncilMembers();
+    } catch (err) {
+        console.error("deleteMember error:", err);
+        showToast("Failed to delete member: " + err.message, "error");
     }
 }
 
@@ -1766,3 +1994,19 @@ async function deleteDept(id) {
 function escapeHtml(str) {
     return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
+
+// Expose functions globally for inline onclick handlers
+window.openCouncilModal = openCouncilModal;
+window.closeModal = closeModal;
+window.editMember = editMember;
+window.deleteMember = deleteMember;
+window.closeDeleteMemberModal = closeDeleteMemberModal;
+window.confirmDeleteMember = confirmDeleteMember;
+window.toggleMemberStatus = toggleMemberStatus;
+window.openAssignLeadershipModal = openAssignLeadershipModal;
+window.closeAssignModal = closeAssignModal;
+window.openDeptModalById = openDeptModalById;
+window.openDeptModal = openDeptModal;
+window.closeDeptModal = closeDeptModal;
+window.toggleDeptStatus = toggleDeptStatus;
+window.deleteDept = deleteDept;

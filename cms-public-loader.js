@@ -1911,7 +1911,7 @@ const DEFAULT_COUNCIL_DEPTS = [
         tag: "Core Department",
         shortDescription: "Technology & Systems",
         description: "Develops software, websites, applications and innovative technical solutions powering VVISC operations and platforms.",
-        coordinatorName: "Rajavardhan P",
+        coordinatorName: "Rajavardhan Perugu",
         displayOrder: 2,
         active: true
     },
@@ -2109,9 +2109,13 @@ const DEFAULT_COUNCIL_MEMBERS = [
     },
     {
         id: "coord-digital",
-        name: "Rajavardhan P",
+        name: "Rajavardhan Perugu",
+        studentId: "23BQ5A6135",
+        branch: "AIM",
+        contactInfo: "8466994645",
+        phone: "8466994645",
         memberType: "Student Leader",
-        role: "Digital Infrastructure Co-ordinator",
+        role: "DI Coordinator",
         leadershipRole: "coordinator",
         department: "Digital Infrastructure",
         description: "Manages digital infrastructure, including networks, servers, and IT systems.",
@@ -2215,6 +2219,12 @@ async function loadCouncilPageContent() {
                     } catch (e) {}
                     cachedCouncilMembers = liveMembers.length > 0 ? liveMembers : DEFAULT_COUNCIL_MEMBERS;
                     renderCouncilDOM(cachedCouncilMembers, cachedCouncilDepts);
+
+                    // Re-render open modal in real-time if currently open
+                    const openModal = document.getElementById("councilTeamModal");
+                    if (openModal && openModal.classList.contains("open") && activeModalDept) {
+                        window.openCouncilTeamModal(activeModalDept.slug || activeModalDept.id);
+                    }
                 }
             }, (err) => {
                 console.warn("Real-time council snapshot notice:", err);
@@ -2232,6 +2242,12 @@ async function loadCouncilPageContent() {
                     } catch (e) {}
                     cachedCouncilDepts = liveDepts.length > 0 ? liveDepts : DEFAULT_COUNCIL_DEPTS;
                     renderCouncilDOM(cachedCouncilMembers, cachedCouncilDepts);
+
+                    // Re-render open modal in real-time if currently open
+                    const openModal = document.getElementById("councilTeamModal");
+                    if (openModal && openModal.classList.contains("open") && activeModalDept) {
+                        window.openCouncilTeamModal(activeModalDept.slug || activeModalDept.id);
+                    }
                 }
             }, (err) => {
                 console.warn("Real-time departments snapshot notice:", err);
@@ -2456,128 +2472,134 @@ window.toggleCardFlip = function(cardOrBtn, event) {
     }
 };
 
-function renderHangingIdCardHtml(member, dept, index = 0) {
-    const initials = getMemberInitials(member.name);
-    const hasImg = member.profileImage && member.profileImage !== "assets/nodp.png";
-    const imgSrc = hasImg ? escapeHtml(getPublicImgSrc(member.profileImage)) : "";
-    const name = escapeHtml(member.name || "Council Member");
-    const role = escapeHtml(member.role || (dept ? `${dept.name} Member` : "Member"));
-    const deptName = escapeHtml(dept ? dept.name : (member.department || "VVISC Council"));
-    
-    const lRole = (member.leadershipRole || "").toLowerCase();
-    const roleLower = (member.role || "").toLowerCase();
-    let badgeText = "ALL ACCESS";
-    let attendeeTag = "COUNCIL MEMBER";
-    
-    if (lRole === "coordinator" || (roleLower.includes("coordinator") && !roleLower.includes("associate") && !roleLower.includes("faculty"))) {
-        badgeText = "COORDINATOR";
-        attendeeTag = "DEPT COORDINATOR";
-    } else if (lRole === "associate_coordinator" || roleLower.includes("associate")) {
-        badgeText = "ASSOC COORD";
-        attendeeTag = "ASSOCIATE COORD";
-    }
+// ==========================================================================
+// Official VVISC Council Member ID Card Component (Exact Recreation of Reference)
+// ==========================================================================
+function renderMemberIdCardHtml(member, dept, index = 0) {
+    const rawName = member.name || member.fullName || "Council Member";
+    const rawImg = member.profileImage || member.photoURL || "";
+    const initials = getMemberInitials(rawName);
+    const hasImg = rawImg && rawImg !== "assets/nodp.png";
+    const imgSrc = hasImg ? escapeHtml(getPublicImgSrc(rawImg)) : "";
+    const name = escapeHtml(rawName);
+    const role = escapeHtml(member.role || (dept ? `${dept.name} Member` : "Council Member"));
+    const deptName = escapeHtml(dept ? dept.name : (member.department || member.departmentName || "VVISC Council"));
 
-    const memberIdCode = `VVISC-26-${String(index + 1).padStart(3, '0')}`;
-    const qrSvg = generateQrSvg(`${memberIdCode}|${member.name}|${deptName}`);
+    const rollNo = (member.studentId || member.rollNo || "").trim();
+    const branch = (member.branch || member.branchCode || "").trim().toUpperCase();
+    const phone = (member.contactInfo || member.phone || "").trim();
+    const linkedin = (member.linkedin || member.linkedinURL || "").trim();
+    const github = (member.github || member.githubURL || "").trim();
 
+    // Portrait / Avatar HTML with subtle dot grid styling
     const avatarHtml = hasImg ? `
-        <img src="${imgSrc}" alt="${name}" class="card-attendee-avatar" onerror="this.onerror=null; this.outerHTML='<div class=\\\'card-attendee-initials\\\'>${initials}</div>';">
+        <img src="${imgSrc}" alt="${name}" class="id-card-portrait-img" onerror="this.onerror=null; this.outerHTML='<div class=\\\'id-card-initials-avatar\\\'>${initials}</div>';">
     ` : `
-        <div class="card-attendee-initials">${initials}</div>
+        <div class="id-card-initials-avatar">${initials}</div>
     `;
 
-    let socialLinksHtml = "";
-    if (member.linkedin && member.linkedin !== "#") {
-        socialLinksHtml += `<a href="${escapeHtml(member.linkedin)}" target="_blank" rel="noopener" class="back-social-link" title="LinkedIn Profile" onclick="event.stopPropagation()">in</a>`;
+    // Bottom Bar Items (Roll No | Branch | Contact / Social)
+    const displayRoll = rollNo || `23BQ${String(index + 1).padStart(2, '0')}`;
+    
+    // Contact / Social Slot: Phone preferred if available, otherwise LinkedIn icon
+    let contactSlotHtml = "";
+    if (phone) {
+        contactSlotHtml = `
+            <span class="id-card-bar-sep">|</span>
+            <div class="id-card-bar-item id-card-contact" title="Contact Number">
+                <div class="id-card-phone-circle">
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor">
+                        <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.05-.24c1.12.37 2.33.57 3.54.57.55 0 1 .45 1 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.21.2 2.42.57 3.54a1 1 0 01-.24 1.05l-2.21 2.2z"/>
+                    </svg>
+                </div>
+                <a href="tel:${escapeAttr(phone)}" class="id-card-phone-link" onclick="event.stopPropagation()">${escapeHtml(phone)}</a>
+            </div>
+        `;
+    } else if (linkedin && linkedin !== "#") {
+        contactSlotHtml = `
+            <span class="id-card-bar-sep">|</span>
+            <a href="${escapeAttr(linkedin)}" target="_blank" rel="noopener" class="id-card-social-pill" title="LinkedIn Profile" onclick="event.stopPropagation()">
+                <span class="id-card-in-icon">in</span>
+                <span style="font-size:0.75rem;">Profile</span>
+            </a>
+        `;
     }
-    if (member.github && member.github !== "#") {
-        socialLinksHtml += `<a href="${escapeHtml(member.github)}" target="_blank" rel="noopener" class="back-social-link" title="GitHub Profile" onclick="event.stopPropagation()">gh</a>`;
-    }
-
-    const barcodeHtml = "|| ||| | || |||| || | ||||".split("").map((c, i) =>
-        c === "|" ? `<i style="width: ${i % 3 === 0 ? 3 : 1.2}px"></i>` : ""
-    ).join("");
 
     return `
-        <div class="hanging-card-unit" data-member-name="${escapeAttr(member.name || '')}" data-member-role="${escapeAttr(member.role || '')}">
-            <!-- Lanyard Top Strap & Metal Ring -->
-            <div class="lanyard">
-                <div class="strap">
-                    <span>COUNCIL PASS</span>
+        <div class="vvisc-id-card" data-member-name="${escapeAttr(rawName)}" data-member-role="${escapeAttr(member.role || '')}" data-member-roll="${escapeAttr(rollNo)}" data-member-branch="${escapeAttr(branch)}">
+            <!-- Subtle Decorative Grid and Curve Backgrounds -->
+            <div class="id-card-bg-grid" aria-hidden="true"></div>
+            <div class="id-card-bg-wave" aria-hidden="true"></div>
+
+            <!-- 1. Top VVISC Emblem & Brand Title -->
+            <div class="id-card-emblem-header">
+                <div class="id-card-emblem-icon">
+                    <svg viewBox="0 0 100 70" class="id-card-wreath-svg" aria-hidden="true">
+                        <!-- Sun & Radiant Rays -->
+                        <circle cx="50" cy="20" r="8" fill="#C89B35"/>
+                        <path d="M50 7 V2 M43 11 L37 6 M57 11 L63 6 M37 20 H31 M63 20 H69 M43 29 L37 34 M57 29 L63 34" stroke="#C89B35" stroke-width="2.2" stroke-linecap="round"/>
+                        <!-- Open Book -->
+                        <path d="M50 33 C43 29 32 29 23 32 L23 48 C32 45 43 45 50 49 C57 45 68 45 77 48 L77 32 C68 29 57 29 50 33 Z" fill="#FFFFFF" stroke="#0D2B1D" stroke-width="2.2" stroke-linejoin="round"/>
+                        <path d="M50 33 V49" stroke="#0D2B1D" stroke-width="2.2"/>
+                        <!-- Laurel Leaves Left -->
+                        <path d="M21 38 C17 30 20 20 27 15 C27 21 24 27 26 32 Z" fill="#1B4D35"/>
+                        <path d="M17 28 C14 20 20 13 27 9 C25 15 21 21 22 27 Z" fill="#2D6A4F"/>
+                        <!-- Laurel Leaves Right -->
+                        <path d="M79 38 C83 30 80 20 73 15 C73 21 76 27 74 32 Z" fill="#1B4D35"/>
+                        <path d="M83 28 C86 20 80 13 73 9 C75 15 79 21 78 27 Z" fill="#2D6A4F"/>
+                    </svg>
                 </div>
-                <div class="metal-ring"></div>
+                <div class="id-card-brand-title">VVISC</div>
             </div>
 
-            <!-- 3D Flippable ID Card -->
-            <div class="id-card" onclick="toggleCardFlip(this, event)" onkeydown="toggleCardFlip(this, event)" role="button" tabindex="0" aria-label="Toggle ${name} ID Card front and back">
-                <!-- FRONT FACE -->
-                <section class="card-face card-front">
-                    <div class="card-brand">
-                        <strong>VVISC.</strong>
-                        <span>${badgeText}</span>
+            <!-- 2. Greeting & Name White Panel -->
+            <div class="id-card-name-panel">
+                <span class="id-card-greeting-text">Hello, I am</span>
+                <h3 class="id-card-full-name" title="${name}">${name}</h3>
+            </div>
+
+            <!-- 3. Member Portrait Frame & Rounded Designation Badge -->
+            <div class="id-card-portrait-wrap">
+                <div class="id-card-portrait-frame">
+                    ${avatarHtml}
+                </div>
+                <div class="id-card-designation-pill" title="${role}">
+                    <span>${role}</span>
+                </div>
+            </div>
+
+            <!-- 4. Bottom Information Bar (Roll No | Branch | Contact) -->
+            <div class="id-card-bottom-bar">
+                <div class="id-card-bar-item id-card-roll" title="Student Roll Number">
+                    <svg class="id-card-bar-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+                        <circle cx="9" cy="10" r="2"></circle>
+                        <line x1="15" y1="8" x2="17" y2="8"></line>
+                        <line x1="15" y1="12" x2="17" y2="12"></line>
+                        <line x1="7" y1="16" x2="17" y2="16"></line>
+                    </svg>
+                    <span class="id-card-roll-text">${escapeHtml(displayRoll)}</span>
+                </div>
+
+                ${branch ? `
+                    <span class="id-card-bar-sep">|</span>
+                    <div class="id-card-bar-item id-card-branch" title="Branch / Course">
+                        <span class="id-card-branch-text">${escapeHtml(branch)}</span>
                     </div>
+                ` : ""}
 
-                    <div class="card-event">
-                        <p>VVIT IUCEE Student Chapter</p>
-                        <p class="card-event-dept">${deptName}</p>
-                        <p class="card-event-date">Tenure 2025 - 2026</p>
-                    </div>
-
-                    <div class="card-attendee">
-                        <div class="card-attendee-head">
-                            <small>${attendeeTag}</small>
-                            ${avatarHtml}
-                        </div>
-                        <h2>${name}</h2>
-                        <div class="role">${role}</div>
-                    </div>
-
-                    <div class="card-footer">
-                        <span>${deptName}</span>
-                        <b>#${String(index + 1).padStart(2, '0')}</b>
-                    </div>
-
-                    <button type="button" class="card-flip-btn" onclick="toggleCardFlip(this, event)" aria-label="Flip card">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                        <span>Flip</span>
-                    </button>
-                </section>
-
-                <!-- BACK FACE -->
-                <section class="card-face card-back">
-                    <div class="back-brand">
-                        VVISC. <span>COUNCIL CREDENTIAL</span>
-                    </div>
-
-                    <div class="qr-wrap">
-                        ${qrSvg}
-                    </div>
-
-                    <p class="qr-caption">SCAN FOR ACCESS</p>
-
-                    <div class="back-info">
-                        <p class="back-name"><strong>${name}</strong></p>
-                        <p class="back-role">${role} / ${deptName}</p>
-                        <p class="back-id">ID: ${memberIdCode}</p>
-                        ${socialLinksHtml ? `<div class="back-social-links">${socialLinksHtml}</div>` : ''}
-                    </div>
-
-                    <div class="barcode" aria-hidden="true">
-                        ${barcodeHtml}
-                    </div>
-
-                    <button type="button" class="card-flip-btn back-flip-btn" onclick="toggleCardFlip(this, event)" aria-label="View front">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                        <span>Front</span>
-                    </button>
-                </section>
+                ${contactSlotHtml}
             </div>
         </div>
     `;
 }
 
+function renderHangingIdCardHtml(member, dept, index = 0) {
+    return renderMemberIdCardHtml(member, dept, index);
+}
+
 function renderIdCardHtml(member, dept, index = 0) {
-    return renderHangingIdCardHtml(member, dept, index);
+    return renderMemberIdCardHtml(member, dept, index);
 }
 
 function renderDepartmentDirectory(depts, activeMembers) {
@@ -2781,7 +2803,7 @@ function renderDepartmentDirectory(depts, activeMembers) {
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        <span>View Team (${memberCount} Member${memberCount === 1 ? '' : 's'})</span>
+                        <span>View Full Team (${memberCount} Member${memberCount === 1 ? '' : 's'})</span>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
@@ -2802,8 +2824,108 @@ function renderDepartmentDirectory(depts, activeMembers) {
 // --------------------------------------------------
 // Department Team ID Card Modal Controller
 // --------------------------------------------------
+
+// ==========================================================================
+// Department Leadership In Modal Renderer (Side-by-Side Coordinator & Associate)
+// ==========================================================================
+function renderDepartmentLeadershipInModal(coordinator, associate, dept) {
+    const container = document.getElementById("councilModalLeadershipGrid");
+    if (!container) return;
+
+    let coordHtml = "";
+    if (coordinator) {
+        const initials = getMemberInitials(coordinator.name);
+        const hasImg = coordinator.profileImage && coordinator.profileImage !== "assets/nodp.png";
+        const cImgSrc = hasImg ? escapeHtml(getPublicImgSrc(coordinator.profileImage)) : "";
+        const cRoll = coordinator.studentId || coordinator.rollNo || "";
+        const cBranch = (coordinator.branch || coordinator.branchCode || "").toUpperCase();
+
+        coordHtml = `
+            <div class="council-modal-leader-card coordinator">
+                ${hasImg ? `
+                    <img src="${cImgSrc}" alt="${escapeHtml(coordinator.name)}" class="council-modal-leader-avatar" onerror="this.onerror=null; this.outerHTML='<div class=\\\'council-modal-leader-initials\\\'>${initials}</div>';">
+                ` : `
+                    <div class="council-modal-leader-initials">${initials}</div>
+                `}
+                <div class="council-modal-leader-content">
+                    <span class="council-modal-leader-role-badge">★ Coordinator</span>
+                    <h5 class="council-modal-leader-name" title="${escapeHtml(coordinator.name)}">${escapeHtml(coordinator.name)}</h5>
+                    <p class="council-modal-leader-desig">${escapeHtml(coordinator.role || `${dept.name} Coordinator`)}</p>
+                    <div class="council-modal-leader-meta-row">
+                        ${cRoll ? `<span class="council-modal-leader-roll">${escapeHtml(cRoll)}</span>` : ""}
+                        ${cBranch ? `<span style="font-weight:700; color:#22c55e;">${escapeHtml(cBranch)}</span>` : ""}
+                        <div class="council-modal-leader-links">
+                            ${coordinator.linkedin && coordinator.linkedin !== "#" ? `<a href="${escapeHtml(coordinator.linkedin)}" target="_blank" rel="noopener" class="council-modal-leader-link" title="LinkedIn">in</a>` : ""}
+                            ${coordinator.github && coordinator.github !== "#" ? `<a href="${escapeHtml(coordinator.github)}" target="_blank" rel="noopener" class="council-modal-leader-link" title="GitHub">gh</a>` : ""}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        coordHtml = `
+            <div class="council-modal-leader-card coordinator vacant">
+                <div class="council-modal-leader-initials" style="background:rgba(0,0,0,0.04); color:var(--text-secondary); border-color:var(--border-color);">--</div>
+                <div class="council-modal-leader-content">
+                    <span class="council-modal-leader-role-badge" style="background:rgba(0,0,0,0.05); color:var(--text-secondary);">Coordinator</span>
+                    <h5 class="council-modal-leader-name" style="font-weight:500; font-style:italic;">Position Vacant</h5>
+                    <p class="council-modal-leader-desig">Appointment in progress</p>
+                </div>
+            </div>
+        `;
+    }
+
+    let assocHtml = "";
+    if (associate) {
+        const initials = getMemberInitials(associate.name);
+        const hasImg = associate.profileImage && associate.profileImage !== "assets/nodp.png";
+        const aImgSrc = hasImg ? escapeHtml(getPublicImgSrc(associate.profileImage)) : "";
+        const aRoll = associate.studentId || associate.rollNo || "";
+        const aBranch = (associate.branch || associate.branchCode || "").toUpperCase();
+
+        assocHtml = `
+            <div class="council-modal-leader-card associate">
+                ${hasImg ? `
+                    <img src="${aImgSrc}" alt="${escapeHtml(associate.name)}" class="council-modal-leader-avatar" onerror="this.onerror=null; this.outerHTML='<div class=\\\'council-modal-leader-initials\\\'>${initials}</div>';">
+                ` : `
+                    <div class="council-modal-leader-initials">${initials}</div>
+                `}
+                <div class="council-modal-leader-content">
+                    <span class="council-modal-leader-role-badge">Associate Coordinator</span>
+                    <h5 class="council-modal-leader-name" title="${escapeHtml(associate.name)}">${escapeHtml(associate.name)}</h5>
+                    <p class="council-modal-leader-desig">${escapeHtml(associate.role || "Associate Coordinator")}</p>
+                    <div class="council-modal-leader-meta-row">
+                        ${aRoll ? `<span class="council-modal-leader-roll">${escapeHtml(aRoll)}</span>` : ""}
+                        ${aBranch ? `<span style="font-weight:700; color:#22c55e;">${escapeHtml(aBranch)}</span>` : ""}
+                        <div class="council-modal-leader-links">
+                            ${associate.linkedin && associate.linkedin !== "#" ? `<a href="${escapeHtml(associate.linkedin)}" target="_blank" rel="noopener" class="council-modal-leader-link" title="LinkedIn">in</a>` : ""}
+                            ${associate.github && associate.github !== "#" ? `<a href="${escapeHtml(associate.github)}" target="_blank" rel="noopener" class="council-modal-leader-link" title="GitHub">gh</a>` : ""}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        assocHtml = `
+            <div class="council-modal-leader-card associate vacant">
+                <div class="council-modal-leader-initials" style="background:rgba(0,0,0,0.04); color:var(--text-secondary); border-color:var(--border-color);">--</div>
+                <div class="council-modal-leader-content">
+                    <span class="council-modal-leader-role-badge" style="background:rgba(0,0,0,0.05); color:var(--text-secondary);">Associate Coord</span>
+                    <h5 class="council-modal-leader-name" style="font-weight:500; font-style:italic;">Position Vacant</h5>
+                    <p class="council-modal-leader-desig">Appointment in progress</p>
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = coordHtml + assocHtml;
+}
+
 let activeModalDept = null;
-let activeModalMembers = [];
+let activeModalAllMembers = [];
+let activeModalRegularMembers = [];
+let activeModalCoordinator = null;
+let activeModalAssociate = null;
 
 window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
     const modal = document.getElementById("councilTeamModal");
@@ -2823,22 +2945,70 @@ window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
 
     activeModalDept = dept;
 
-    // Use cached team members or compute dynamically
-    if (Array.isArray(dept._teamMembers) && dept._teamMembers.length > 0) {
-        activeModalMembers = [...dept._teamMembers];
-    } else {
-        const assignedMembers = activeMembers.filter(m => matchesDepartment(m, dept));
-        const distinct = [];
-        const seen = new Set();
-        assignedMembers.forEach(m => {
-            const k = m.id || m.name;
-            if (!seen.has(k)) {
-                seen.add(k);
-                distinct.push(m);
-            }
-        });
-        activeModalMembers = distinct;
+    // Resolve Coordinator
+    let coordinator = null;
+    if (dept.coordinatorId) {
+        coordinator = activeMembers.find(m => m.id === dept.coordinatorId);
     }
+    if (!coordinator && dept.coordinatorName) {
+        coordinator = activeMembers.find(m => m.name && m.name.toLowerCase().trim() === dept.coordinatorName.toLowerCase().trim());
+    }
+    if (!coordinator) {
+        coordinator = activeMembers.find(m => {
+            if (!matchesDepartment(m, dept)) return false;
+            const role = (m.role || "").toLowerCase();
+            const lRole = (m.leadershipRole || "").toLowerCase();
+            return lRole === "coordinator" || ((role.includes("co-ordinator") || role.includes("coordinator")) && !role.includes("associate") && !role.includes("faculty"));
+        });
+    }
+
+    // Resolve Associate Coordinator
+    let associate = null;
+    if (dept.associateCoordinatorId) {
+        associate = activeMembers.find(m => m.id === dept.associateCoordinatorId);
+    }
+    if (!associate && dept.associateCoordinatorName) {
+        associate = activeMembers.find(m => m.name && m.name.toLowerCase().trim() === dept.associateCoordinatorName.toLowerCase().trim());
+    }
+    if (!associate) {
+        associate = activeMembers.find(m => {
+            if (!matchesDepartment(m, dept) || m === coordinator) return false;
+            const role = (m.role || "").toLowerCase();
+            const lRole = (m.leadershipRole || "").toLowerCase();
+            return (lRole === "associate_coordinator" || role.includes("associate"));
+        });
+    }
+
+    // Assemble all department members (including leadership for total count)
+    const assignedMembers = activeMembers.filter(m => matchesDepartment(m, dept));
+    const allMembersDistinct = [];
+    const seenKeys = new Set();
+    const addDistinct = (m) => {
+        if (!m) return;
+        const k = m.id || (m.name + "|" + (m.role || ""));
+        if (!seenKeys.has(k)) {
+            seenKeys.add(k);
+            allMembersDistinct.push(m);
+        }
+    };
+    if (coordinator) addDistinct(coordinator);
+    if (associate) addDistinct(associate);
+    assignedMembers.forEach(addDistinct);
+
+    allMembersDistinct.sort((a, b) => (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999));
+
+    // Exclude Coordinator & Associate Coordinator from the team ID cards gallery
+    const regularMembers = allMembersDistinct.filter(m => 
+        m !== coordinator && 
+        m !== associate && 
+        (!coordinator || m.id !== coordinator.id) && 
+        (!associate || m.id !== associate.id)
+    );
+
+    activeModalAllMembers = allMembersDistinct;
+    activeModalRegularMembers = regularMembers;
+    activeModalCoordinator = coordinator;
+    activeModalAssociate = associate;
 
     // Populate Modal Header
     const iconEl = document.getElementById("councilModalDeptIcon");
@@ -2851,27 +3021,28 @@ window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
     if (nameEl) nameEl.textContent = dept.name;
     if (tagEl) tagEl.textContent = (dept.tag || "Department").toUpperCase();
     if (descEl) descEl.textContent = dept.description || dept.shortDescription || "";
-    if (countEl) countEl.textContent = `${activeModalMembers.length} Member${activeModalMembers.length === 1 ? '' : 's'}`;
+    if (countEl) countEl.textContent = `${allMembersDistinct.length} Active Member${allMembersDistinct.length === 1 ? '' : 's'}`;
+
+    // Render Department Leadership at the Top
+    renderDepartmentLeadershipInModal(coordinator, associate, dept);
 
     // Reset Search Input in Modal
     const searchInput = document.getElementById("councilModalSearchInput");
     const searchClear = document.getElementById("councilModalSearchClear");
-
     const queryToUse = initialQuery || currentCouncilQuery || "";
     if (searchInput) {
         searchInput.value = queryToUse;
         if (searchClear) searchClear.style.display = queryToUse ? "block" : "none";
     }
 
-    // Render ID Cards
+    // Render Team ID Cards below
     renderModalIdCards(queryToUse);
 
-    // Open Modal with Animation & Lock Body Scroll
+    // Open Modal & Lock Body Scroll
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
 
-    // Focus close button or search
     if (searchInput && queryToUse) {
         searchInput.focus();
     } else {
@@ -2887,31 +3058,52 @@ window.closeCouncilTeamModal = function() {
     modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
     activeModalDept = null;
-    activeModalMembers = [];
+    activeModalAllMembers = [];
+    activeModalRegularMembers = [];
+    activeModalCoordinator = null;
+    activeModalAssociate = null;
 };
 
 function renderModalIdCards(query = "") {
     const grid = document.getElementById("councilModalCardsGrid");
     const emptyState = document.getElementById("councilModalEmptyState");
+    const notice = document.getElementById("councilModalAllLeadershipNotice");
+    const rosterCountEl = document.getElementById("councilModalTeamRosterCount");
     const metaEl = document.getElementById("councilModalFilterMeta");
     if (!grid) return;
 
     grid.innerHTML = "";
 
     const q = (query || "").toLowerCase().trim();
-    const filtered = activeModalMembers.filter(m => {
+    const filtered = activeModalRegularMembers.filter(m => {
         if (!q) return true;
-        const name = (m.name || "").toLowerCase();
+        const name = (m.name || m.fullName || "").toLowerCase();
         const role = (m.role || "").toLowerCase();
-        return name.includes(q) || role.includes(q);
+        const rollNo = (m.studentId || m.rollNo || "").toLowerCase();
+        const branch = (m.branch || m.branchCode || "").toLowerCase();
+        return name.includes(q) || role.includes(q) || rollNo.includes(q) || branch.includes(q);
     });
+
+    if (rosterCountEl) {
+        rosterCountEl.textContent = `${filtered.length} Team Member${filtered.length === 1 ? '' : 's'}`;
+    }
 
     if (metaEl) {
         metaEl.textContent = q 
-            ? `Showing ${filtered.length} of ${activeModalMembers.length} members`
-            : `Showing all ${activeModalMembers.length} active members`;
+            ? `Showing ${filtered.length} of ${activeModalRegularMembers.length} team members`
+            : `Showing all ${activeModalRegularMembers.length} active team members`;
     }
 
+    // If department has 0 regular members (only leadership) and no active search query
+    if (activeModalRegularMembers.length === 0 && !q) {
+        if (notice) notice.style.display = "block";
+        if (emptyState) emptyState.style.display = "none";
+        return;
+    }
+
+    if (notice) notice.style.display = "none";
+
+    // If search produced 0 matches
     if (filtered.length === 0) {
         if (emptyState) emptyState.style.display = "block";
         return;
@@ -2920,7 +3112,7 @@ function renderModalIdCards(query = "") {
     if (emptyState) emptyState.style.display = "none";
 
     filtered.forEach((m, index) => {
-        const cardHtml = renderHangingIdCardHtml(m, activeModalDept, index);
+        const cardHtml = renderMemberIdCardHtml(m, activeModalDept, index);
         grid.insertAdjacentHTML("beforeend", cardHtml);
     });
 }

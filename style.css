@@ -18514,13 +18514,598 @@ html[data-theme="dark"] .council-modal-body {
 }
 
 /* ==========================================================================
-   Side-by-Side Responsive CSS Grid (3-4 Cards Desktop, 2 Tablet, 1-2 Mobile)
+   VVISC Official Member ID Card (Exact Recreation of Reference Image)
+   ========================================================================== */
+
+.vvisc-id-card {
+    background: #F6F2E9; /* Warm cream / sand */
+    border-radius: 26px;
+    border: 1px solid rgba(13, 43, 29, 0.12);
+    box-shadow: 0 12px 32px -8px rgba(10, 35, 24, 0.12), 0 2px 8px rgba(0, 0, 0, 0.03);
+    padding: 24px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 340px;
+    min-height: 520px;
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    user-select: none;
+}
+
+.vvisc-id-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 42px -10px rgba(10, 35, 24, 0.2);
+}
+
+/* Background Subtle Decorative Elements (Grid & Wave) */
+.vvisc-id-card .id-card-bg-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: 
+        linear-gradient(to right, rgba(13, 43, 29, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(13, 43, 29, 0.045) 1px, transparent 1px);
+    background-size: 20px 20px;
+    mask-image: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, transparent 45%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.9) 100%);
+    -webkit-mask-image: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, transparent 45%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.9) 100%);
+    z-index: 0;
+}
+
+.vvisc-id-card .id-card-bg-wave {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 120px;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(ellipse at top right, rgba(215, 203, 180, 0.45) 0%, rgba(215, 203, 180, 0) 70%);
+    z-index: 0;
+}
+
+/* 1. Top VVISC Emblem & Brand Title */
+.id-card-emblem-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2px;
+}
+
+.id-card-emblem-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.id-card-emblem-icon .id-card-wreath-svg {
+    width: 54px;
+    height: 42px;
+    display: block;
+}
+
+.id-card-brand-title {
+    font-family: 'Outfit', 'Space Grotesk', serif, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    color: #0D2B1D; /* Forest Green */
+    text-transform: uppercase;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+/* 2. White Name Container Panel */
+.id-card-name-panel {
+    background: #FFFFFF;
+    border-radius: 18px;
+    width: 100%;
+    padding: 10px 14px 12px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(13, 43, 29, 0.04);
+    border: 1px solid rgba(13, 43, 29, 0.08);
+    position: relative;
+    z-index: 1;
+    margin: 10px 0 14px;
+    box-sizing: border-box;
+}
+
+.id-card-greeting-text {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: #2D4A3E;
+    text-transform: none;
+    margin-bottom: 2px;
+}
+
+.id-card-full-name {
+    font-family: 'Outfit', 'Space Grotesk', sans-serif;
+    font-size: 1.38rem;
+    font-weight: 800;
+    color: #082218;
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -0.01em;
+    word-break: break-word;
+}
+
+/* 3. Member Portrait Frame & Pill */
+.id-card-portrait-wrap {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+.id-card-portrait-frame {
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 7px;
+    box-shadow: 0 8px 22px rgba(13, 43, 29, 0.06);
+    border: 1px solid rgba(13, 43, 29, 0.08);
+    position: relative;
+    overflow: hidden;
+    background-color: #FAF8F2;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(13, 43, 29, 0.08) 1.5px, transparent 1.5px),
+        radial-gradient(circle at 90% 80%, rgba(13, 43, 29, 0.08) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+}
+
+.id-card-portrait-img {
+    width: 100%;
+    height: 290px;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 16px;
+    display: block;
+}
+
+.id-card-initials-avatar {
+    width: 100%;
+    height: 290px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0D2B1D 0%, #16422E 100%);
+    color: #E6C875;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.id-card-designation-pill {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FFFFFF;
+    border-radius: 999px;
+    padding: 7px 22px;
+    box-shadow: 0 6px 18px rgba(13, 43, 29, 0.12);
+    border: 1.5px solid rgba(13, 43, 29, 0.08);
+    font-family: 'Outfit', 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #0A2318;
+    white-space: nowrap;
+    z-index: 2;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+/* 4. Bottom Credential Capsule Bar */
+.id-card-bottom-bar {
+    background: #FFFFFF;
+    border-radius: 999px;
+    width: 100%;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 6px;
+    box-shadow: 0 4px 14px rgba(13, 43, 29, 0.05);
+    border: 1px solid rgba(13, 43, 29, 0.08);
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    box-sizing: border-box;
+}
+
+.id-card-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0A2318;
+}
+
+.id-card-bar-ico {
+    width: 15px;
+    height: 15px;
+    stroke: #0A2318;
+    flex-shrink: 0;
+}
+
+.id-card-roll-text {
+    font-family: 'Space Grotesk', monospace, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.id-card-branch-text {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #0A2318;
+}
+
+.id-card-bar-sep {
+    color: #D5CEBF;
+    font-weight: 300;
+    font-size: 0.85rem;
+    user-select: none;
+}
+
+.id-card-phone-circle {
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: #0A2318;
+    color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.id-card-phone-link {
+    color: #0A2318;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.id-card-phone-link:hover {
+    text-decoration: underline;
+    color: var(--accent-color);
+}
+
+.id-card-social-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #0A2318;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.78rem;
+}
+
+.id-card-in-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: #0A2318;
+    color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+/* ==========================================================================
+   Popup Leadership Section (Coordinator & Associate Coordinator Side-by-Side)
+   ========================================================================== */
+.council-modal-leadership-section {
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 1px dashed var(--border-color, rgba(16, 40, 32, 0.15));
+}
+
+.council-modal-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.council-modal-section-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(200, 155, 53, 0.16);
+    color: #C89B35;
+    border: 1px solid rgba(200, 155, 53, 0.3);
+}
+
+.council-modal-section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-color, #102820);
+    letter-spacing: -0.01em;
+}
+
+.council-modal-leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+
+@media (max-width: 680px) {
+    .council-modal-leadership-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.council-modal-leader-card {
+    background: var(--card-bg, #FFFFFF);
+    border: 1px solid var(--border-color, rgba(16, 40, 32, 0.12));
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.council-modal-leader-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.council-modal-leader-card.coordinator {
+    border-left: 4px solid #C89B35;
+    background: linear-gradient(135deg, rgba(200, 155, 53, 0.05) 0%, transparent 100%);
+}
+
+.council-modal-leader-card.associate {
+    border-left: 4px solid #102820;
+    background: linear-gradient(135deg, rgba(16, 40, 32, 0.03) 0%, transparent 100%);
+}
+
+body.dark-mode .council-modal-leader-card.associate,
+html[data-theme="dark"] .council-modal-leader-card.associate {
+    border-left-color: #4ade80;
+}
+
+.council-modal-leader-avatar {
+    width: 66px;
+    height: 66px;
+    border-radius: 14px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--border-color);
+}
+
+.council-modal-leader-card.coordinator .council-modal-leader-avatar {
+    border-color: #C89B35;
+}
+
+.council-modal-leader-initials {
+    width: 66px;
+    height: 66px;
+    border-radius: 14px;
+    background: #102820;
+    color: #C89B35;
+    font-weight: 800;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid #C89B35;
+}
+
+.council-modal-leader-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.council-modal-leader-role-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.council-modal-leader-card.coordinator .council-modal-leader-role-badge {
+    background: rgba(200, 155, 53, 0.15);
+    color: #C89B35;
+}
+
+.council-modal-leader-card.associate .council-modal-leader-role-badge {
+    background: rgba(16, 40, 32, 0.1);
+    color: var(--text-color);
+}
+
+.council-modal-leader-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-color);
+}
+
+.council-modal-leader-desig {
+    font-size: 0.82rem;
+    opacity: 0.8;
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.council-modal-leader-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.74rem;
+}
+
+.council-modal-leader-roll {
+    font-family: 'Space Grotesk', monospace, sans-serif;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+body.dark-mode .council-modal-leader-roll,
+html[data-theme="dark"] .council-modal-leader-roll {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.council-modal-leader-links {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.council-modal-leader-link {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.council-modal-leader-link:hover {
+    background: var(--accent-color);
+    color: #FFFFFF;
+}
+
+/* Vacant Leadership Slot */
+.council-modal-leader-card.vacant {
+    border-style: dashed;
+    background: rgba(0, 0, 0, 0.02);
+    opacity: 0.75;
+}
+
+body.dark-mode .council-modal-leader-card.vacant,
+html[data-theme="dark"] .council-modal-leader-card.vacant {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Dark Mode Overrides for the ID Card */
+body.dark-mode .vvisc-id-card,
+html[data-theme="dark"] .vvisc-id-card {
+    background: #0A1C16; /* Deep rich forest night */
+    border-color: rgba(212, 175, 55, 0.25);
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55);
+}
+
+body.dark-mode .vvisc-id-card .id-card-bg-grid,
+html[data-theme="dark"] .vvisc-id-card .id-card-bg-grid {
+    background-image: 
+        linear-gradient(to right, rgba(212, 175, 55, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(212, 175, 55, 0.06) 1px, transparent 1px);
+}
+
+body.dark-mode .id-card-brand-title,
+html[data-theme="dark"] .id-card-brand-title {
+    color: #E2CE9F;
+}
+
+body.dark-mode .id-card-name-panel,
+html[data-theme="dark"] .id-card-name-panel {
+    background: #0E271F;
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+body.dark-mode .id-card-greeting-text,
+html[data-theme="dark"] .id-card-greeting-text {
+    color: #A3C7B5;
+}
+
+body.dark-mode .id-card-full-name,
+html[data-theme="dark"] .id-card-full-name {
+    color: #FFFFFF;
+}
+
+body.dark-mode .id-card-portrait-frame,
+html[data-theme="dark"] .id-card-portrait-frame {
+    background: #0E271F;
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+body.dark-mode .id-card-designation-pill,
+html[data-theme="dark"] .id-card-designation-pill {
+    background: #14372C;
+    color: #FFFFFF;
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+body.dark-mode .id-card-bottom-bar,
+html[data-theme="dark"] .id-card-bottom-bar {
+    background: #0E271F;
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+body.dark-mode .id-card-bar-item,
+body.dark-mode .id-card-phone-link,
+body.dark-mode .id-card-branch-text,
+html[data-theme="dark"] .id-card-bar-item,
+html[data-theme="dark"] .id-card-phone-link,
+html[data-theme="dark"] .id-card-branch-text {
+    color: #EDE8DF;
+}
+
+body.dark-mode .id-card-bar-ico,
+html[data-theme="dark"] .id-card-bar-ico {
+    stroke: #E2CE9F;
+}
+
+body.dark-mode .id-card-phone-circle,
+html[data-theme="dark"] .id-card-phone-circle {
+    background: #C89B35;
+    color: #0A1C16;
+}
+
+/* ==========================================================================
+   Side-by-Side Responsive CSS Grid (3 Cards Desktop, 2 Tablet, 1 Mobile)
    ========================================================================== */
 .council-modal-cards-grid,
 .council-id-cards-grid {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 28px 18px !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 26px 20px !important;
     justify-items: center !important;
     align-items: start !important;
     width: 100% !important;
@@ -18545,422 +19130,6 @@ html[data-theme="dark"] .council-modal-body {
 body.dark-mode .council-modal-empty-state h4,
 html[data-theme="dark"] .council-modal-empty-state h4 {
     color: #FAF9F6;
-}
-
-/* ==========================================================================
-   Interactive 3D Hanging ID Card Component (User Design Reference)
-   ========================================================================== */
-.hanging-card-unit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    width: 100%;
-    max-width: 235px;
-    perspective: 1000px;
-    box-sizing: border-box;
-}
-
-/* Lanyard Top Strap & Metal Ring */
-.lanyard {
-    height: 38px;
-    width: 32px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    position: relative;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.strap {
-    width: 22px;
-    height: 30px;
-    background: linear-gradient(90deg, #090909, #363636, #090909);
-    border-radius: 0 0 6px 6px;
-    border: 1px solid #444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
-}
-
-.strap span {
-    writing-mode: vertical-rl;
-    font-size: 6px;
-    letter-spacing: 1.5px;
-    color: #D4AF37;
-    font-weight: 800;
-}
-
-.metal-ring {
-    width: 14px;
-    height: 14px;
-    border: 2.5px solid #777;
-    border-radius: 50%;
-    background: #ddd;
-    position: absolute;
-    bottom: -6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-/* 3D Flippable ID Card Body */
-.id-card {
-    width: 230px;
-    height: 360px;
-    position: relative;
-    transform-style: preserve-3d;
-    border-radius: 17px;
-    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.28));
-    transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s ease;
-    cursor: pointer;
-    user-select: none;
-    margin-top: -3px;
-    box-sizing: border-box;
-}
-
-.id-card:hover {
-    filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.38));
-}
-
-.id-card:focus {
-    outline: none;
-    filter: drop-shadow(0 0 0 3px rgba(212, 175, 55, 0.5));
-}
-
-.id-card.flipped {
-    transform: rotateY(180deg);
-}
-
-.id-card.flipped:hover {
-    transform: rotateY(180deg) translateY(-4px);
-}
-
-/* Common Card Face Styling */
-.card-face {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    border-radius: 17px;
-    background: linear-gradient(145deg, #16241E 0%, #081511 75%);
-    color: #f5f5f5;
-    border: 1px solid rgba(212, 175, 55, 0.35);
-    padding: 20px 18px 18px;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-}
-
-/* Glass Sheen Gradient */
-.card-front::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 45%);
-}
-
-/* Metallic Hole Cutout Grommet */
-.card-front::after,
-.card-back::after {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: calc(50% - 9px);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2.5px solid #666;
-    background: #eee;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
-    z-index: 4;
-}
-
-/* Brand Header */
-.card-brand {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 4px;
-}
-
-.card-brand strong {
-    font-size: 20px;
-    letter-spacing: -1px;
-    color: #FAF9F6;
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-    font-weight: 800;
-}
-
-.card-brand span {
-    font-size: 7.5px;
-    letter-spacing: 1px;
-    color: #D4AF37;
-    font-weight: 800;
-    text-transform: uppercase;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: rgba(212, 175, 55, 0.08);
-}
-
-/* Event & Chapter Block */
-.card-event {
-    margin-top: 18px;
-    font-size: 9.5px;
-    line-height: 1.35;
-    color: #9AB0A6;
-    text-align: left;
-}
-
-.card-event p {
-    margin: 1px 0;
-}
-
-.card-event .card-event-dept {
-    color: #E6DFD1;
-    font-weight: 600;
-    font-size: 10px;
-}
-
-/* Attendee Block */
-.card-attendee {
-    margin-top: 18px;
-    text-align: left;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-attendee-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-}
-
-.card-attendee small {
-    font-size: 7.5px;
-    letter-spacing: 1.5px;
-    color: #D4AF37;
-    text-transform: uppercase;
-    font-weight: 800;
-}
-
-.card-attendee-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1.5px solid #C89B35;
-    object-fit: cover;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.card-attendee-initials {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1.5px solid #C89B35;
-    background: linear-gradient(135deg, #102820, #C89B35);
-    color: #FFFFFF;
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-}
-
-.card-attendee h2 {
-    margin: 4px 0 2px;
-    font-size: 16.5px;
-    line-height: 1.2;
-    font-weight: 700;
-    color: #FAF9F6;
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-    overflow-wrap: anywhere;
-}
-
-.role {
-    margin-top: 4px;
-    font-size: 10.5px;
-    letter-spacing: 0.8px;
-    color: #8EABA0;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-/* Card Footer */
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 9.5px;
-    color: #8EABA0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-top: 8px;
-    margin-top: auto;
-}
-
-.card-footer span {
-    color: #9AB0A6;
-    font-weight: 600;
-    max-width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.card-footer b {
-    font-size: 14px;
-    color: #D4AF37;
-    font-family: monospace;
-    font-weight: 800;
-}
-
-/* Flip Trigger Button */
-.card-flip-btn {
-    position: absolute;
-    bottom: 11px;
-    right: 16px;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(212, 175, 55, 0.35);
-    color: #FAF9F6;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.2s ease;
-}
-
-.card-flip-btn:hover {
-    background: #D4AF37;
-    color: #081410;
-}
-
-/* Card Back Face */
-.card-back {
-    transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.back-brand {
-    width: 100%;
-    font-size: 13px;
-    font-weight: 800;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #FAF9F6;
-    margin-top: 4px;
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-}
-
-.back-brand span {
-    font-size: 7px;
-    color: #D4AF37;
-    letter-spacing: 1px;
-    font-weight: 700;
-}
-
-.qr-wrap {
-    margin-top: 14px;
-    background: #FFFFFF;
-    padding: 5px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.qr-caption {
-    margin-top: 7px;
-    font-size: 7.5px;
-    letter-spacing: 1.2px;
-    color: #D4AF37;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.back-info {
-    margin-top: 8px;
-    text-align: center;
-    font-size: 9px;
-    line-height: 1.35;
-    color: #9AB0A6;
-    width: 100%;
-}
-
-.back-info p {
-    margin: 2px 0;
-}
-
-.back-info strong {
-    color: #FAF9F6;
-    font-size: 11px;
-}
-
-.back-info .back-id {
-    font-family: monospace;
-    color: #D4AF37;
-    font-size: 8.5px;
-    letter-spacing: 0.5px;
-}
-
-.back-social-links {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 6px;
-}
-
-.back-social-link {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    color: #FAF9F6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.back-social-link:hover {
-    background: #D4AF37;
-    color: #081410;
-}
-
-.barcode {
-    height: 20px;
-    display: flex;
-    align-items: stretch;
-    gap: 2px;
-    margin-top: auto;
-    margin-bottom: 24px;
-    justify-content: center;
-}
-
-.barcode i {
-    display: block;
-    height: 100%;
-    background: #FAF9F6;
 }
 
 /* ==========================================================================

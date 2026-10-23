@@ -40,7 +40,14 @@ service firebase.storage {
 
     match /council/{allPaths=**} {
       allow read: if true;
-      allow write: if isSignedIn() && isValidImage();
+      allow create, update: if isSignedIn() && isValidImage();
+      allow delete: if isSignedIn();
+    }
+
+    match /council-members/{allPaths=**} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && isValidImage();
+      allow delete: if isSignedIn();
     }
 
     match /projects/{allPaths=**} {
