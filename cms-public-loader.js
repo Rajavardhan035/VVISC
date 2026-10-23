@@ -2385,67 +2385,199 @@ function renderCouncilDOM(members, depts) {
     renderDepartmentDirectory(depts, activeMembers);
 }
 
-// Render single member ID card HTML matching the official VVISC ID Card reference
-function renderIdCardHtml(member, dept) {
+// --------------------------------------------------
+// High-Fidelity 3D Hanging Card ID Generator
+// (Integrated with official VVISC Hanging Pass UI)
+// --------------------------------------------------
+
+function generateQrSvg(text, size = 95) {
+    const N = 21;
+    const grid = Array.from({length: N}, () => Array(N).fill(0));
+    
+    // 1. Finder patterns (top-left, top-right, bottom-left)
+    function drawFinder(r0, c0) {
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                if (r === 0 || r === 6 || c === 0 || c === 6 || (r >= 2 && r <= 4 && c >= 2 && c <= 4)) {
+                    grid[r0 + r][c0 + c] = 1;
+                }
+            }
+        }
+    }
+    drawFinder(0, 0);
+    drawFinder(0, 14);
+    drawFinder(14, 0);
+    
+    // 2. Timing patterns
+    for (let i = 8; i < 13; i++) {
+        grid[6][i] = (i % 2 === 0) ? 1 : 0;
+        grid[i][6] = (i % 2 === 0) ? 1 : 0;
+    }
+    
+    // 3. Hash-based deterministic fill
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+        hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0;
+    }
+    
+    for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+            if ((r < 8 && c < 8) || (r < 8 && c >= 13) || (r >= 13 && c < 8)) continue;
+            if (r === 6 || c === 6) continue;
+            const bit = Math.abs((hash ^ (r * 31 + c * 17 + (hash >> (r % 7)))) % 2);
+            grid[r][c] = bit;
+        }
+    }
+    
+    const cellSize = (size / N).toFixed(2);
+    let rects = '';
+    for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+            if (grid[r][c]) {
+                const x = (c * cellSize).toFixed(2);
+                const y = (r * cellSize).toFixed(2);
+                rects += '<rect x="' + x + '" y="' + y + '" width="' + cellSize + '" height="' + cellSize + '" fill="#080808"/>';
+            }
+        }
+    }
+    
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + rects + '</svg>';
+}
+
+window.toggleCardFlip = function(cardOrBtn, event) {
+    if (event) {
+        if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+        if (event.target.tagName === 'A' || event.target.closest('a')) return;
+        event.stopPropagation();
+    }
+    const card = cardOrBtn.classList.contains('id-card') ? cardOrBtn : cardOrBtn.closest('.id-card');
+    if (card) {
+        card.classList.toggle('flipped');
+    }
+};
+
+function renderHangingIdCardHtml(member, dept, index = 0) {
     const initials = getMemberInitials(member.name);
     const hasImg = member.profileImage && member.profileImage !== "assets/nodp.png";
     const imgSrc = hasImg ? escapeHtml(getPublicImgSrc(member.profileImage)) : "";
     const name = escapeHtml(member.name || "Council Member");
     const role = escapeHtml(member.role || (dept ? `${dept.name} Member` : "Member"));
     const deptName = escapeHtml(dept ? dept.name : (member.department || "VVISC Council"));
-    const initialsFallback = `<div class="id-card-initials-fallback">${initials}</div>`;
+    
+    const lRole = (member.leadershipRole || "").toLowerCase();
+    const roleLower = (member.role || "").toLowerCase();
+    let badgeText = "ALL ACCESS";
+    let attendeeTag = "COUNCIL MEMBER";
+    
+    if (lRole === "coordinator" || (roleLower.includes("coordinator") && !roleLower.includes("associate") && !roleLower.includes("faculty"))) {
+        badgeText = "COORDINATOR";
+        attendeeTag = "DEPT COORDINATOR";
+    } else if (lRole === "associate_coordinator" || roleLower.includes("associate")) {
+        badgeText = "ASSOC COORD";
+        attendeeTag = "ASSOCIATE COORD";
+    }
 
-    let linksHtml = "";
+    const memberIdCode = `VVISC-26-${String(index + 1).padStart(3, '0')}`;
+    const qrSvg = generateQrSvg(`${memberIdCode}|${member.name}|${deptName}`);
+
+    const avatarHtml = hasImg ? `
+        <img src="${imgSrc}" alt="${name}" class="card-attendee-avatar" onerror="this.onerror=null; this.outerHTML='<div class=\\\'card-attendee-initials\\\'>${initials}</div>';">
+    ` : `
+        <div class="card-attendee-initials">${initials}</div>
+    `;
+
+    let socialLinksHtml = "";
     if (member.linkedin && member.linkedin !== "#") {
-        linksHtml += `<a href="${escapeHtml(member.linkedin)}" target="_blank" rel="noopener" class="id-card-link-btn" title="LinkedIn Profile" aria-label="LinkedIn Profile">in</a>`;
+        socialLinksHtml += `<a href="${escapeHtml(member.linkedin)}" target="_blank" rel="noopener" class="back-social-link" title="LinkedIn Profile" onclick="event.stopPropagation()">in</a>`;
     }
     if (member.github && member.github !== "#") {
-        linksHtml += `<a href="${escapeHtml(member.github)}" target="_blank" rel="noopener" class="id-card-link-btn" title="GitHub Profile" aria-label="GitHub Profile">gh</a>`;
+        socialLinksHtml += `<a href="${escapeHtml(member.github)}" target="_blank" rel="noopener" class="back-social-link" title="GitHub Profile" onclick="event.stopPropagation()">gh</a>`;
     }
 
+    const barcodeHtml = "|| ||| | || |||| || | ||||".split("").map((c, i) =>
+        c === "|" ? `<i style="width: ${i % 3 === 0 ? 3 : 1.2}px"></i>` : ""
+    ).join("");
+
     return `
-        <div class="council-id-card" data-member-name="${escapeAttr(member.name || '')}" data-member-role="${escapeAttr(member.role || '')}">
-            <!-- ID Card Header: VVISC Brand -->
-            <div class="id-card-brand-header">
-                <div class="id-card-emblem-wrap">
-                    <svg class="id-card-emblem" width="34" height="34" viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="22" stroke="var(--accent-gold, #C89B35)" stroke-width="1.5" stroke-dasharray="3 3"/>
-                        <path d="M24 10 L24 32 M14 26 C17 23 21 23 24 25 C27 23 31 23 34 26 L34 16 C31 13 27 13 24 15 C21 13 17 13 14 16 Z" fill="none" stroke="var(--text-color, #102820)" stroke-width="2"/>
-                        <path d="M24 8 L24 5 M18 9 L16 7 M30 9 L32 7" stroke="var(--accent-gold, #C89B35)" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <div class="id-card-brand-title">VVISC</div>
-                    <div class="id-card-sub-brand">COUNCIL MEMBER</div>
+        <div class="hanging-card-unit" data-member-name="${escapeAttr(member.name || '')}" data-member-role="${escapeAttr(member.role || '')}">
+            <!-- Lanyard Top Strap & Metal Ring -->
+            <div class="lanyard">
+                <div class="strap">
+                    <span>COUNCIL PASS</span>
                 </div>
+                <div class="metal-ring"></div>
             </div>
 
-            <!-- "Hello, I am" Pill Box -->
-            <div class="id-card-name-bubble">
-                <span class="id-card-greeting">Hello, I am</span>
-                <h4 class="id-card-name" title="${name}">${name}</h4>
-            </div>
+            <!-- 3D Flippable ID Card -->
+            <div class="id-card" onclick="toggleCardFlip(this, event)" onkeydown="toggleCardFlip(this, event)" role="button" tabindex="0" aria-label="Toggle ${name} ID Card front and back">
+                <!-- FRONT FACE -->
+                <section class="card-face card-front">
+                    <div class="card-brand">
+                        <strong>VVISC.</strong>
+                        <span>${badgeText}</span>
+                    </div>
 
-            <!-- Portrait Photo Frame -->
-            <div class="id-card-portrait-wrap">
-                <div class="id-card-dot-pattern"></div>
-                ${hasImg ? `
-                    <img src="${imgSrc}" alt="${name}" class="id-card-img" onerror="this.onerror=null; this.parentElement.innerHTML='${initialsFallback}';">
-                ` : initialsFallback}
-            </div>
+                    <div class="card-event">
+                        <p>VVIT IUCEE Student Chapter</p>
+                        <p class="card-event-dept">${deptName}</p>
+                        <p class="card-event-date">Tenure 2025 - 2026</p>
+                    </div>
 
-            <!-- Role Badge Pill overlapping photo bottom -->
-            <div class="id-card-role-pill" title="${role}">
-                <span>${role}</span>
-            </div>
+                    <div class="card-attendee">
+                        <div class="card-attendee-head">
+                            <small>${attendeeTag}</small>
+                            ${avatarHtml}
+                        </div>
+                        <h2>${name}</h2>
+                        <div class="role">${role}</div>
+                    </div>
 
-            <!-- Bottom Info Bar (Department & optional links) -->
-            <div class="id-card-bottom-bar">
-                <span class="id-card-dept-badge">🏛️ ${deptName}</span>
-                <div class="id-card-links">
-                    ${linksHtml}
-                </div>
+                    <div class="card-footer">
+                        <span>${deptName}</span>
+                        <b>#${String(index + 1).padStart(2, '0')}</b>
+                    </div>
+
+                    <button type="button" class="card-flip-btn" onclick="toggleCardFlip(this, event)" aria-label="Flip card">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        <span>Flip</span>
+                    </button>
+                </section>
+
+                <!-- BACK FACE -->
+                <section class="card-face card-back">
+                    <div class="back-brand">
+                        VVISC. <span>COUNCIL CREDENTIAL</span>
+                    </div>
+
+                    <div class="qr-wrap">
+                        ${qrSvg}
+                    </div>
+
+                    <p class="qr-caption">SCAN FOR ACCESS</p>
+
+                    <div class="back-info">
+                        <p class="back-name"><strong>${name}</strong></p>
+                        <p class="back-role">${role} / ${deptName}</p>
+                        <p class="back-id">ID: ${memberIdCode}</p>
+                        ${socialLinksHtml ? `<div class="back-social-links">${socialLinksHtml}</div>` : ''}
+                    </div>
+
+                    <div class="barcode" aria-hidden="true">
+                        ${barcodeHtml}
+                    </div>
+
+                    <button type="button" class="card-flip-btn back-flip-btn" onclick="toggleCardFlip(this, event)" aria-label="View front">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        <span>Front</span>
+                    </button>
+                </section>
             </div>
         </div>
     `;
+}
+
+function renderIdCardHtml(member, dept, index = 0) {
+    return renderHangingIdCardHtml(member, dept, index);
 }
 
 function renderDepartmentDirectory(depts, activeMembers) {
@@ -2787,8 +2919,8 @@ function renderModalIdCards(query = "") {
 
     if (emptyState) emptyState.style.display = "none";
 
-    filtered.forEach(m => {
-        const cardHtml = renderIdCardHtml(m, activeModalDept);
+    filtered.forEach((m, index) => {
+        const cardHtml = renderHangingIdCardHtml(m, activeModalDept, index);
         grid.insertAdjacentHTML("beforeend", cardHtml);
     });
 }

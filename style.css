@@ -18251,8 +18251,8 @@ html[data-theme="dark"] .council-view-team-btn:hover {
 .council-modal-dialog {
     background: #FFFFFF;
     border-radius: 24px;
-    max-width: 1060px;
-    width: 100%;
+    max-width: 1180px;
+    width: 95%;
     max-height: 88vh;
     display: flex;
     flex-direction: column;
@@ -18501,10 +18501,11 @@ html[data-theme="dark"] .council-modal-filter-meta {
 
 /* Modal Scrollable Body & ID Card Grid */
 .council-modal-body {
-    padding: 28px;
+    padding: 28px 24px 36px;
     overflow-y: auto;
     flex: 1;
     background: #F7F5EE;
+    box-sizing: border-box;
 }
 
 body.dark-mode .council-modal-body,
@@ -18512,17 +18513,27 @@ html[data-theme="dark"] .council-modal-body {
     background: #061B15;
 }
 
-.council-modal-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 24px;
-    justify-content: center;
+/* ==========================================================================
+   Side-by-Side Responsive CSS Grid (3-4 Cards Desktop, 2 Tablet, 1-2 Mobile)
+   ========================================================================== */
+.council-modal-cards-grid,
+.council-id-cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 28px 18px !important;
+    justify-items: center !important;
+    align-items: start !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
 }
 
 .council-modal-empty-state {
     text-align: center;
     padding: 60px 20px;
     color: #718096;
+    grid-column: 1 / -1;
+    width: 100%;
 }
 
 .council-modal-empty-state h4 {
@@ -18537,320 +18548,452 @@ html[data-theme="dark"] .council-modal-empty-state h4 {
 }
 
 /* ==========================================================================
-   ID CARD MEMBER UI (Inspired by uploaded reference media_1792743800481.jpg)
+   Interactive 3D Hanging ID Card Component (User Design Reference)
    ========================================================================== */
-.council-id-card {
-    background: #FBF8EE;
-    border: 1.5px solid rgba(200, 155, 53, 0.35);
-    border-radius: 24px;
-    padding: 18px 16px 14px;
+.hanging-card-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    max-width: 235px;
+    perspective: 1000px;
+    box-sizing: border-box;
+}
+
+/* Lanyard Top Strap & Metal Ring */
+.lanyard {
+    height: 38px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.strap {
+    width: 22px;
+    height: 30px;
+    background: linear-gradient(90deg, #090909, #363636, #090909);
+    border-radius: 0 0 6px 6px;
+    border: 1px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+}
+
+.strap span {
+    writing-mode: vertical-rl;
+    font-size: 6px;
+    letter-spacing: 1.5px;
+    color: #D4AF37;
+    font-weight: 800;
+}
+
+.metal-ring {
+    width: 14px;
+    height: 14px;
+    border: 2.5px solid #777;
+    border-radius: 50%;
+    background: #ddd;
+    position: absolute;
+    bottom: -6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 3D Flippable ID Card Body */
+.id-card {
+    width: 230px;
+    height: 360px;
+    position: relative;
+    transform-style: preserve-3d;
+    border-radius: 17px;
+    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.28));
+    transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+    margin-top: -3px;
+    box-sizing: border-box;
+}
+
+.id-card:hover {
+    filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.38));
+}
+
+.id-card:focus {
+    outline: none;
+    filter: drop-shadow(0 0 0 3px rgba(212, 175, 55, 0.5));
+}
+
+.id-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.id-card.flipped:hover {
+    transform: rotateY(180deg) translateY(-4px);
+}
+
+/* Common Card Face Styling */
+.card-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #16241E 0%, #081511 75%);
+    color: #f5f5f5;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    padding: 20px 18px 18px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* Glass Sheen Gradient */
+.card-front::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 45%);
+}
+
+/* Metallic Hole Cutout Grommet */
+.card-front::after,
+.card-back::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: calc(50% - 9px);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2.5px solid #666;
+    background: #eee;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+    z-index: 4;
+}
+
+/* Brand Header */
+.card-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.card-brand strong {
+    font-size: 20px;
+    letter-spacing: -1px;
+    color: #FAF9F6;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    font-weight: 800;
+}
+
+.card-brand span {
+    font-size: 7.5px;
+    letter-spacing: 1px;
+    color: #D4AF37;
+    font-weight: 800;
+    text-transform: uppercase;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(212, 175, 55, 0.08);
+}
+
+/* Event & Chapter Block */
+.card-event {
+    margin-top: 18px;
+    font-size: 9.5px;
+    line-height: 1.35;
+    color: #9AB0A6;
+    text-align: left;
+}
+
+.card-event p {
+    margin: 1px 0;
+}
+
+.card-event .card-event-dept {
+    color: #E6DFD1;
+    font-weight: 600;
+    font-size: 10px;
+}
+
+/* Attendee Block */
+.card-attendee {
+    margin-top: 18px;
+    text-align: left;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-attendee-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.card-attendee small {
+    font-size: 7.5px;
+    letter-spacing: 1.5px;
+    color: #D4AF37;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.card-attendee-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #C89B35;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.card-attendee-initials {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #C89B35;
+    background: linear-gradient(135deg, #102820, #C89B35);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+}
+
+.card-attendee h2 {
+    margin: 4px 0 2px;
+    font-size: 16.5px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #FAF9F6;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    overflow-wrap: anywhere;
+}
+
+.role {
+    margin-top: 4px;
+    font-size: 10.5px;
+    letter-spacing: 0.8px;
+    color: #8EABA0;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Card Footer */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9.5px;
+    color: #8EABA0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
+    margin-top: auto;
+}
+
+.card-footer span {
+    color: #9AB0A6;
+    font-weight: 600;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-footer b {
+    font-size: 14px;
+    color: #D4AF37;
+    font-family: monospace;
+    font-weight: 800;
+}
+
+/* Flip Trigger Button */
+.card-flip-btn {
+    position: absolute;
+    bottom: 11px;
+    right: 16px;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: #FAF9F6;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.card-flip-btn:hover {
+    background: #D4AF37;
+    color: #081410;
+}
+
+/* Card Back Face */
+.card-back {
+    transform: rotateY(180deg);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    position: relative;
-    box-shadow: 0 10px 25px rgba(16, 40, 32, 0.08);
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
-    box-sizing: border-box;
+}
+
+.back-brand {
     width: 100%;
-    max-width: 310px;
-    margin: 0 auto;
-}
-
-.council-id-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 36px rgba(16, 40, 32, 0.14);
-    border-color: #C89B35;
-}
-
-body.dark-mode .council-id-card,
-html[data-theme="dark"] .council-id-card {
-    background: #0E2C23;
-    border-color: rgba(212, 175, 55, 0.4);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-}
-
-body.dark-mode .council-id-card:hover,
-html[data-theme="dark"] .council-id-card:hover {
-    border-color: #D4AF37;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 175, 55, 0.2);
-}
-
-/* ID Card Top Brand Header */
-.id-card-brand-header {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 8px;
-}
-
-.id-card-emblem-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-
-.id-card-emblem {
-    margin-bottom: 2px;
-}
-
-.id-card-brand-title {
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.2em;
-    color: #102820;
-    line-height: 1;
-}
-
-body.dark-mode .id-card-brand-title,
-html[data-theme="dark"] .id-card-brand-title {
-    color: #FAF9F6;
-}
-
-.id-card-sub-brand {
-    font-size: 0.58rem;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.16em;
-    color: #C89B35;
-    line-height: 1;
-}
-
-body.dark-mode .id-card-sub-brand,
-html[data-theme="dark"] .id-card-sub-brand {
-    color: #E5C365;
-}
-
-/* "Hello, I am" Pill Box & Name */
-.id-card-name-bubble {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 12px;
-}
-
-.id-card-greeting {
-    display: inline-block;
-    padding: 3px 14px;
-    background: #FFFFFF;
-    border-radius: 50px;
-    font-size: 0.68rem;
-    font-weight: 600;
-    font-style: italic;
-    color: #4A6357;
-    border: 1px solid rgba(200, 155, 53, 0.25);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-    margin-bottom: 6px;
-}
-
-body.dark-mode .id-card-greeting,
-html[data-theme="dark"] .id-card-greeting {
-    background: rgba(255, 255, 255, 0.08);
-    color: #A0D8C3;
-    border-color: rgba(212, 175, 55, 0.3);
-}
-
-.id-card-name {
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-    font-size: 1.18rem;
-    font-weight: 800;
-    color: #102820;
-    margin: 0;
-    line-height: 1.25;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-body.dark-mode .id-card-name,
-html[data-theme="dark"] .id-card-name {
-    color: #FAF9F6;
-}
-
-/* Central Portrait Photo Frame with Dot Grid Texture */
-.id-card-portrait-wrap {
-    width: 100%;
-    aspect-ratio: 1 / 1.05;
-    border-radius: 18px;
-    background: #ECE6D5;
-    border: 3px solid #FFFFFF;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 6px 16px rgba(16, 40, 32, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-}
-
-body.dark-mode .id-card-portrait-wrap,
-html[data-theme="dark"] .id-card-portrait-wrap {
-    background: #09221B;
-    border-color: #164638;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-}
-
-.id-card-dot-pattern {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(16, 40, 32, 0.16) 1.5px, transparent 1.5px);
-    background-size: 12px 12px;
-    opacity: 0.85;
-    pointer-events: none;
-}
-
-body.dark-mode .id-card-dot-pattern,
-html[data-theme="dark"] .id-card-dot-pattern {
-    background-image: radial-gradient(rgba(212, 175, 55, 0.25) 1.5px, transparent 1.5px);
-}
-
-.id-card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    position: relative;
-    z-index: 1;
-}
-
-.id-card-initials-fallback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.2rem;
-    font-weight: 800;
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-    background: linear-gradient(135deg, #102820 0%, #1A4D3E 50%, #C89B35 100%);
-    color: #FAF9F6;
-    user-select: none;
-    position: relative;
-    z-index: 1;
-}
-
-body.dark-mode .id-card-initials-fallback,
-html[data-theme="dark"] .id-card-initials-fallback {
-    background: linear-gradient(135deg, #051F1A 0%, #0E2C23 60%, #D4AF37 100%);
-    color: #FFFFFF;
-}
-
-/* Floating Role Badge Pill */
-.id-card-role-pill {
-    margin-top: -26px;
-    position: relative;
-    z-index: 2;
-    background: #FFFFFF;
-    color: #102820;
-    border: 1px solid rgba(200, 155, 53, 0.35);
-    border-radius: 50px;
-    padding: 5px 16px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    white-space: nowrap;
-    max-width: 90%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-body.dark-mode .id-card-role-pill,
-html[data-theme="dark"] .id-card-role-pill {
-    background: #173E32;
-    color: #FAF9F6;
-    border-color: rgba(212, 175, 55, 0.5);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-}
-
-/* Bottom Bar: Department & Links */
-.id-card-bottom-bar {
-    width: 100%;
-    margin-top: 12px;
-    padding: 7px 12px;
-    background: #FFFFFF;
-    border-radius: 12px;
-    border: 1px solid rgba(200, 155, 53, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    box-sizing: border-box;
+    color: #FAF9F6;
+    margin-top: 4px;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
 }
 
-body.dark-mode .id-card-bottom-bar,
-html[data-theme="dark"] .id-card-bottom-bar {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.id-card-dept-badge {
-    font-size: 0.68rem;
+.back-brand span {
+    font-size: 7px;
+    color: #D4AF37;
+    letter-spacing: 1px;
     font-weight: 700;
-    color: #1A4D3E;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: left;
 }
 
-body.dark-mode .id-card-dept-badge,
-html[data-theme="dark"] .id-card-dept-badge {
-    color: #C5E3D8;
-}
-
-.id-card-links {
+.qr-wrap {
+    margin-top: 14px;
+    background: #FFFFFF;
+    padding: 5px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.id-card-link-btn {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.qr-caption {
+    margin-top: 7px;
+    font-size: 7.5px;
+    letter-spacing: 1.2px;
+    color: #D4AF37;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.back-info {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 9px;
+    line-height: 1.35;
+    color: #9AB0A6;
+    width: 100%;
+}
+
+.back-info p {
+    margin: 2px 0;
+}
+
+.back-info strong {
+    color: #FAF9F6;
+    font-size: 11px;
+}
+
+.back-info .back-id {
+    font-family: monospace;
+    color: #D4AF37;
+    font-size: 8.5px;
+    letter-spacing: 0.5px;
+}
+
+.back-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.back-social-link {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #EBF1EE;
-    color: #102820;
-    font-size: 0.65rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #FAF9F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
     font-weight: 700;
     text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.id-card-link-btn:hover {
-    background: #102820;
-    color: #FFFFFF;
-}
-
-body.dark-mode .id-card-link-btn,
-html[data-theme="dark"] .id-card-link-btn {
-    background: rgba(255, 255, 255, 0.08);
-    color: #C5E3D8;
-}
-
-body.dark-mode .id-card-link-btn:hover,
-html[data-theme="dark"] .id-card-link-btn:hover {
+.back-social-link:hover {
     background: #D4AF37;
-    color: #051F1A;
+    color: #081410;
+}
+
+.barcode {
+    height: 20px;
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    margin-top: auto;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.barcode i {
+    display: block;
+    height: 100%;
+    background: #FAF9F6;
 }
 
 /* ==========================================================================
-   Responsive Breakpoints & Reduced Motion
+   Responsive Breakpoints for Side-by-Side Grid (Desktop 3-4, Tablet 2, Mobile 1-2)
    ========================================================================== */
-@media (max-width: 1100px) {
+@media (max-width: 1140px) {
+    .council-modal-cards-grid,
+    .council-id-cards-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 24px 16px !important;
+    }
+
     .council-dept-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 22px !important;
     }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
+    .council-modal-cards-grid,
+    .council-id-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 22px 14px !important;
+    }
+}
+
+@media (max-width: 580px) {
+    .council-modal-cards-grid,
+    .council-id-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
     .council-dept-grid {
         grid-template-columns: 1fr !important;
         gap: 20px !important;
@@ -18859,6 +19002,7 @@ html[data-theme="dark"] .id-card-link-btn:hover {
     .council-modal-dialog {
         max-height: 94vh;
         border-radius: 18px;
+        width: 96%;
     }
 
     .council-modal-header {
@@ -18873,10 +19017,6 @@ html[data-theme="dark"] .id-card-link-btn:hover {
         padding: 18px 14px;
     }
 
-    .council-modal-cards-grid {
-        grid-template-columns: 1fr;
-    }
-
     .council-dept-leadership-grid {
         grid-template-columns: 1fr;
     }
@@ -18885,7 +19025,8 @@ html[data-theme="dark"] .id-card-link-btn:hover {
 @media (prefers-reduced-motion: reduce) {
     .council-dept-card,
     .council-leader-slot,
-    .council-id-card,
+    .hanging-card-unit,
+    .id-card,
     .council-modal-dialog,
     .council-modal-overlay {
         transition: none !important;
