@@ -2127,6 +2127,40 @@ const DEFAULT_COUNCIL_MEMBERS = [
         active: true
     },
     {
+        id: "assoc-digital",
+        name: "Navya",
+        studentId: "24BQ1A42",
+        branch: "AIM",
+        memberType: "Student Leader",
+        role: "Associate Coordinator",
+        leadershipRole: "associate_coordinator",
+        department: "Digital Infrastructure",
+        description: "Assists the Digital Infrastructure Coordinator in managing portals and platforms.",
+        profileImage: "assets/nodp.png",
+        email: "navya@vvisc.net",
+        linkedin: "#",
+        github: "#",
+        displayOrder: 11,
+        active: true
+    },
+    {
+        id: "member-digital-vivek",
+        name: "K. S. Vivek",
+        studentId: "23BQ1A05",
+        branch: "CSE",
+        memberType: "Council Member",
+        role: "Team Member",
+        leadershipRole: "member",
+        department: "Digital Infrastructure",
+        description: "Technical team contributor for digital systems and operations.",
+        profileImage: "assets/nodp.png",
+        email: "vivek@vvisc.net",
+        linkedin: "#",
+        github: "#",
+        displayOrder: 12,
+        active: true
+    },
+    {
         id: "coord-pr",
         name: "Harika K",
         memberType: "Student Leader",
@@ -2302,6 +2336,183 @@ function matchesDepartment(member, dept) {
     }
 
     return false;
+}
+
+
+function normalizeCouncilMember(m) {
+    if (!m) return m;
+    const norm = { ...m };
+    const name = (norm.name || norm.fullName || "").trim();
+    const nameLower = name.toLowerCase();
+    const id = (norm.id || "").toLowerCase();
+
+    // Specific profile enrichment: Rajavardhan Perugu (DI Coordinator)
+    if (id === "member_rajavardhan" || id === "coord-digital" || nameLower.includes("raja") || nameLower.includes("perugu")) {
+        norm.name = "Rajavardhan Perugu";
+        norm.fullName = "Rajavardhan Perugu";
+        norm.studentId = "23BQ5A6135";
+        norm.rollNo = "23BQ5A6135";
+        norm.branch = "AIM";
+        norm.branchCode = "AIM";
+        norm.phone = "8466994645";
+        norm.contactInfo = "8466994645";
+        norm.role = "DI Coordinator";
+        norm.leadershipRole = "coordinator";
+        norm.department = "Digital Infrastructure";
+        norm.departmentName = "Digital Infrastructure";
+        norm.displayOrder = 1;
+    }
+
+    // Specific profile enrichment: Navya (Associate Coordinator)
+    if (id === "fjhiurg8nvffosp2pcep" || nameLower === "navya" || (nameLower.includes("navya") && (norm.department || "").toLowerCase().includes("digital"))) {
+        norm.name = "Navya";
+        norm.fullName = "Navya";
+        norm.role = "Associate Coordinator";
+        norm.leadershipRole = "associate_coordinator";
+        norm.department = "Digital Infrastructure";
+        norm.departmentName = "Digital Infrastructure";
+        norm.studentId = (!norm.studentId || norm.studentId.toLowerCase().includes("wefwf")) ? "24BQ1A42" : norm.studentId.toUpperCase();
+        norm.rollNo = norm.studentId;
+        if (!norm.branch) norm.branch = "AIM";
+        norm.branchCode = norm.branch;
+        norm.displayOrder = 2;
+    }
+
+    // Specific profile enrichment: K. S. Vivek (Team Member)
+    if (nameLower.includes("vivek") || id === "s0lrm2f2qlzrnpj3ljxi") {
+        norm.name = "K. S. Vivek";
+        norm.fullName = "K. S. Vivek";
+        norm.role = "Team Member";
+        norm.leadershipRole = "member";
+        norm.department = "Digital Infrastructure";
+        norm.departmentName = "Digital Infrastructure";
+        norm.studentId = (!norm.studentId || norm.studentId.toLowerCase().includes("wefwf")) ? "23BQ1A05" : norm.studentId.toUpperCase();
+        norm.rollNo = norm.studentId;
+        if (!norm.branch) norm.branch = "CSE";
+        norm.branchCode = norm.branch;
+        norm.displayOrder = 3;
+    }
+
+    norm.displayOrder = parseInt(norm.displayOrder) || 50;
+    return norm;
+}
+
+function resolveDepartmentLeadership(dept, activeMembers) {
+    if (!dept) return { coordinator: null, associate: null };
+
+    const slug = (dept.slug || dept.id || "").toLowerCase();
+    const deptName = (dept.name || "").toLowerCase();
+    const assigned = (activeMembers || []).filter(m => matchesDepartment(m, dept));
+
+    const isAssociateMatch = (m) => {
+        if (!m) return false;
+        const lRole = (m.leadershipRole || "").toLowerCase().trim();
+        const role = (m.role || "").toLowerCase().trim();
+        if (lRole === "associate_coordinator") return true;
+        if (role.includes("associate") || role.includes("ass ") || role.includes("ass.") || role.includes("ass co") || role.includes("asst") || role.includes("vice")) return true;
+        return false;
+    };
+
+    const isCoordinatorMatch = (m) => {
+        if (!m) return false;
+        if (isAssociateMatch(m)) return false; // MUST NEVER be an associate!
+        const lRole = (m.leadershipRole || "").toLowerCase().trim();
+        const role = (m.role || "").toLowerCase().trim();
+        if (lRole === "coordinator") return true;
+        if ((role.includes("coordinator") || role.includes("co-ordinator") || role.includes("lead") || role.includes("head")) && !role.includes("faculty")) return true;
+        return false;
+    };
+
+    // 1. Resolve Coordinator
+    let coordinator = null;
+    if (dept.coordinatorId) {
+        coordinator = activeMembers.find(m => m.id === dept.coordinatorId);
+    }
+    if (!coordinator && dept.coordinatorName) {
+        const cTarget = dept.coordinatorName.toLowerCase().trim();
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase().trim();
+            return n === cTarget || n.includes(cTarget) || cTarget.includes(n);
+        });
+    }
+    // Department-specific verified coordinators
+    if (!coordinator && (slug.includes("digital") || deptName.includes("digital"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "member_rajavardhan" || m.id === "coord-digital" || n.includes("raja") || n.includes("perugu");
+        });
+    }
+    if (!coordinator && (slug.includes("rnd") || deptName.includes("research"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "coord-rnd" || m.id === "member_harshitha" || n.includes("harshitha");
+        });
+    }
+    if (!coordinator && (slug.includes("pr") || deptName.includes("public"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "coord-pr" || m.id === "member_harika" || n.includes("harika");
+        });
+    }
+    if (!coordinator && (slug.includes("operation") || deptName.includes("operation"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "coord-operations" || m.id === "member_praveena" || n.includes("praveena");
+        });
+    }
+    if (!coordinator && (slug.includes("strategy") || deptName.includes("strateg"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "coord-strategy" || m.id === "member_nishitha" || n.includes("nishitha");
+        });
+    }
+    if (!coordinator && (slug.includes("social") || slug.includes("media") || deptName.includes("media") || deptName.includes("visual") || deptName.includes("m&v"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "coord-media" || m.id === "member_abhishek" || n.includes("abhishek");
+        });
+    }
+    if (!coordinator && (slug.includes("finance") || deptName.includes("finance"))) {
+        coordinator = activeMembers.find(m => {
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "student-treasurer" || m.id === "member_lalith" || n.includes("lalith");
+        });
+    }
+    if (!coordinator) {
+        coordinator = assigned.find(isCoordinatorMatch);
+    }
+    if (!coordinator) {
+        coordinator = activeMembers.find(m => matchesDepartment(m, dept) && isCoordinatorMatch(m));
+    }
+
+    // 2. Resolve Associate Coordinator
+    let associate = null;
+    if (dept.associateCoordinatorId) {
+        associate = activeMembers.find(m => m.id === dept.associateCoordinatorId && m !== coordinator);
+    }
+    if (!associate && dept.associateCoordinatorName) {
+        const aTarget = dept.associateCoordinatorName.toLowerCase().trim();
+        associate = activeMembers.find(m => {
+            if (m === coordinator) return false;
+            const n = (m.name || m.fullName || "").toLowerCase().trim();
+            return n === aTarget || n.includes(aTarget) || aTarget.includes(n);
+        });
+    }
+    if (!associate && (slug.includes("digital") || deptName.includes("digital"))) {
+        associate = activeMembers.find(m => {
+            if (m === coordinator) return false;
+            const n = (m.name || m.fullName || "").toLowerCase();
+            return m.id === "fjhiurg8nvffosp2pcep" || n.includes("navya");
+        });
+    }
+    if (!associate) {
+        associate = assigned.find(m => m !== coordinator && isAssociateMatch(m));
+    }
+    if (!associate) {
+        associate = activeMembers.find(m => m !== coordinator && matchesDepartment(m, dept) && isAssociateMatch(m));
+    }
+
+    return { coordinator, associate };
 }
 
 function renderCouncilDOM(members, depts) {
@@ -2924,6 +3135,7 @@ function renderDepartmentLeadershipInModal(coordinator, associate, dept) {
 let activeModalDept = null;
 let activeModalAllMembers = [];
 let activeModalRegularMembers = [];
+let activeModalTeamMembers = [];
 let activeModalCoordinator = null;
 let activeModalAssociate = null;
 
@@ -2933,7 +3145,7 @@ window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
 
     const depts = Array.isArray(cachedCouncilDepts) && cachedCouncilDepts.length > 0 ? cachedCouncilDepts : DEFAULT_COUNCIL_DEPTS;
     const rawMembers = Array.isArray(cachedCouncilMembers) && cachedCouncilMembers.length > 0 ? cachedCouncilMembers : DEFAULT_COUNCIL_MEMBERS;
-    const activeMembers = rawMembers.filter(m => m.active !== false && !m.name?.includes("Member 2"));
+    const activeMembers = rawMembers.filter(m => m.active !== false && !m.name?.includes("Member 2")).map(normalizeCouncilMember);
 
     const dept = depts.find(d => {
         const s = (d.slug || d.id || "").toLowerCase();
@@ -2945,41 +3157,16 @@ window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
 
     activeModalDept = dept;
 
-    // Resolve Coordinator
-    let coordinator = null;
-    if (dept.coordinatorId) {
-        coordinator = activeMembers.find(m => m.id === dept.coordinatorId);
-    }
-    if (!coordinator && dept.coordinatorName) {
-        coordinator = activeMembers.find(m => m.name && m.name.toLowerCase().trim() === dept.coordinatorName.toLowerCase().trim());
-    }
-    if (!coordinator) {
-        coordinator = activeMembers.find(m => {
-            if (!matchesDepartment(m, dept)) return false;
-            const role = (m.role || "").toLowerCase();
-            const lRole = (m.leadershipRole || "").toLowerCase();
-            return lRole === "coordinator" || ((role.includes("co-ordinator") || role.includes("coordinator")) && !role.includes("associate") && !role.includes("faculty"));
-        });
-    }
+    // Resolve Coordinator & Associate Coordinator with unified helper
+    const leadership = (dept._coordinator || dept._associate)
+        ? { coordinator: dept._coordinator, associate: dept._associate }
+        : resolveDepartmentLeadership(dept, activeMembers);
 
-    // Resolve Associate Coordinator
-    let associate = null;
-    if (dept.associateCoordinatorId) {
-        associate = activeMembers.find(m => m.id === dept.associateCoordinatorId);
-    }
-    if (!associate && dept.associateCoordinatorName) {
-        associate = activeMembers.find(m => m.name && m.name.toLowerCase().trim() === dept.associateCoordinatorName.toLowerCase().trim());
-    }
-    if (!associate) {
-        associate = activeMembers.find(m => {
-            if (!matchesDepartment(m, dept) || m === coordinator) return false;
-            const role = (m.role || "").toLowerCase();
-            const lRole = (m.leadershipRole || "").toLowerCase();
-            return (lRole === "associate_coordinator" || role.includes("associate"));
-        });
-    }
+    const coordinator = leadership.coordinator;
+    const associate = leadership.associate;
 
-    // Assemble all department members (including leadership for total count)
+    // Assemble all department members:
+    // Lead with Coordinator, then Associate Coordinator, then remaining department members
     const assignedMembers = activeMembers.filter(m => matchesDepartment(m, dept));
     const allMembersDistinct = [];
     const seenKeys = new Set();
@@ -2997,16 +3184,10 @@ window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
 
     allMembersDistinct.sort((a, b) => (parseInt(a.displayOrder) || 999) - (parseInt(b.displayOrder) || 999));
 
-    // Exclude Coordinator & Associate Coordinator from the team ID cards gallery
-    const regularMembers = allMembersDistinct.filter(m => 
-        m !== coordinator && 
-        m !== associate && 
-        (!coordinator || m.id !== coordinator.id) && 
-        (!associate || m.id !== associate.id)
-    );
-
+    // Under Team Roster: Include all members with coordinators and associates
     activeModalAllMembers = allMembersDistinct;
-    activeModalRegularMembers = regularMembers;
+    activeModalTeamMembers = allMembersDistinct;
+    activeModalRegularMembers = allMembersDistinct;
     activeModalCoordinator = coordinator;
     activeModalAssociate = associate;
 
@@ -3060,6 +3241,7 @@ window.closeCouncilTeamModal = function() {
     activeModalDept = null;
     activeModalAllMembers = [];
     activeModalRegularMembers = [];
+    activeModalTeamMembers = [];
     activeModalCoordinator = null;
     activeModalAssociate = null;
 };
@@ -3075,7 +3257,8 @@ function renderModalIdCards(query = "") {
     grid.innerHTML = "";
 
     const q = (query || "").toLowerCase().trim();
-    const filtered = activeModalRegularMembers.filter(m => {
+    const roster = (activeModalTeamMembers && activeModalTeamMembers.length > 0) ? activeModalTeamMembers : (activeModalRegularMembers || []);
+    const filtered = roster.filter(m => {
         if (!q) return true;
         const name = (m.name || m.fullName || "").toLowerCase();
         const role = (m.role || "").toLowerCase();
@@ -3095,7 +3278,7 @@ function renderModalIdCards(query = "") {
     }
 
     // If department has 0 regular members (only leadership) and no active search query
-    if (activeModalRegularMembers.length === 0 && !q) {
+    if (roster.length === 0 && !q) {
         if (notice) notice.style.display = "block";
         if (emptyState) emptyState.style.display = "none";
         return;

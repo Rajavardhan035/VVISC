@@ -299,6 +299,39 @@ const DEFAULT_COUNCIL_MEMBERS = [
         active: true
     },
     {
+        name: "Navya",
+        studentId: "24BQ1A42",
+        branch: "AIM",
+        memberType: "Student Leader",
+        role: "Associate Coordinator",
+        leadershipRole: "associate_coordinator",
+        department: "Digital Infrastructure",
+        description: "Assists the Digital Infrastructure Coordinator in managing portals and platforms.",
+        profileImage: "assets/nodp.png",
+        email: "navya@vvisc.net",
+        linkedin: "#",
+        github: "#",
+        displayOrder: 11,
+        active: true
+    },
+    {
+        name: "K. S. Vivek",
+        studentId: "23BQ1A05",
+        branch: "CSE",
+        memberType: "Council Member",
+        role: "Team Member",
+        leadershipRole: "member",
+        department: "Digital Infrastructure",
+        description: "Technical team contributor for digital systems and operations.",
+        profileImage: "assets/nodp.png",
+        email: "vivek@vvisc.net",
+        linkedin: "#",
+        github: "#",
+        displayOrder: 12,
+        active: true
+    },
+
+    {
         name: "Harika K",
         memberType: "Student Leader",
         role: "Public Relations Co-ordinator",
