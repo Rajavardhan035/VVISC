@@ -2385,13 +2385,67 @@ function renderCouncilDOM(members, depts) {
     renderDepartmentDirectory(depts, activeMembers);
 }
 
-function updateDrawerBtnText(btn, isOpen) {
-    if (!btn) return;
-    const span = btn.querySelector("span");
-    if (!span) return;
-    const match = span.textContent.match(/\((.*?)\)/);
-    const countPart = match ? ` (${match[1]})` : "";
-    span.textContent = isOpen ? `Hide Team${countPart}` : `View Full Team${countPart}`;
+// Render single member ID card HTML matching the official VVISC ID Card reference
+function renderIdCardHtml(member, dept) {
+    const initials = getMemberInitials(member.name);
+    const hasImg = member.profileImage && member.profileImage !== "assets/nodp.png";
+    const imgSrc = hasImg ? escapeHtml(getPublicImgSrc(member.profileImage)) : "";
+    const name = escapeHtml(member.name || "Council Member");
+    const role = escapeHtml(member.role || (dept ? `${dept.name} Member` : "Member"));
+    const deptName = escapeHtml(dept ? dept.name : (member.department || "VVISC Council"));
+    const initialsFallback = `<div class="id-card-initials-fallback">${initials}</div>`;
+
+    let linksHtml = "";
+    if (member.linkedin && member.linkedin !== "#") {
+        linksHtml += `<a href="${escapeHtml(member.linkedin)}" target="_blank" rel="noopener" class="id-card-link-btn" title="LinkedIn Profile" aria-label="LinkedIn Profile">in</a>`;
+    }
+    if (member.github && member.github !== "#") {
+        linksHtml += `<a href="${escapeHtml(member.github)}" target="_blank" rel="noopener" class="id-card-link-btn" title="GitHub Profile" aria-label="GitHub Profile">gh</a>`;
+    }
+
+    return `
+        <div class="council-id-card" data-member-name="${escapeAttr(member.name || '')}" data-member-role="${escapeAttr(member.role || '')}">
+            <!-- ID Card Header: VVISC Brand -->
+            <div class="id-card-brand-header">
+                <div class="id-card-emblem-wrap">
+                    <svg class="id-card-emblem" width="34" height="34" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="22" stroke="var(--accent-gold, #C89B35)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                        <path d="M24 10 L24 32 M14 26 C17 23 21 23 24 25 C27 23 31 23 34 26 L34 16 C31 13 27 13 24 15 C21 13 17 13 14 16 Z" fill="none" stroke="var(--text-color, #102820)" stroke-width="2"/>
+                        <path d="M24 8 L24 5 M18 9 L16 7 M30 9 L32 7" stroke="var(--accent-gold, #C89B35)" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="id-card-brand-title">VVISC</div>
+                    <div class="id-card-sub-brand">COUNCIL MEMBER</div>
+                </div>
+            </div>
+
+            <!-- "Hello, I am" Pill Box -->
+            <div class="id-card-name-bubble">
+                <span class="id-card-greeting">Hello, I am</span>
+                <h4 class="id-card-name" title="${name}">${name}</h4>
+            </div>
+
+            <!-- Portrait Photo Frame -->
+            <div class="id-card-portrait-wrap">
+                <div class="id-card-dot-pattern"></div>
+                ${hasImg ? `
+                    <img src="${imgSrc}" alt="${name}" class="id-card-img" onerror="this.onerror=null; this.parentElement.innerHTML='${initialsFallback}';">
+                ` : initialsFallback}
+            </div>
+
+            <!-- Role Badge Pill overlapping photo bottom -->
+            <div class="id-card-role-pill" title="${role}">
+                <span>${role}</span>
+            </div>
+
+            <!-- Bottom Info Bar (Department & optional links) -->
+            <div class="id-card-bottom-bar">
+                <span class="id-card-dept-badge">🏛️ ${deptName}</span>
+                <div class="id-card-links">
+                    ${linksHtml}
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function renderDepartmentDirectory(depts, activeMembers) {
@@ -2451,7 +2505,7 @@ function renderDepartmentDirectory(depts, activeMembers) {
                 });
             }
 
-            // 3. Assemble distinct team members for drawer
+            // 3. Assemble distinct team members for modal
             const teamMembers = [];
             const seenKeys = new Set();
             const addMember = (m) => {
@@ -2466,6 +2520,11 @@ function renderDepartmentDirectory(depts, activeMembers) {
             if (coordinator) addMember(coordinator);
             if (associate) addMember(associate);
             assignedMembers.forEach(addMember);
+
+            // Store internal references on dept object for live modal & search lookup
+            dept._teamMembers = teamMembers;
+            dept._coordinator = coordinator;
+            dept._associate = associate;
 
             const memberCount = teamMembers.length;
             const countText = memberCount === 1 ? "1 Active Member" : `${memberCount} Active Members`;
@@ -2484,14 +2543,14 @@ function renderDepartmentDirectory(depts, activeMembers) {
                     <div class="council-leader-slot coordinator">
                         <div class="council-leader-avatar-wrap">
                             ${hasImg ? `
-                                <img src="${escapeHtml(getPublicImgSrc(coordinator.profileImage))}" alt="${escapeHtml(coordinator.name)}" class="council-leader-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'council-initials-avatar\\'>${initials}</div>';">
+                                <img src="${escapeHtml(getPublicImgSrc(coordinator.profileImage))}" alt="${escapeHtml(coordinator.name)}" class="council-leader-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'council-initials-avatar\\\'>${initials}</div>';">
                             ` : `
                                 <div class="council-initials-avatar">${initials}</div>
                             `}
                         </div>
                         <div class="council-leader-info">
                             <span class="council-leader-role-badge">★ Coordinator</span>
-                            <h4 class="council-leader-name">${escapeHtml(coordinator.name)}</h4>
+                            <h4 class="council-leader-name" title="${escapeHtml(coordinator.name)}">${escapeHtml(coordinator.name)}</h4>
                             <p class="council-leader-designation">${escapeHtml(coordinator.role || `${dept.name} Co-ordinator`)}</p>
                             <div class="council-leader-links">
                                 ${coordinator.linkedin && coordinator.linkedin !== "#" ? `<a href="${escapeHtml(coordinator.linkedin)}" target="_blank" rel="noopener" class="council-leader-link" title="LinkedIn" aria-label="LinkedIn">in</a>` : ""}
@@ -2508,7 +2567,7 @@ function renderDepartmentDirectory(depts, activeMembers) {
                         </div>
                         <div class="council-leader-info">
                             <span class="council-leader-role-badge">Coordinator</span>
-                            <h4 class="council-leader-name">Position not assigned</h4>
+                            <h4 class="council-leader-name">Position Vacant</h4>
                             <p class="council-leader-designation">Appointment in progress</p>
                         </div>
                     </div>
@@ -2524,14 +2583,14 @@ function renderDepartmentDirectory(depts, activeMembers) {
                     <div class="council-leader-slot associate">
                         <div class="council-leader-avatar-wrap">
                             ${hasImg ? `
-                                <img src="${escapeHtml(getPublicImgSrc(associate.profileImage))}" alt="${escapeHtml(associate.name)}" class="council-leader-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'council-initials-avatar\\'>${initials}</div>';">
+                                <img src="${escapeHtml(getPublicImgSrc(associate.profileImage))}" alt="${escapeHtml(associate.name)}" class="council-leader-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'council-initials-avatar\\\'>${initials}</div>';">
                             ` : `
                                 <div class="council-initials-avatar">${initials}</div>
                             `}
                         </div>
                         <div class="council-leader-info">
-                            <span class="council-leader-role-badge">Associate Coordinator</span>
-                            <h4 class="council-leader-name">${escapeHtml(associate.name)}</h4>
+                            <span class="council-leader-role-badge">Associate</span>
+                            <h4 class="council-leader-name" title="${escapeHtml(associate.name)}">${escapeHtml(associate.name)}</h4>
                             <p class="council-leader-designation">${escapeHtml(associate.role || "Associate Co-ordinator")}</p>
                             <div class="council-leader-links">
                                 ${associate.linkedin && associate.linkedin !== "#" ? `<a href="${escapeHtml(associate.linkedin)}" target="_blank" rel="noopener" class="council-leader-link" title="LinkedIn" aria-label="LinkedIn">in</a>` : ""}
@@ -2547,57 +2606,20 @@ function renderDepartmentDirectory(depts, activeMembers) {
                             <div class="council-initials-avatar">--</div>
                         </div>
                         <div class="council-leader-info">
-                            <span class="council-leader-role-badge">Associate Coordinator</span>
-                            <h4 class="council-leader-name">Position not assigned</h4>
+                            <span class="council-leader-role-badge">Associate</span>
+                            <h4 class="council-leader-name">Position Vacant</h4>
                             <p class="council-leader-designation">Appointment in progress</p>
                         </div>
                     </div>
                 `;
             }
 
-            // Team Drawer Grid Items
-            let teamGridHtml = "";
-            if (teamMembers.length > 0) {
-                teamMembers.forEach(m => {
-                    const initials = getMemberInitials(m.name);
-                    const hasImg = m.profileImage && m.profileImage !== "assets/nodp.png";
-                    teamGridHtml += `
-                        <div class="council-member-card" data-member-name="${escapeAttr(m.name || '')}" data-member-role="${escapeAttr(m.role || '')}">
-                            <div class="council-member-avatar-wrap">
-                                ${hasImg ? `
-                                    <img src="${escapeHtml(getPublicImgSrc(m.profileImage))}" alt="${escapeHtml(m.name)}" class="council-member-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'council-initials-avatar\\' style=\\'font-size:0.95rem;\\'>${initials}</div>';">
-                                ` : `
-                                    <div class="council-initials-avatar" style="font-size:0.95rem;">${initials}</div>
-                                `}
-                            </div>
-                            <div class="council-member-info">
-                                <h5 class="council-member-name">${escapeHtml(m.name)}</h5>
-                                <p class="council-member-role">${escapeHtml(m.role || "Team Member")}</p>
-                                <div class="council-member-links">
-                                    ${m.linkedin && m.linkedin !== "#" ? `<a href="${escapeHtml(m.linkedin)}" target="_blank" rel="noopener" class="council-member-link-sm">LinkedIn &rarr;</a>` : ""}
-                                    ${m.github && m.github !== "#" ? `<a href="${escapeHtml(m.github)}" target="_blank" rel="noopener" class="council-member-link-sm">GitHub &rarr;</a>` : ""}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                teamGridHtml = `<div class="council-empty-team">No members assigned to this department yet.</div>`;
-            }
-
             card.innerHTML = `
                 <div class="council-dept-header">
-                    <div class="council-dept-title-group">
+                    <div class="council-dept-header-top">
                         <div class="council-dept-icon-box">${dept.icon || "🏛️"}</div>
-                        <div>
-                            <span class="council-dept-tag">${escapeHtml(dept.tag || "Department")}</span>
-                            <h3>${escapeHtml(dept.name)}</h3>
-                            <p class="council-dept-desc">${escapeHtml(dept.description || dept.shortDescription || "")}</p>
-                        </div>
-                    </div>
-                    <div class="council-dept-badges">
                         <span class="dept-count-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -2606,28 +2628,32 @@ function renderDepartmentDirectory(depts, activeMembers) {
                             <span class="dept-member-counter">${countText}</span>
                         </span>
                     </div>
+                    <span class="council-dept-tag">${escapeHtml(dept.tag || "Department")}</span>
+                    <h3>${escapeHtml(dept.name)}</h3>
+                    <p class="council-dept-desc">${escapeHtml(dept.description || dept.shortDescription || "")}</p>
                 </div>
 
                 <div class="council-leadership-section">
                     <div class="council-leadership-heading">Department Leadership</div>
-                    <div class="council-leadership-row">
+                    <div class="council-dept-leadership-grid">
                         ${coordinatorHtml}
                         ${associateHtml}
                     </div>
                 </div>
 
-                <div class="council-team-drawer">
-                    <button type="button" class="council-team-toggle-btn" aria-expanded="false" data-dept="${escapeAttr(slug)}">
-                        <span>View Full Team (${memberCount} member${memberCount === 1 ? "" : "s"})</span>
-                        <svg class="toggle-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
+                <div class="council-dept-footer">
+                    <button type="button" class="council-view-team-btn" onclick="openCouncilTeamModal('${escapeAttr(slug)}')">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>View Team (${memberCount} Member${memberCount === 1 ? '' : 's'})</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow">
+                            <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </button>
-                    <div class="council-team-panel" id="team-panel-${escapeAttr(slug)}">
-                        <div class="council-team-grid">
-                            ${teamGridHtml}
-                        </div>
-                    </div>
                 </div>
             `;
 
@@ -2641,53 +2667,143 @@ function renderDepartmentDirectory(depts, activeMembers) {
     applyCouncilFilters();
 }
 
-function initCouncilDirectoryInteractivity() {
-    // 1. Accordion Toggle Handlers
-    const toggleBtns = document.querySelectorAll(".council-team-toggle-btn");
-    toggleBtns.forEach(btn => {
-        btn.onclick = (e) => {
-            e.preventDefault();
-            const dept = btn.getAttribute("data-dept");
-            const panel = document.getElementById(`team-panel-${dept}`);
-            if (!panel) return;
-            const isOpen = panel.classList.contains("open");
-            if (isOpen) {
-                panel.classList.remove("open");
-                btn.setAttribute("aria-expanded", "false");
-                updateDrawerBtnText(btn, false);
-            } else {
-                panel.classList.add("open");
-                btn.setAttribute("aria-expanded", "true");
-                updateDrawerBtnText(btn, true);
+// --------------------------------------------------
+// Department Team ID Card Modal Controller
+// --------------------------------------------------
+let activeModalDept = null;
+let activeModalMembers = [];
+
+window.openCouncilTeamModal = function(deptSlugOrId, initialQuery = "") {
+    const modal = document.getElementById("councilTeamModal");
+    if (!modal) return;
+
+    const depts = Array.isArray(cachedCouncilDepts) && cachedCouncilDepts.length > 0 ? cachedCouncilDepts : DEFAULT_COUNCIL_DEPTS;
+    const rawMembers = Array.isArray(cachedCouncilMembers) && cachedCouncilMembers.length > 0 ? cachedCouncilMembers : DEFAULT_COUNCIL_MEMBERS;
+    const activeMembers = rawMembers.filter(m => m.active !== false && !m.name?.includes("Member 2"));
+
+    const dept = depts.find(d => {
+        const s = (d.slug || d.id || "").toLowerCase();
+        const target = (deptSlugOrId || "").toLowerCase();
+        return s === target || (d.id && String(d.id).toLowerCase() === target);
+    }) || depts[0];
+
+    if (!dept) return;
+
+    activeModalDept = dept;
+
+    // Use cached team members or compute dynamically
+    if (Array.isArray(dept._teamMembers) && dept._teamMembers.length > 0) {
+        activeModalMembers = [...dept._teamMembers];
+    } else {
+        const assignedMembers = activeMembers.filter(m => matchesDepartment(m, dept));
+        const distinct = [];
+        const seen = new Set();
+        assignedMembers.forEach(m => {
+            const k = m.id || m.name;
+            if (!seen.has(k)) {
+                seen.add(k);
+                distinct.push(m);
             }
-        };
+        });
+        activeModalMembers = distinct;
+    }
+
+    // Populate Modal Header
+    const iconEl = document.getElementById("councilModalDeptIcon");
+    const nameEl = document.getElementById("councilModalDeptName");
+    const tagEl = document.getElementById("councilModalDeptTag");
+    const descEl = document.getElementById("councilModalDeptDesc");
+    const countEl = document.getElementById("councilModalMemberCount");
+
+    if (iconEl) iconEl.textContent = dept.icon || "🏛️";
+    if (nameEl) nameEl.textContent = dept.name;
+    if (tagEl) tagEl.textContent = (dept.tag || "Department").toUpperCase();
+    if (descEl) descEl.textContent = dept.description || dept.shortDescription || "";
+    if (countEl) countEl.textContent = `${activeModalMembers.length} Member${activeModalMembers.length === 1 ? '' : 's'}`;
+
+    // Reset Search Input in Modal
+    const searchInput = document.getElementById("councilModalSearchInput");
+    const searchClear = document.getElementById("councilModalSearchClear");
+
+    const queryToUse = initialQuery || currentCouncilQuery || "";
+    if (searchInput) {
+        searchInput.value = queryToUse;
+        if (searchClear) searchClear.style.display = queryToUse ? "block" : "none";
+    }
+
+    // Render ID Cards
+    renderModalIdCards(queryToUse);
+
+    // Open Modal with Animation & Lock Body Scroll
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    // Focus close button or search
+    if (searchInput && queryToUse) {
+        searchInput.focus();
+    } else {
+        const closeBtn = document.getElementById("councilModalCloseBtn");
+        if (closeBtn) closeBtn.focus();
+    }
+};
+
+window.closeCouncilTeamModal = function() {
+    const modal = document.getElementById("councilTeamModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    activeModalDept = null;
+    activeModalMembers = [];
+};
+
+function renderModalIdCards(query = "") {
+    const grid = document.getElementById("councilModalCardsGrid");
+    const emptyState = document.getElementById("councilModalEmptyState");
+    const metaEl = document.getElementById("councilModalFilterMeta");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    const q = (query || "").toLowerCase().trim();
+    const filtered = activeModalMembers.filter(m => {
+        if (!q) return true;
+        const name = (m.name || "").toLowerCase();
+        const role = (m.role || "").toLowerCase();
+        return name.includes(q) || role.includes(q);
     });
 
-    // 2. Expand All & Collapse All Controls
-    const expandAllBtn = document.getElementById("expandAllTeamsBtn");
-    const collapseAllBtn = document.getElementById("collapseAllTeamsBtn");
-
-    if (expandAllBtn) {
-        expandAllBtn.onclick = () => {
-            document.querySelectorAll(".council-team-panel").forEach(p => p.classList.add("open"));
-            document.querySelectorAll(".council-team-toggle-btn").forEach(b => {
-                b.setAttribute("aria-expanded", "true");
-                updateDrawerBtnText(b, true);
-            });
-        };
+    if (metaEl) {
+        metaEl.textContent = q 
+            ? `Showing ${filtered.length} of ${activeModalMembers.length} members`
+            : `Showing all ${activeModalMembers.length} active members`;
     }
 
-    if (collapseAllBtn) {
-        collapseAllBtn.onclick = () => {
-            document.querySelectorAll(".council-team-panel").forEach(p => p.classList.remove("open"));
-            document.querySelectorAll(".council-team-toggle-btn").forEach(b => {
-                b.setAttribute("aria-expanded", "false");
-                updateDrawerBtnText(b, false);
-            });
-        };
+    if (filtered.length === 0) {
+        if (emptyState) emptyState.style.display = "block";
+        return;
     }
 
-    // 3. Department Filter Pills
+    if (emptyState) emptyState.style.display = "none";
+
+    filtered.forEach(m => {
+        const cardHtml = renderIdCardHtml(m, activeModalDept);
+        grid.insertAdjacentHTML("beforeend", cardHtml);
+    });
+}
+
+window.clearCouncilModalSearch = function() {
+    const searchInput = document.getElementById("councilModalSearchInput");
+    const searchClear = document.getElementById("councilModalSearchClear");
+    if (searchInput) searchInput.value = "";
+    if (searchClear) searchClear.style.display = "none";
+    renderModalIdCards("");
+    if (searchInput) searchInput.focus();
+};
+
+function initCouncilDirectoryInteractivity() {
+    // 1. Department Filter Pills
     const pills = document.querySelectorAll(".council-dept-pill");
     pills.forEach(pill => {
         pill.onclick = () => {
@@ -2698,7 +2814,7 @@ function initCouncilDirectoryInteractivity() {
         };
     });
 
-    // 4. Live Search Box
+    // 2. Main Page Live Search Box
     const searchInput = document.getElementById("councilSearchInput");
     const searchClear = document.getElementById("councilSearchClear");
 
@@ -2719,6 +2835,43 @@ function initCouncilDirectoryInteractivity() {
             searchInput.focus();
         };
     }
+
+    // 3. Modal Search Input Handlers
+    const modalSearchInput = document.getElementById("councilModalSearchInput");
+    const modalSearchClear = document.getElementById("councilModalSearchClear");
+
+    if (modalSearchInput) {
+        modalSearchInput.oninput = () => {
+            const val = modalSearchInput.value.trim().toLowerCase();
+            if (modalSearchClear) modalSearchClear.style.display = val ? "block" : "none";
+            renderModalIdCards(val);
+        };
+    }
+
+    if (modalSearchClear && modalSearchInput) {
+        modalSearchClear.onclick = () => {
+            clearCouncilModalSearch();
+        };
+    }
+
+    // 4. Modal Backdrop & Escape Key Handlers
+    const modalOverlay = document.getElementById("councilTeamModal");
+    if (modalOverlay) {
+        modalOverlay.onclick = (e) => {
+            if (e.target === modalOverlay) {
+                closeCouncilTeamModal();
+            }
+        };
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" || e.keyCode === 27) {
+            const m = document.getElementById("councilTeamModal");
+            if (m && m.classList.contains("open")) {
+                closeCouncilTeamModal();
+            }
+        }
+    });
 }
 
 function applyCouncilFilters() {
@@ -2738,12 +2891,10 @@ function applyCouncilFilters() {
             return;
         }
 
-        if (!q) {
-            card.style.display = "";
-            card.querySelectorAll(".council-member-card").forEach(m => m.style.display = "");
-            visibleCardsCount++;
-            return;
-        }
+        const dept = (cachedCouncilDepts || []).find(d => {
+            const s = (d.slug || d.id || "").toLowerCase();
+            return s === cardSlug || s === cardId;
+        });
 
         const deptName = (card.querySelector("h3")?.textContent || "").toLowerCase();
         const deptTag = (card.querySelector(".council-dept-tag")?.textContent || "").toLowerCase();
@@ -2753,34 +2904,41 @@ function applyCouncilFilters() {
         const assocName = (card.querySelector(".council-leader-slot.associate .council-leader-name")?.textContent || "").toLowerCase();
         const assocRole = (card.querySelector(".council-leader-slot.associate .council-leader-designation")?.textContent || "").toLowerCase();
 
-        let hasMatchingMember = false;
-        const memberCards = card.querySelectorAll(".council-member-card");
-        memberCards.forEach(m => {
-            const mName = (m.getAttribute("data-member-name") || m.querySelector("h5")?.textContent || "").toLowerCase();
-            const mRole = (m.getAttribute("data-member-role") || m.querySelector("p")?.textContent || "").toLowerCase();
-            if (mName.includes(q) || mRole.includes(q)) {
-                m.style.display = "";
-                hasMatchingMember = true;
-            } else {
-                m.style.display = "none";
-            }
-        });
+        // Check if any team member in dept matches
+        let matchingMembersCount = 0;
+        if (dept && Array.isArray(dept._teamMembers)) {
+            dept._teamMembers.forEach(m => {
+                const mName = (m.name || "").toLowerCase();
+                const mRole = (m.role || "").toLowerCase();
+                if (mName.includes(q) || mRole.includes(q)) {
+                    matchingMembersCount++;
+                }
+            });
+        }
 
-        const deptMatches = deptName.includes(q) || deptTag.includes(q) || deptDesc.includes(q) ||
+        const deptMatches = !q || deptName.includes(q) || deptTag.includes(q) || deptDesc.includes(q) ||
             coordName.includes(q) || coordRole.includes(q) ||
             assocName.includes(q) || assocRole.includes(q);
 
-        if (deptMatches || hasMatchingMember) {
+        const hasMatch = deptMatches || matchingMembersCount > 0;
+
+        if (hasMatch) {
             card.style.display = "";
             visibleCardsCount++;
-            if (hasMatchingMember) {
-                const panel = card.querySelector(".council-team-panel");
-                const btn = card.querySelector(".council-team-toggle-btn");
-                if (panel) panel.classList.add("open");
-                if (btn) {
-                    btn.setAttribute("aria-expanded", "true");
-                    updateDrawerBtnText(btn, true);
+
+            // Update View Team button label when member inside matches
+            const viewBtn = card.querySelector(".council-view-team-btn");
+            if (viewBtn) {
+                const totalCount = dept && Array.isArray(dept._teamMembers) ? dept._teamMembers.length : 1;
+                const span = viewBtn.querySelector("span");
+                if (span) {
+                    if (q && matchingMembersCount > 0 && !deptMatches) {
+                        span.textContent = `View Team (${matchingMembersCount} Match)`;
+                    } else {
+                        span.textContent = `View Team (${totalCount} Member${totalCount === 1 ? '' : 's'})`;
+                    }
                 }
+                viewBtn.onclick = () => openCouncilTeamModal(cardSlug, q);
             }
         } else {
             card.style.display = "none";
@@ -2795,10 +2953,10 @@ function applyCouncilFilters() {
             noResultsMsg.id = "councilNoResultsMsg";
             noResultsMsg.className = "council-no-results-box";
             noResultsMsg.innerHTML = `
-                <div style="text-align:center; padding: 48px 24px; color: var(--text-secondary, #56665F); background: var(--card-bg, #FFFFFF); border: 1px dashed var(--border-color, #E6E1D6); border-radius: 16px;">
-                    <div style="font-size: 2.2rem; margin-bottom: 12px;">🔍</div>
+                <div style="text-align:center; padding: 48px 24px; color: var(--text-secondary, #56665F); background: var(--card-bg, #FFFFFF); border: 1.5px dashed var(--border-color, #E6E1D6); border-radius: 20px;">
+                    <div style="font-size: 2.4rem; margin-bottom: 12px;">🔍</div>
                     <h3 style="font-size: 1.25rem; margin-bottom: 6px; color: var(--text-color, #102820);">No council records matched your search</h3>
-                    <p style="font-size: 0.95rem; margin-bottom: 16px;">Try adjusting your keyword or clearing the department filter.</p>
+                    <p style="font-size: 0.95rem; margin-bottom: 18px;">Try adjusting your keyword or clearing the department filter.</p>
                     <button type="button" class="council-ctrl-btn" onclick="resetCouncilSearchAndFilters()">Clear Filters &amp; Search</button>
                 </div>
             `;

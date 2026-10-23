@@ -17735,125 +17735,134 @@ html[data-theme="dark"] .council-toolbar-meta {
 }
 
 /* ==========================================================================
-   Department Showcase Cards Grid
+   Council Directory - 3-Column Modern Grid & Leadership Cards
    ========================================================================== */
 .council-dept-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 36px !important;
-    max-width: 1200px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 28px !important;
+    max-width: 1280px !important;
     margin: 0 auto !important;
     width: 100% !important;
+    box-sizing: border-box !important;
     min-height: 180px;
     opacity: 1 !important;
     visibility: visible !important;
 }
 
+/* Individual Department Leadership Card */
 .council-dept-card {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    background: var(--card-bg, #FFFFFF);
-    border: 1px solid var(--border-color, #E6E1D6);
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
     border-radius: 20px;
-    padding: 32px 32px 28px;
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.05);
+    padding: 24px 22px 20px;
+    box-shadow: 0 8px 24px rgba(16, 40, 32, 0.05);
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+    box-sizing: border-box;
+}
+
+.council-dept-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #102820 0%, #1A4D3E 50%, #C89B35 100%);
+    opacity: 0.9;
+}
+
+.council-dept-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(16, 40, 32, 0.1);
+    border-color: #C89B35;
 }
 
 body.dark-mode .council-dept-card,
 html[data-theme="dark"] .council-dept-card {
-    background: #0B2922;
-    border-color: rgba(212, 175, 55, 0.22);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    background: #0B241E;
+    border-color: rgba(200, 155, 53, 0.22);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.council-dept-card:hover {
-    border-color: #C89B35;
-    box-shadow: 0 14px 40px rgba(200, 155, 53, 0.12);
+body.dark-mode .council-dept-card::before,
+html[data-theme="dark"] .council-dept-card::before {
+    background: linear-gradient(90deg, #1A4D3E 0%, #C89B35 50%, #E5C365 100%);
 }
 
 body.dark-mode .council-dept-card:hover,
 html[data-theme="dark"] .council-dept-card:hover {
     border-color: #D4AF37;
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.12);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.15);
 }
 
-.council-no-results-box {
-    max-width: 1200px;
-    margin: 20px auto;
-    width: 100%;
-    animation: drawerFadeIn 0.3s ease-out;
-}
-
-/* Department Top Header */
+/* Department Card Header */
 .council-dept-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--border-color, #E6E1D6);
-    margin-bottom: 26px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
 }
 
-body.dark-mode .council-dept-header,
-html[data-theme="dark"] .council-dept-header {
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.council-dept-title-group {
+.council-dept-top-bar {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    flex: 1;
-    min-width: 280px;
+    gap: 12px;
 }
 
 .council-dept-icon-box {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background: rgba(200, 155, 53, 0.1);
-    border: 1px solid rgba(200, 155, 53, 0.3);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(16, 40, 32, 0.08) 0%, rgba(200, 155, 53, 0.12) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.9rem;
+    font-size: 1.4rem;
+    border: 1px solid rgba(200, 155, 53, 0.25);
     flex-shrink: 0;
 }
 
 body.dark-mode .council-dept-icon-box,
 html[data-theme="dark"] .council-dept-icon-box {
-    background: rgba(212, 175, 55, 0.15);
-    border-color: rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, rgba(26, 77, 62, 0.4) 0%, rgba(212, 175, 55, 0.15) 100%);
+    border-color: rgba(212, 175, 55, 0.3);
 }
 
-.council-dept-title-group h3 {
-    margin: 0;
-    font-size: 1.55rem;
+.dept-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
     font-weight: 700;
-    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-    color: var(--text-color, #102820);
-    letter-spacing: -0.01em;
+    padding: 5px 11px;
+    border-radius: 50px;
+    background: #F4F6F4;
+    color: #1A4D3E;
+    border: 1px solid #E2E8F0;
+    letter-spacing: 0.02em;
 }
 
-body.dark-mode .council-dept-title-group h3,
-html[data-theme="dark"] .council-dept-title-group h3 {
-    color: #FAF9F6;
+body.dark-mode .dept-count-badge,
+html[data-theme="dark"] .dept-count-badge {
+    background: rgba(255, 255, 255, 0.06);
+    color: #C5E3D8;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .council-dept-tag {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-weight: 800;
+    letter-spacing: 0.1em;
     color: #C89B35;
-    margin-bottom: 4px;
+    margin-top: 4px;
 }
 
 body.dark-mode .council-dept-tag,
@@ -17861,62 +17870,56 @@ html[data-theme="dark"] .council-dept-tag {
     color: #D4AF37;
 }
 
+.council-dept-header h3 {
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #102820;
+    margin: 2px 0 6px;
+    line-height: 1.3;
+}
+
+body.dark-mode .council-dept-header h3,
+html[data-theme="dark"] .council-dept-header h3 {
+    color: #FAF9F6;
+}
+
 .council-dept-desc {
-    margin: 6px 0 0;
-    font-size: 0.92rem;
-    color: var(--text-secondary, #56665F);
-    line-height: 1.5;
-    max-width: 680px;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: #56665F;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.45em;
 }
 
 body.dark-mode .council-dept-desc,
 html[data-theme="dark"] .council-dept-desc {
-    color: #A3B8B0;
+    color: #A0B3AB;
 }
 
-.council-dept-badges {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.dept-count-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(200, 155, 53, 0.12);
-    border: 1px solid rgba(200, 155, 53, 0.3);
-    color: #9E741B;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 20px;
-}
-
-body.dark-mode .dept-count-badge,
-html[data-theme="dark"] .dept-count-badge {
-    background: rgba(212, 175, 55, 0.15);
-    border-color: rgba(212, 175, 55, 0.35);
-    color: #D4AF37;
-}
-
-/* ==========================================================================
-   Leadership Section (Coordinator & Associate Coordinator)
-   ========================================================================== */
+/* Leadership Area in Card */
 .council-leadership-section {
-    margin-bottom: 24px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed #E5E7EB;
+}
+
+body.dark-mode .council-leadership-section,
+html[data-theme="dark"] .council-leadership-section {
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .council-leadership-heading {
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
+    font-size: 0.7rem;
+    font-weight: 800;
     text-transform: uppercase;
-    color: var(--text-secondary, #56665F);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    letter-spacing: 0.08em;
+    color: #718096;
+    margin-bottom: 10px;
 }
 
 body.dark-mode .council-leadership-heading,
@@ -17924,78 +17927,81 @@ html[data-theme="dark"] .council-leadership-heading {
     color: #8EABA0;
 }
 
-.council-leadership-heading::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border-color, #E6E1D6);
-}
-
-body.dark-mode .council-leadership-heading::after,
-html[data-theme="dark"] .council-leadership-heading::after {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.council-leadership-row {
+.council-dept-leadership-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-    gap: 18px;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
-/* Leader Slot Card */
+/* Individual Leader Slot in Card */
 .council-leader-slot {
-    background: var(--bg-color, #FAF9F6);
-    border: 1.5px solid var(--border-color, #E6E1D6);
-    border-radius: 14px;
-    padding: 20px 22px;
-    position: relative;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 12px 10px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 18px;
-    transition: all 0.25s ease;
-}
-
-body.dark-mode .council-leader-slot,
-html[data-theme="dark"] .council-leader-slot {
-    background: #07221C;
-    border-color: rgba(212, 175, 55, 0.2);
+    text-align: center;
+    gap: 8px;
+    position: relative;
+    box-sizing: border-box;
+    min-height: 135px;
+    transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .council-leader-slot:hover {
     border-color: #C89B35;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(200, 155, 53, 0.12);
+    background: #FFFFFF;
+}
+
+body.dark-mode .council-leader-slot,
+html[data-theme="dark"] .council-leader-slot {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 body.dark-mode .council-leader-slot:hover,
 html[data-theme="dark"] .council-leader-slot:hover {
-    border-color: #D4AF37;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.council-leader-slot.coordinator {
+    border-top: 2.5px solid #102820;
+}
+
+body.dark-mode .council-leader-slot.coordinator,
+html[data-theme="dark"] .council-leader-slot.coordinator {
+    border-top: 2.5px solid #D4AF37;
+}
+
+.council-leader-slot.associate {
+    border-top: 2.5px solid #C89B35;
+}
+
+body.dark-mode .council-leader-slot.associate,
+html[data-theme="dark"] .council-leader-slot.associate {
+    border-top: 2.5px solid #1A4D3E;
 }
 
 .council-leader-avatar-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     position: relative;
-    width: 68px;
-    height: 68px;
+    overflow: hidden;
     flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 .council-leader-img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #C89B35;
-    background: #FFFFFF;
+    display: block;
 }
 
-body.dark-mode .council-leader-img,
-html[data-theme="dark"] .council-leader-img {
-    border-color: #D4AF37;
-    background: #051F1A;
-}
-
-/* Initials Avatar Fallback */
 .council-initials-avatar {
     width: 100%;
     height: 100%;
@@ -18003,14 +18009,11 @@ html[data-theme="dark"] .council-leader-img {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 0.85rem;
     font-weight: 700;
     font-family: var(--font-heading, 'Space Grotesk', sans-serif);
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, #102820 0%, #1A3E33 50%, #C89B35 100%);
+    background: linear-gradient(135deg, #102820 0%, #1A4D3E 50%, #C89B35 100%);
     color: #FAF9F6;
-    border: 2px solid #C89B35;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     user-select: none;
 }
 
@@ -18018,58 +18021,55 @@ body.dark-mode .council-initials-avatar,
 html[data-theme="dark"] .council-initials-avatar {
     background: linear-gradient(135deg, #051F1A 0%, #0B2922 60%, #D4AF37 100%);
     color: #FFFFFF;
-    border-color: #D4AF37;
 }
 
 .council-leader-info {
-    flex: 1;
-    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .council-leader-role-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 0.62rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 2px 8px;
-    border-radius: 6px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 50px;
     margin-bottom: 4px;
+    white-space: nowrap;
 }
 
 .council-leader-slot.coordinator .council-leader-role-badge {
-    background: rgba(200, 155, 53, 0.15);
-    color: #9E741B;
-    border: 1px solid rgba(200, 155, 53, 0.35);
+    background: rgba(16, 40, 32, 0.08);
+    color: #102820;
 }
 
 body.dark-mode .council-leader-slot.coordinator .council-leader-role-badge,
 html[data-theme="dark"] .council-leader-slot.coordinator .council-leader-role-badge {
-    background: rgba(212, 175, 55, 0.2);
-    color: #D4AF37;
-    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(212, 175, 55, 0.15);
+    color: #E5C365;
 }
 
 .council-leader-slot.associate .council-leader-role-badge {
-    background: rgba(16, 40, 32, 0.1);
-    color: #102820;
-    border: 1px solid rgba(16, 40, 32, 0.2);
+    background: rgba(200, 155, 53, 0.12);
+    color: #8C6A18;
 }
 
 body.dark-mode .council-leader-slot.associate .council-leader-role-badge,
 html[data-theme="dark"] .council-leader-slot.associate .council-leader-role-badge {
-    background: rgba(255, 255, 255, 0.08);
-    color: #A3B8B0;
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(26, 77, 62, 0.4);
+    color: #A0D8C3;
 }
 
 .council-leader-name {
-    font-size: 1.12rem;
+    font-size: 0.84rem;
     font-weight: 700;
-    margin: 2px 0 3px;
-    color: var(--text-color, #102820);
+    color: #102820;
+    margin: 0 0 2px;
+    line-height: 1.25;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -18081,9 +18081,11 @@ html[data-theme="dark"] .council-leader-name {
 }
 
 .council-leader-designation {
-    font-size: 0.82rem;
-    color: var(--text-secondary, #56665F);
-    margin: 0 0 6px;
+    font-size: 0.72rem;
+    color: #718096;
+    margin: 0;
+    line-height: 1.2;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -18096,337 +18098,798 @@ html[data-theme="dark"] .council-leader-designation {
 
 .council-leader-links {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 5px;
+    margin-top: 6px;
 }
 
 .council-leader-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    background: rgba(200, 155, 53, 0.1);
-    color: #9E741B;
-    border: 1px solid rgba(200, 155, 53, 0.25);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #E5E7EB;
+    color: #102820;
+    font-size: 0.65rem;
+    font-weight: 700;
     text-decoration: none;
-    font-size: 0.8rem;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.council-leader-link:hover {
+    background: #102820;
+    color: #FFFFFF;
 }
 
 body.dark-mode .council-leader-link,
 html[data-theme="dark"] .council-leader-link {
-    background: rgba(255, 255, 255, 0.06);
-    color: #D4AF37;
-    border-color: rgba(212, 175, 55, 0.3);
-}
-
-.council-leader-link:hover {
-    background: #C89B35;
-    color: #FFFFFF;
-    border-color: #C89B35;
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.08);
+    color: #C5E3D8;
 }
 
 body.dark-mode .council-leader-link:hover,
 html[data-theme="dark"] .council-leader-link:hover {
     background: #D4AF37;
     color: #051F1A;
-    border-color: #D4AF37;
 }
 
-/* Vacant Leadership Slot */
+/* Vacant Slot */
 .council-leader-slot.vacant {
     border-style: dashed;
-    border-color: var(--border-color, #E6E1D6);
-    opacity: 0.75;
-    background: transparent;
+    background: #FAFAFA;
+}
+
+.council-leader-slot.vacant .council-initials-avatar {
+    background: #EDF2F7;
+    color: #A0AEC0;
+}
+
+.council-leader-slot.vacant .council-leader-name {
+    font-style: italic;
+    color: #718096;
+    font-weight: 500;
 }
 
 body.dark-mode .council-leader-slot.vacant,
 html[data-theme="dark"] .council-leader-slot.vacant {
-    border-color: rgba(255, 255, 255, 0.15);
-}
-
-.council-leader-slot.vacant .council-initials-avatar {
-    background: rgba(0, 0, 0, 0.05);
-    border: 1.5px dashed var(--border-color, #E6E1D6);
-    color: var(--text-secondary, #56665F);
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 body.dark-mode .council-leader-slot.vacant .council-initials-avatar,
 html[data-theme="dark"] .council-leader-slot.vacant .council-initials-avatar {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.15);
-    color: #8EABA0;
+    background: rgba(255, 255, 255, 0.04);
+    color: #718096;
 }
 
-.council-leader-slot.vacant .council-leader-name {
-    font-weight: 500;
-    font-style: italic;
-    color: var(--text-secondary, #56665F);
-    font-size: 0.95rem;
+/* View Team Action Button */
+.council-dept-footer {
+    margin-top: 16px;
 }
 
-body.dark-mode .council-leader-slot.vacant .council-leader-name,
-html[data-theme="dark"] .council-leader-slot.vacant .council-leader-name {
-    color: #8EABA0;
+.council-view-team-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    background: #102820;
+    color: #FAF9F6;
+    border: 1px solid rgba(200, 155, 53, 0.35);
+    font-size: 0.84rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(16, 40, 32, 0.12);
+}
+
+.council-view-team-btn:hover {
+    background: linear-gradient(135deg, #102820 0%, #1A4D3E 100%);
+    border-color: #C89B35;
+    color: #FFFFFF;
+    box-shadow: 0 6px 18px rgba(16, 40, 32, 0.22);
+    transform: translateY(-1px);
+}
+
+.council-view-team-btn .btn-arrow {
+    transition: transform 0.2s ease;
+}
+
+.council-view-team-btn:hover .btn-arrow {
+    transform: translateX(3px);
+}
+
+body.dark-mode .council-view-team-btn,
+html[data-theme="dark"] .council-view-team-btn {
+    background: linear-gradient(135deg, #0E2C23 0%, #173E32 100%);
+    color: #FAF9F6;
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .council-view-team-btn:hover,
+html[data-theme="dark"] .council-view-team-btn:hover {
+    background: linear-gradient(135deg, #164638 0%, #215D4C 100%);
+    border-color: #D4AF37;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(212, 175, 55, 0.2);
 }
 
 /* ==========================================================================
-   Full Team Section (Expandable Accordion / Drawer)
+   Department Team Modal Popup Dialog
    ========================================================================== */
-.council-team-drawer {
-    border-top: 1px solid var(--border-color, #E6E1D6);
-    padding-top: 18px;
-    margin-top: 10px;
-}
-
-body.dark-mode .council-team-drawer,
-html[data-theme="dark"] .council-team-drawer {
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.council-team-toggle-btn {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 18px;
-    border-radius: 10px;
-    background: var(--input-bg, #FAF9F6);
-    border: 1px solid var(--border-color, #E6E1D6);
-    color: var(--text-color, #102820);
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-body.dark-mode .council-team-toggle-btn,
-html[data-theme="dark"] .council-team-toggle-btn {
-    background: #07221C;
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #EAE5DA;
-}
-
-.council-team-toggle-btn:hover {
-    background: rgba(200, 155, 53, 0.08);
-    border-color: #C89B35;
-    color: #C89B35;
-}
-
-body.dark-mode .council-team-toggle-btn:hover,
-html[data-theme="dark"] .council-team-toggle-btn:hover {
-    background: rgba(212, 175, 55, 0.12);
-    border-color: #D4AF37;
-    color: #D4AF37;
-}
-
-.council-team-toggle-btn .toggle-chevron {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.council-team-toggle-btn[aria-expanded="true"] .toggle-chevron {
-    transform: rotate(180deg);
-}
-
-/* Expandable Panel */
-.council-team-panel {
-    display: none;
-    padding-top: 20px;
-    animation: drawerFadeIn 0.3s ease-out;
-}
-
-.council-team-panel.open {
-    display: block;
-}
-
-@keyframes drawerFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.council-team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 14px;
-}
-
-.council-member-card {
-    background: var(--bg-color, #FAF9F6);
-    border: 1px solid var(--border-color, #E6E1D6);
-    border-radius: 12px;
-    padding: 14px 16px;
+.council-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(8, 24, 18, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99999;
     display: flex;
     align-items: center;
-    gap: 14px;
-    transition: all 0.2s ease;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    box-sizing: border-box;
 }
 
-body.dark-mode .council-member-card,
-html[data-theme="dark"] .council-member-card {
-    background: #07221C;
-    border-color: rgba(255, 255, 255, 0.08);
+.council-modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-.council-member-card:hover {
-    border-color: #C89B35;
+.council-modal-dialog {
     background: #FFFFFF;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-}
-
-body.dark-mode .council-member-card:hover,
-html[data-theme="dark"] .council-member-card:hover {
-    border-color: #D4AF37;
-    background: #092B23;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-}
-
-.council-member-avatar-wrap {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
+    border-radius: 24px;
+    max-width: 1060px;
+    width: 100%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(200, 155, 53, 0.3);
+    overflow: hidden;
+    transform: scale(0.94) translateY(12px);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+    box-sizing: border-box;
     position: relative;
 }
 
-.council-member-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1.5px solid var(--border-color, #E6E1D6);
+.council-modal-overlay.open .council-modal-dialog {
+    transform: scale(1) translateY(0);
 }
 
-body.dark-mode .council-member-img,
-html[data-theme="dark"] .council-member-img {
-    border-color: rgba(212, 175, 55, 0.3);
+body.dark-mode .council-modal-dialog,
+html[data-theme="dark"] .council-modal-dialog {
+    background: #09221B;
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212, 175, 55, 0.4);
 }
 
-.council-member-info {
-    flex: 1;
+/* Modal Header */
+.council-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    border-bottom: 1px solid #E5E7EB;
+    background: #FAF9F6;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+body.dark-mode .council-modal-header,
+html[data-theme="dark"] .council-modal-header {
+    background: #061B15;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.council-modal-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
     min-width: 0;
 }
 
-.council-member-name {
-    font-size: 0.96rem;
-    font-weight: 700;
-    margin: 0 0 2px;
-    color: var(--text-color, #102820);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-body.dark-mode .council-member-name,
-html[data-theme="dark"] .council-member-name {
-    color: #FAF9F6;
-}
-
-.council-member-role {
-    font-size: 0.78rem;
-    color: var(--text-secondary, #56665F);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-body.dark-mode .council-member-role,
-html[data-theme="dark"] .council-member-role {
-    color: #8EABA0;
-}
-
-.council-member-links {
+.council-modal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(16, 40, 32, 0.08) 0%, rgba(200, 155, 53, 0.15) 100%);
+    border: 1px solid rgba(200, 155, 53, 0.3);
     display: flex;
-    gap: 6px;
-    margin-top: 4px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
-.council-member-link-sm {
-    color: var(--text-secondary, #56665F);
-    font-size: 0.75rem;
-    text-decoration: none;
-    transition: color 0.2s ease;
+body.dark-mode .council-modal-icon,
+html[data-theme="dark"] .council-modal-icon {
+    background: linear-gradient(135deg, rgba(26, 77, 62, 0.5) 0%, rgba(212, 175, 55, 0.2) 100%);
+    border-color: rgba(212, 175, 55, 0.4);
 }
 
-.council-member-link-sm:hover {
+.council-modal-titles {
+    min-width: 0;
+}
+
+.council-modal-dept-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: #C89B35;
+    display: block;
 }
 
-body.dark-mode .council-member-link-sm:hover,
-html[data-theme="dark"] .council-member-link-sm:hover {
+body.dark-mode .council-modal-dept-tag,
+html[data-theme="dark"] .council-modal-dept-tag {
     color: #D4AF37;
 }
 
-.council-empty-team {
-    padding: 24px;
-    text-align: center;
-    color: var(--text-secondary, #56665F);
-    font-size: 0.88rem;
-    font-style: italic;
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px;
+.council-modal-titles h3 {
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #102820;
+    margin: 2px 0 0;
+    line-height: 1.25;
 }
 
-body.dark-mode .council-empty-team,
-html[data-theme="dark"] .council-empty-team {
-    background: rgba(255, 255, 255, 0.02);
+body.dark-mode .council-modal-titles h3,
+html[data-theme="dark"] .council-modal-titles h3 {
+    color: #FAF9F6;
+}
+
+.council-modal-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.council-modal-count-badge {
+    padding: 6px 14px;
+    border-radius: 50px;
+    background: #EBF1EE;
+    color: #102820;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border: 1px solid rgba(16, 40, 32, 0.12);
+    white-space: nowrap;
+}
+
+body.dark-mode .council-modal-count-badge,
+html[data-theme="dark"] .council-modal-count-badge {
+    background: rgba(212, 175, 55, 0.15);
+    color: #E5C365;
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.council-modal-close-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #F0EDE4;
+    border: 1px solid #E2DCCF;
+    color: #102820;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.council-modal-close-btn:hover {
+    background: #102820;
+    color: #FAF9F6;
+    transform: rotate(90deg);
+}
+
+body.dark-mode .council-modal-close-btn,
+html[data-theme="dark"] .council-modal-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #FAF9F6;
+}
+
+body.dark-mode .council-modal-close-btn:hover,
+html[data-theme="dark"] .council-modal-close-btn:hover {
+    background: #D4AF37;
+    color: #051F1A;
+}
+
+/* Modal Toolbar */
+.council-modal-toolbar {
+    padding: 14px 28px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+body.dark-mode .council-modal-toolbar,
+html[data-theme="dark"] .council-modal-toolbar {
+    background: #09221B;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.council-modal-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 360px;
+}
+
+.council-modal-search-icon {
+    position: absolute;
+    left: 12px;
+    color: #718096;
+    pointer-events: none;
+}
+
+.council-modal-search-input {
+    width: 100%;
+    padding: 9px 34px 9px 34px;
+    border-radius: 50px;
+    border: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    font-size: 0.85rem;
+    color: #102820;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.council-modal-search-input:focus {
+    border-color: #C89B35;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(200, 155, 53, 0.15);
+}
+
+body.dark-mode .council-modal-search-input,
+html[data-theme="dark"] .council-modal-search-input {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #FAF9F6;
+}
+
+body.dark-mode .council-modal-search-input:focus,
+html[data-theme="dark"] .council-modal-search-input:focus {
+    border-color: #D4AF37;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.council-modal-search-clear {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: #A0AEC0;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.council-modal-filter-meta {
+    font-size: 0.78rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+body.dark-mode .council-modal-filter-meta,
+html[data-theme="dark"] .council-modal-filter-meta {
     color: #8EABA0;
 }
 
-/* Reduced motion accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .council-dept-card,
-    .council-leader-slot,
-    .council-member-card,
-    .council-team-toggle-btn .toggle-chevron,
-    .council-team-panel {
-        transition: none !important;
-        animation: none !important;
-        transform: none !important;
+/* Modal Scrollable Body & ID Card Grid */
+.council-modal-body {
+    padding: 28px;
+    overflow-y: auto;
+    flex: 1;
+    background: #F7F5EE;
+}
+
+body.dark-mode .council-modal-body,
+html[data-theme="dark"] .council-modal-body {
+    background: #061B15;
+}
+
+.council-modal-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    justify-content: center;
+}
+
+.council-modal-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+}
+
+.council-modal-empty-state h4 {
+    font-size: 1.15rem;
+    margin: 12px 0 6px;
+    color: #102820;
+}
+
+body.dark-mode .council-modal-empty-state h4,
+html[data-theme="dark"] .council-modal-empty-state h4 {
+    color: #FAF9F6;
+}
+
+/* ==========================================================================
+   ID CARD MEMBER UI (Inspired by uploaded reference media_1792743800481.jpg)
+   ========================================================================== */
+.council-id-card {
+    background: #FBF8EE;
+    border: 1.5px solid rgba(200, 155, 53, 0.35);
+    border-radius: 24px;
+    padding: 18px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(16, 40, 32, 0.08);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 310px;
+    margin: 0 auto;
+}
+
+.council-id-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 36px rgba(16, 40, 32, 0.14);
+    border-color: #C89B35;
+}
+
+body.dark-mode .council-id-card,
+html[data-theme="dark"] .council-id-card {
+    background: #0E2C23;
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .council-id-card:hover,
+html[data-theme="dark"] .council-id-card:hover {
+    border-color: #D4AF37;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* ID Card Top Brand Header */
+.id-card-brand-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.id-card-emblem-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.id-card-emblem {
+    margin-bottom: 2px;
+}
+
+.id-card-brand-title {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    color: #102820;
+    line-height: 1;
+}
+
+body.dark-mode .id-card-brand-title,
+html[data-theme="dark"] .id-card-brand-title {
+    color: #FAF9F6;
+}
+
+.id-card-sub-brand {
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    color: #C89B35;
+    line-height: 1;
+}
+
+body.dark-mode .id-card-sub-brand,
+html[data-theme="dark"] .id-card-sub-brand {
+    color: #E5C365;
+}
+
+/* "Hello, I am" Pill Box & Name */
+.id-card-name-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.id-card-greeting {
+    display: inline-block;
+    padding: 3px 14px;
+    background: #FFFFFF;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    font-style: italic;
+    color: #4A6357;
+    border: 1px solid rgba(200, 155, 53, 0.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    margin-bottom: 6px;
+}
+
+body.dark-mode .id-card-greeting,
+html[data-theme="dark"] .id-card-greeting {
+    background: rgba(255, 255, 255, 0.08);
+    color: #A0D8C3;
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.id-card-name {
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: #102820;
+    margin: 0;
+    line-height: 1.25;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.dark-mode .id-card-name,
+html[data-theme="dark"] .id-card-name {
+    color: #FAF9F6;
+}
+
+/* Central Portrait Photo Frame with Dot Grid Texture */
+.id-card-portrait-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    border-radius: 18px;
+    background: #ECE6D5;
+    border: 3px solid #FFFFFF;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(16, 40, 32, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+body.dark-mode .id-card-portrait-wrap,
+html[data-theme="dark"] .id-card-portrait-wrap {
+    background: #09221B;
+    border-color: #164638;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.id-card-dot-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(16, 40, 32, 0.16) 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+body.dark-mode .id-card-dot-pattern,
+html[data-theme="dark"] .id-card-dot-pattern {
+    background-image: radial-gradient(rgba(212, 175, 55, 0.25) 1.5px, transparent 1.5px);
+}
+
+.id-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.id-card-initials-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    background: linear-gradient(135deg, #102820 0%, #1A4D3E 50%, #C89B35 100%);
+    color: #FAF9F6;
+    user-select: none;
+    position: relative;
+    z-index: 1;
+}
+
+body.dark-mode .id-card-initials-fallback,
+html[data-theme="dark"] .id-card-initials-fallback {
+    background: linear-gradient(135deg, #051F1A 0%, #0E2C23 60%, #D4AF37 100%);
+    color: #FFFFFF;
+}
+
+/* Floating Role Badge Pill */
+.id-card-role-pill {
+    margin-top: -26px;
+    position: relative;
+    z-index: 2;
+    background: #FFFFFF;
+    color: #102820;
+    border: 1px solid rgba(200, 155, 53, 0.35);
+    border-radius: 50px;
+    padding: 5px 16px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark-mode .id-card-role-pill,
+html[data-theme="dark"] .id-card-role-pill {
+    background: #173E32;
+    color: #FAF9F6;
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* Bottom Bar: Department & Links */
+.id-card-bottom-bar {
+    width: 100%;
+    margin-top: 12px;
+    padding: 7px 12px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    border: 1px solid rgba(200, 155, 53, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+body.dark-mode .id-card-bottom-bar,
+html[data-theme="dark"] .id-card-bottom-bar {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.id-card-dept-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #1A4D3E;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+body.dark-mode .id-card-dept-badge,
+html[data-theme="dark"] .id-card-dept-badge {
+    color: #C5E3D8;
+}
+
+.id-card-links {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.id-card-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #EBF1EE;
+    color: #102820;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.id-card-link-btn:hover {
+    background: #102820;
+    color: #FFFFFF;
+}
+
+body.dark-mode .id-card-link-btn,
+html[data-theme="dark"] .id-card-link-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #C5E3D8;
+}
+
+body.dark-mode .id-card-link-btn:hover,
+html[data-theme="dark"] .id-card-link-btn:hover {
+    background: #D4AF37;
+    color: #051F1A;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints & Reduced Motion
+   ========================================================================== */
+@media (max-width: 1100px) {
+    .council-dept-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 22px !important;
     }
 }
 
-/* Mobile & Tablet Responsive Adjustments */
-@media (max-width: 768px) {
-    .council-directory-section {
-        padding: 50px 0 70px;
+@media (max-width: 720px) {
+    .council-dept-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
     }
 
-    .council-directory-toolbar {
-        padding: 16px;
-        margin: 24px auto 32px;
+    .council-modal-dialog {
+        max-height: 94vh;
+        border-radius: 18px;
     }
 
-    .council-dept-card {
-        padding: 22px 18px 20px;
-        border-radius: 16px;
+    .council-modal-header {
+        padding: 16px 18px;
     }
 
-    .council-dept-title-group h3 {
-        font-size: 1.3rem;
+    .council-modal-toolbar {
+        padding: 12px 18px;
     }
 
-    .council-leadership-row {
+    .council-modal-body {
+        padding: 18px 14px;
+    }
+
+    .council-modal-cards-grid {
         grid-template-columns: 1fr;
     }
 
-    .council-leader-slot {
-        padding: 16px;
-    }
-
-    .council-team-grid {
+    .council-dept-leadership-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .council-dept-card,
+    .council-leader-slot,
+    .council-id-card,
+    .council-modal-dialog,
+    .council-modal-overlay {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
     }
 }
